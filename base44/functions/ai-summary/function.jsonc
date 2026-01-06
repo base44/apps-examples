@@ -1,0 +1,19 @@
+{
+  // Entry point file (Deno function)
+  "entry": "index.ts",
+  "triggers": [
+    {
+      "id": "695d511dd947568145198c50",
+      "name": "Daily AI Summary for In-Progress Tasks",
+      "description": "Generates AI summaries for all in-progress tasks daily at 8 AM",
+
+      "type": "schedule",
+      "scheduleMode": "recurring",  // "recurring" or "once"
+      "cron": "0 8 * * *",          // Cron expression (8 AM daily)
+      "isActive": true
+
+      // "timezone": "America/New_York"  // Override default timezone
+    }
+  ]
+}
+

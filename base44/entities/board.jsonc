@@ -1,0 +1,29 @@
+{
+  "name": "Board",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Name of the board"
+    },
+    "description": {
+      "type": "string",
+      "description": "Board description"
+    },
+    "team_id": {
+      "type": "string",
+      "description": "Associated team ID"
+    },
+    "owner_email": {
+      "type": "string",
+      "description": "Email of board owner"
+    },
+    "color": {
+      "type": "string",
+      "enum": ["blue", "green", "purple", "orange", "pink", "cyan"],
+      "default": "blue",
+      "description": "Board accent color"
+    }
+  },
+  "required": ["name"]
+}

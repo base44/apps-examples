@@ -1,0 +1,72 @@
+{
+  "name": "Task",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Task title"
+    },
+    "description": {
+      "type": "string",
+      "description": "Task description"
+      // "format": "richtext",  // Enable rich text editor in dashboard
+    },
+    "status": {
+      "type": "string",
+      "enum": ["todo", "in_progress", "done"],
+      "default": "todo",
+      "description": "Current status of the task"
+    },
+    "board_id": {
+      "type": "string",
+      "description": "Board this task belongs to"
+      // "relation": { "entity": "Board", "type": "many-to-one" }
+    },
+    "assignee_email": {
+      "type": "string",
+      "description": "Email of assigned user"
+    },
+    "priority": {
+      "type": "string",
+      "enum": ["low", "medium", "high"],
+      "default": "medium",
+      "description": "Task priority"
+    },
+    "due_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Due date"
+    },
+    "attachments": {
+      "type": "array",
+      "description": "File attachments",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "url": { "type": "string" },
+          "type": { "type": "string" }
+        }
+      }
+    },
+    "position": {
+      "type": "number",
+      "description": "Position in column for ordering"
+    },
+    "labels": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Task labels/tags"
+    }
+  },
+  "required": ["title"]
+
+  // Row-level security policies
+  // Docs: https://docs.base44.com/entities/policies
+  // "policies": {
+  //   "read": "auth.isAuthenticated",
+  //   "create": "auth.isAuthenticated",
+  //   "update": "record.created_by == auth.userId",
+  //   "delete": "record.created_by == auth.userId || auth.isAdmin"
+  // }
+}

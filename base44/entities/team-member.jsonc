@@ -1,0 +1,21 @@
+{
+  "name": "TeamMember",
+  "type": "object",
+  "properties": {
+    "team_id": {
+      "type": "string",
+      "description": "Team ID"
+    },
+    "user_email": {
+      "type": "string",
+      "description": "Member email"
+    },
+    "role": {
+      "type": "string",
+      "enum": ["admin", "member", "viewer"],
+      "default": "member",
+      "description": "Member role in team"
+    }
+  },
+  "required": ["team_id", "user_email"]
+}

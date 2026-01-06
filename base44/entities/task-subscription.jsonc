@@ -1,0 +1,25 @@
+{
+  "name": "TaskSubscription",
+  "type": "object",
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "description": "Task ID to subscribe to"
+    },
+    "user_email": {
+      "type": "string",
+      "description": "Subscriber email"
+    },
+    "notify_on_status_change": {
+      "type": "boolean",
+      "default": true,
+      "description": "Notify when status changes"
+    },
+    "notify_on_comment": {
+      "type": "boolean",
+      "default": true,
+      "description": "Notify on new comments"
+    }
+  },
+  "required": ["task_id", "user_email"]
+}

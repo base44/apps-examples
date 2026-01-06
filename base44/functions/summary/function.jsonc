@@ -1,0 +1,15 @@
+{
+  "entry": "index.ts",
+  "triggers": [
+    {
+      "id": "695d511dd947568145198c4f",
+      "name": "Daily Summary Logger",
+      "description": "Logs total task count every day at 9 AM",
+      "type": "schedule",
+      "scheduleMode": "recurring",
+      "cron": "0 8 * * *",
+      "isActive": true
+    }
+  ]
+}
+

@@ -1,0 +1,36 @@
+{
+  "name": "ActivityLog",
+  "type": "object",
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "description": "Related task ID"
+    },
+    "board_id": {
+      "type": "string",
+      "description": "Related board ID"
+    },
+    "user_email": {
+      "type": "string",
+      "description": "User who performed action"
+    },
+    "action": {
+      "type": "string",
+      "enum": ["created", "updated", "moved", "deleted", "commented", "attached"],
+      "description": "Type of action"
+    },
+    "details": {
+      "type": "string",
+      "description": "Action details"
+    },
+    "old_value": {
+      "type": "string",
+      "description": "Previous value"
+    },
+    "new_value": {
+      "type": "string",
+      "description": "New value"
+    }
+  },
+  "required": ["action"]
+}

@@ -1,0 +1,13 @@
+{
+  "entry": "index.ts",
+  "triggers": [
+    {
+      "id": "695d511dd947568145198c4f",
+      "name": "On Task Create Logger",
+      "description": "Logs task creation event",
+      "type": "event",
+      "entity": "Task",
+      "event": "create"
+    }
+  ]
+}
