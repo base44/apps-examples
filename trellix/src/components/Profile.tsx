@@ -52,7 +52,7 @@ export default function Profile({ user, onUpdate, onBack }: Props) {
             {user.is_verified && <p className="verified"><Icon name="check" size={14} /> Email verified</p>}
           </div>
 
-          <button type="submit" disabled={saving}>
+          <button type="submit" className="btn btn-primary" disabled={saving} style={{ width: '100%', justifyContent: 'center' }}>
             {saving ? 'Saving...' : 'Save Changes'}
           </button>
         </form>

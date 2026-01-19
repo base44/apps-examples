@@ -15,6 +15,11 @@ export default function BoardList({ boards, setBoards, onSelectBoard }: Props) {
   const [newName, setNewName] = useState('');
   const [newDescription, setNewDescription] = useState('');
   const [newColor, setNewColor] = useState<string>('blue');
+  
+  const [editingBoard, setEditingBoard] = useState<any>(null);
+  const [editName, setEditName] = useState('');
+  const [editDescription, setEditDescription] = useState('');
+  const [editColor, setEditColor] = useState<string>('blue');
 
   const createBoard = async () => {
     if (!newName.trim()) return;
@@ -28,6 +33,25 @@ export default function BoardList({ boards, setBoards, onSelectBoard }: Props) {
     setNewDescription('');
     setNewColor('blue');
     setShowCreate(false);
+  };
+
+  const openEditModal = (board: any, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setEditingBoard(board);
+    setEditName(board.name);
+    setEditDescription(board.description || '');
+    setEditColor(board.color || 'blue');
+  };
+
+  const updateBoard = async () => {
+    if (!editName.trim() || !editingBoard) return;
+    const updated = await Board.update(editingBoard.id, {
+      name: editName,
+      description: editDescription || undefined,
+      color: editColor,
+    });
+    setBoards(boards.map((b) => (b.id === editingBoard.id ? updated : b)));
+    setEditingBoard(null);
   };
 
   const deleteBoard = async (id: string, e: React.MouseEvent) => {
@@ -82,6 +106,50 @@ export default function BoardList({ boards, setBoards, onSelectBoard }: Props) {
         </div>
       )}
 
+      {editingBoard && (
+        <div className="modal-overlay" onClick={() => setEditingBoard(null)}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <h3>Edit Board</h3>
+            <div className="form-group">
+              <label>Board Name</label>
+              <input
+                type="text"
+                placeholder="Enter board name..."
+                value={editName}
+                onChange={(e) => setEditName(e.target.value)}
+                autoFocus
+              />
+            </div>
+            <div className="form-group">
+              <label>Description</label>
+              <input
+                type="text"
+                placeholder="Optional description..."
+                value={editDescription}
+                onChange={(e) => setEditDescription(e.target.value)}
+              />
+            </div>
+            <div className="form-group">
+              <label>Cover Color</label>
+              <div className="color-picker">
+                {COLORS.map((c) => (
+                  <button
+                    key={c}
+                    type="button"
+                    className={`color-btn ${c} ${editColor === c ? 'selected' : ''}`}
+                    onClick={() => setEditColor(c)}
+                  />
+                ))}
+              </div>
+            </div>
+            <div className="modal-actions">
+              <button className="btn" onClick={() => setEditingBoard(null)}>Cancel</button>
+              <button className="btn btn-primary" onClick={updateBoard}>Save Changes</button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="boards-grid">
         {boards.map((board) => (
           <div
@@ -89,17 +157,26 @@ export default function BoardList({ boards, setBoards, onSelectBoard }: Props) {
             className="board-card"
             onClick={() => onSelectBoard(board.name)}
           >
-            <div className={`board-card-cover ${board.color || 'blue'}`}>
+            <div className="board-card-content">
+              <div className="board-card-header">
+                <span className={`board-color-dot ${board.color || 'blue'}`} />
+                <h3>{board.name}</h3>
+              </div>
+              {board.description && <p>{board.description}</p>}
+            </div>
+            <div className="board-card-actions">
               <button 
-                className="delete-btn" 
+                className="card-action-btn"
+                onClick={(e) => openEditModal(board, e)}
+              >
+                Edit
+              </button>
+              <button 
+                className="card-action-btn danger" 
                 onClick={(e) => deleteBoard(board.id, e)}
               >
-                ×
+                Delete
               </button>
-            </div>
-            <div className="board-card-body">
-              <h3>{board.name}</h3>
-              {board.description && <p>{board.description}</p>}
             </div>
           </div>
         ))}

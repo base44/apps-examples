@@ -30,9 +30,11 @@ function App() {
   const [theme, setTheme] = useState<'dark' | 'light'>(() => 
     (localStorage.getItem('theme') as 'dark' | 'light') || 'light'
   );
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(() =>
-    localStorage.getItem('sidebarCollapsed') === 'true'
-  );
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+    const stored = localStorage.getItem('sidebarCollapsed');
+    if (stored !== null) return stored === 'true';
+    return window.innerWidth < 768;
+  });
   const authChecked = useRef(false);
 
   useEffect(() => {
@@ -198,25 +200,30 @@ function App() {
           
           <div className="nav-section">
             {!sidebarCollapsed && <div className="nav-section-title">Your Boards</div>}
-            {boards.map((board) => (
-              <div
-                key={board.id}
-                className={`nav-item ${view.type === 'board' && view.name === board.name ? 'active' : ''}`}
-                onClick={() => navigate({ type: 'board', name: board.name })}
-                title={board.name}
-              >
-                <span 
-                  className="board-dot" 
-                  style={{ 
-                    background: `var(--${board.color === 'blue' ? 'accent' : 
-                      board.color === 'green' ? 'success' : 
-                      board.color === 'orange' ? 'warning' : 
-                      board.color === 'pink' || board.color === 'purple' ? 'accent' : 'accent'})` 
-                  }}
-                />
-                {!sidebarCollapsed && board.name}
-              </div>
-            ))}
+            {boards.map((board) => {
+              const colorMap: Record<string, string> = {
+                blue: '#3b82f6',
+                green: '#22c55e',
+                purple: '#8b5cf6',
+                orange: '#f59e0b',
+                pink: '#ec4899',
+                cyan: '#06b6d4',
+              };
+              return (
+                <div
+                  key={board.id}
+                  className={`nav-item ${view.type === 'board' && view.name === board.name ? 'active' : ''}`}
+                  onClick={() => navigate({ type: 'board', name: board.name })}
+                  title={board.name}
+                >
+                  <span 
+                    className="board-dot" 
+                    style={{ background: colorMap[board.color] || colorMap.blue }}
+                  />
+                  {!sidebarCollapsed && board.name}
+                </div>
+              );
+            })}
             <div 
               className="nav-item add-board-btn"
               onClick={() => setShowQuickCreate(true)}
