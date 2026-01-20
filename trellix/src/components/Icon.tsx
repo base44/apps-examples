@@ -50,5 +50,5 @@ export default function Icon({ name, size = 20, className }: Props) {
     ),
   };
 
-  return icons[name] || null;
+  return icons[name];
 }

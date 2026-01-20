@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { Board, Task, ActivityLog } from '../base44Client';
-import TaskCard from './TaskCard';
-import TaskModal from './TaskModal';
-import Icon from './Icon';
+import { Board, Task, ActivityLog } from '../sdk-client/base44-client';
+import TaskCard from './task-card';
+import TaskModal from './task-modal';
+import Icon from './icon';
 
 const COLUMNS = [
   { id: 'todo', label: 'To Do' },

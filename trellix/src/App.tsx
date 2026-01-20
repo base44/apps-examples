@@ -1,9 +1,9 @@
 import { useEffect, useState, useRef } from 'react';
-import { base44, Board } from './base44Client';
-import BoardList from './components/BoardList';
-import BoardView from './components/BoardView';
-import Profile from './components/Profile';
-import Icon from './components/Icon';
+import { base44, Board } from './sdk-client/base44-client';
+import BoardList from './components/board-list';
+import BoardView from './components/board-view';
+import Profile from './components/profile';
+import Icon from './components/icon';
 import './App.css';
 
 type View = { type: 'boards' } | { type: 'board'; name: string } | { type: 'profile' };

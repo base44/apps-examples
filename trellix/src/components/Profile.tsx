@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { base44 } from '../base44Client';
-import Icon from './Icon';
+import { base44 } from '../sdk-client/base44-client';
+import Icon from './icon';
 
 interface Props {
   user: any;

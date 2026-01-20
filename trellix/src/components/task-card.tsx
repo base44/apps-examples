@@ -1,4 +1,4 @@
-import Icon from './Icon';
+import Icon from './icon';
 
 interface Props {
   task: any;

@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Board } from '../base44Client';
-import Icon from './Icon';
+import { Board } from '../sdk-client/base44-client';
+import Icon from './icon';
 
 const COLORS = ['blue', 'green', 'purple', 'orange', 'pink', 'cyan'] as const;
 
