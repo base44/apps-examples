@@ -8,13 +8,9 @@
   // Site/hosting configuration
   // Docs: https://docs.base44.com/configuration/hosting
   "site": {
+    "installCommand": "npm install",
     "buildCommand": "npm run build",
     "serveCommand": "npm run dev",
     "outputDirectory": "./dist"
-    // "installCommand": "npm ci", // Custom install command
   }
-
-  // Custom domain configuration
-  // Docs: https://docs.base44.com/configuration/domains
-  // "domains": ["app.example.com"]
 }
