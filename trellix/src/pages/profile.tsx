@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { base44 } from '../sdk-client/base44-client';
-import Icon from './icon';
+import Icon from '../components/sidebar/icon';
+import type { User } from '../types';
 
 interface Props {
-  user: any;
-  onUpdate: (user: any) => void;
+  user: User;
+  onUpdate: (user: User) => void;
   onBack: () => void;
 }
 
@@ -29,7 +30,7 @@ export default function Profile({ user, onUpdate, onBack }: Props) {
       <div className="profile-card">
         <button className="back-btn" onClick={onBack}>← Back to boards</button>
         <h2>Profile</h2>
-        
+
         <div className="profile-info">
           <div className="avatar">{(user.full_name || user.email)[0].toUpperCase()}</div>
           <p className="email">{user.email}</p>
@@ -46,7 +47,7 @@ export default function Profile({ user, onUpdate, onBack }: Props) {
               placeholder="Enter your name"
             />
           </div>
-          
+
           <div className="profile-meta">
             <p><Icon name="calendar" size={14} /> Member since {new Date(user.created_date).toLocaleDateString()}</p>
             {user.is_verified && <p className="verified"><Icon name="check" size={14} /> Email verified</p>}
@@ -58,8 +59,8 @@ export default function Profile({ user, onUpdate, onBack }: Props) {
         </form>
 
         <div style={{ marginTop: 24, paddingTop: 24, borderTop: '1px solid var(--border)' }}>
-          <button 
-            className="btn" 
+          <button
+            className="btn"
             onClick={handleLogout}
             style={{ width: '100%', justifyContent: 'center', color: 'var(--danger)' }}
           >

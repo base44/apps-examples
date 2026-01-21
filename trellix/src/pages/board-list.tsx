@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { Board } from '../sdk-client/base44-client';
-import Icon from './icon';
+import Icon from '../components/sidebar/icon';
+import type { Board as BoardType, BoardColor } from '../types';
 
-const COLORS = ['blue', 'green', 'purple', 'orange', 'pink', 'cyan'] as const;
+const COLORS: BoardColor[] = ['blue', 'green', 'purple', 'orange', 'pink', 'cyan'];
 
 interface Props {
-  boards: any[];
-  setBoards: (boards: any[]) => void;
+  boards: BoardType[];
+  setBoards: (boards: BoardType[]) => void;
   onSelectBoard: (name: string) => void;
 }
 
@@ -14,12 +15,12 @@ export default function BoardList({ boards, setBoards, onSelectBoard }: Props) {
   const [showCreate, setShowCreate] = useState(false);
   const [newName, setNewName] = useState('');
   const [newDescription, setNewDescription] = useState('');
-  const [newColor, setNewColor] = useState<string>('blue');
+  const [newColor, setNewColor] = useState<BoardColor>('blue');
   
-  const [editingBoard, setEditingBoard] = useState<any>(null);
+  const [editingBoard, setEditingBoard] = useState<BoardType | null>(null);
   const [editName, setEditName] = useState('');
   const [editDescription, setEditDescription] = useState('');
-  const [editColor, setEditColor] = useState<string>('blue');
+  const [editColor, setEditColor] = useState<BoardColor>('blue');
 
   const createBoard = async () => {
     if (!newName.trim()) return;
@@ -35,7 +36,7 @@ export default function BoardList({ boards, setBoards, onSelectBoard }: Props) {
     setShowCreate(false);
   };
 
-  const openEditModal = (board: any, e: React.MouseEvent) => {
+  const openEditModal = (board: BoardType, e: React.MouseEvent) => {
     e.stopPropagation();
     setEditingBoard(board);
     setEditName(board.name);

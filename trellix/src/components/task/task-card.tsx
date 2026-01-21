@@ -1,7 +1,8 @@
-import Icon from './icon';
+import Icon from '../sidebar/icon';
+import type { Task } from '../../types';
 
 interface Props {
-  task: any;
+  task: Task;
   onEdit: () => void;
   onDelete: () => void;
   onDragStart: () => void;
@@ -48,7 +49,7 @@ export default function TaskCard({ task, onEdit, onDelete, onDragStart, onDragEn
         )}
       </div>
       
-      {task.labels?.length > 0 && (
+      {task.labels && task.labels.length > 0 && (
         <div className="labels">
           {task.labels.map((label: string) => (
             <span key={label} className="label">{label}</span>

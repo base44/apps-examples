@@ -1,9 +1,10 @@
 import { useState } from 'react';
+import type { Task, TaskFormData, TaskPriority, TaskStatus } from '../../types';
 
 interface Props {
-  task?: any;
-  initialStatus?: string;
-  onSave: (data: any) => void;
+  task?: Task | null;
+  initialStatus?: TaskStatus;
+  onSave: (data: TaskFormData) => void;
   onClose: () => void;
 }
 
@@ -59,7 +60,7 @@ export default function TaskModal({ task, initialStatus, onSave, onClose }: Prop
           <div className="form-row">
             <div className="form-group">
               <label>Priority</label>
-              <select value={priority} onChange={(e) => setPriority(e.target.value)}>
+              <select value={priority} onChange={(e) => setPriority(e.target.value as TaskPriority)}>
                 <option value="low">Low</option>
                 <option value="medium">Medium</option>
                 <option value="high">High</option>

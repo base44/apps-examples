@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Board, Task, ActivityLog } from '../sdk-client/base44-client';
-import TaskCard from './task-card';
-import TaskModal from './task-modal';
-import Icon from './icon';
+import TaskCard from '../components/task/task-card';
+import TaskModal from '../components/task/task-modal';
+import Icon from '../components/sidebar/icon';
+import type { Board as BoardType, Task as TaskType, TaskFormData, TaskStatus } from '../types';
 
 const COLUMNS = [
   { id: 'todo', label: 'To Do' },
@@ -16,11 +17,11 @@ interface Props {
 }
 
 export default function BoardView({ boardName }: Props) {
-  const [board, setBoard] = useState<any>(null);
-  const [tasks, setTasks] = useState<any[]>([]);
-  const [editingTask, setEditingTask] = useState<any>(null);
-  const [showCreate, setShowCreate] = useState<string | null>(null);
-  const [draggedTask, setDraggedTask] = useState<any>(null);
+  const [board, setBoard] = useState<BoardType>();
+  const [tasks, setTasks] = useState<TaskType[]>([]);
+  const [editingTask, setEditingTask] = useState<TaskType | null>(null);
+  const [showCreate, setShowCreate] = useState<TaskStatus | null>(null);
+  const [draggedTask, setDraggedTask] = useState<TaskType | null>(null);
   const [dragOverColumn, setDragOverColumn] = useState<string | null>(null);
 
   useEffect(() => {
@@ -33,17 +34,17 @@ export default function BoardView({ boardName }: Props) {
     });
   }, [boardName]);
 
-  const createTask = async (data: any) => {
-    const task = await Task.create({ ...data, board_id: board.id });
+  const createTask = async (data: TaskFormData) => {
+    const task = await Task.create({ ...data, board_id: board!.id });
     setTasks([...tasks, task]);
-    await ActivityLog.create({ task_id: task.id, board_id: board.id, action: 'created' });
+    await ActivityLog.create({ task_id: task.id, board_id: board!.id, action: 'created' });
     setShowCreate(null);
   };
 
-  const updateTask = async (id: string, data: any) => {
+  const updateTask = async (id: string, data: Partial<TaskFormData>) => {
     const updated = await Task.update(id, data);
     setTasks(tasks.map((t) => (t.id === id ? updated : t)));
-    await ActivityLog.create({ task_id: id, board_id: board.id, action: 'updated' });
+    await ActivityLog.create({ task_id: id, board_id: board!.id, action: 'updated' });
     setEditingTask(null);
   };
 
@@ -65,7 +66,7 @@ export default function BoardView({ boardName }: Props) {
     setTasks(tasks.map((t) => (t.id === draggedTask.id ? updated : t)));
     await ActivityLog.create({
       task_id: draggedTask.id,
-      board_id: board.id,
+      board_id: board!.id,
       action: 'moved',
       old_value: oldStatus,
       new_value: status,
