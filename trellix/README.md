@@ -130,31 +130,7 @@ The `base44/config.jsonc` file defines project metadata and hosting/build settin
 
 ## Development
 
-### Install dependencies
-
-```bash
-npm install
-```
-
-### Start the development server
-
-```bash
-npm run dev
-```
-
-### Build for production
-
-```bash
-npm run build
-```
-
-### Environment variables
-
-Create a `.env` file with your Base44 app ID:
-
-```
-VITE_BASE44_APP_ID=your_app_id
-```
+See the [Getting started](../README.md#getting-started) guide in the top-level README for setup instructions.
 
 ## Tech stack
 
