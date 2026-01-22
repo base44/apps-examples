@@ -66,9 +66,9 @@ Follow these steps to run any example app locally.
 
 ## Available examples
 
-| Example | Description |
-| --- | --- |
-| [trellix](./trellix/) | A Trello-style task and project management app |
+| App | Description | Live demo |
+| --- | --- | --- |
+| [trellix](./trellix/) | A Trello-style task and project management app | [Try it](https://trellix-example-64ad1623.base44.app/) |
 
 ## See also
 
