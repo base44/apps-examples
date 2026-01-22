@@ -2,107 +2,75 @@
 
 This repository contains example apps built with [Base44](https://base44.com). Use these examples to learn how Base44 works and as starting points for your own projects.
 
-## Prerequisites
-
-Before you begin, make sure you have:
-
-- [Node.js](https://nodejs.org/) v18 or later
-- A Base44 account at [app.base44.com](https://app.base44.com)
-- The Base44 CLI installed globally:
-
-```bash
-npm install -g base44 --registry https://registry.npmjs.org
-```
-
 ## Getting started
 
 Follow these steps to run any example app locally.
 
-### Clone the repository
+> **Note:** Before you begin, make sure you have [Node.js](https://nodejs.org/) v18 or later, a Base44 account at [app.base44.com](https://app.base44.com), and the Base44 CLI installed globally: `npm install -g base44 --registry https://registry.npmjs.org`
 
-```bash
-git clone <repository-url>
-cd apps-examples
-```
+1. Clone this repository and navigate to it:
 
-### Navigate to an example
+    ```bash
+    cd apps-examples
+    ```
 
-```bash
-cd trellix
-```
+2. Navigate to an example app. For example:
 
-### Install dependencies
+    ```bash
+    cd trellix
+    ```
 
-```bash
-npm install
-```
+3. Install dependencies:
 
-### Log in to Base44
+    ```bash
+    npm install
+    ```
 
-```bash
-base44 login
-```
+4. Log in to Base44:
 
-Follow the prompts to authenticate with your Base44 account.
+    ```bash
+    base44 login
+    ```
 
-### Link the project
+    Follow the prompts to authenticate with your Base44 account.
 
-```bash
-base44 link
-```
+5. Link the project:
 
-This command creates a new Base44 project and generates a `base44/.env.local` file containing your `BASE44_CLIENT_ID`.
+    ```bash
+    base44 link
+    ```
 
-### Create the root environment file
+    This command creates a new Base44 project and generates a `base44/.env.local` file containing your `BASE44_CLIENT_ID`.
 
-Copy the `BASE44_CLIENT_ID` value from `base44/.env.local` and create a `.env.local` file in the project root:
+6. Create the root environment file from the generated credentials:
 
-```bash
-# View the generated ID
-cat base44/.env.local
+    ```bash
+    sed 's/BASE44_CLIENT_ID/VITE_BASE44_APP_ID/' base44/.env.local > .env.local
+    ```
 
-# Create the root .env.local file
-echo "VITE_BASE44_APP_ID=<your-BASE44_CLIENT_ID>" > .env.local
-```
+7. Push the entities:
 
-### Push the entities
+    ```bash
+    base44 entities push
+    ```
 
-```bash
-base44 entities push
-```
+    This uploads the entity schemas to your Base44 project.
 
-This uploads the entity schemas to your Base44 project.
+8. Start the development server:
 
-### Start the development server
+    ```bash
+    npm run dev
+    ```
 
-```bash
-npm run dev
-```
-
-The app is now running at `http://localhost:5173/`.
+    The app is now running at `http://localhost:5173/`.
 
 ## Available examples
 
 | Example | Description |
-|---------|-------------|
+| --- | --- |
 | [trellix](./trellix/) | A Trello-style task and project management app |
 
-## Project structure
-
-Each example follows a similar structure:
-
-```
-example-app/
-├── base44/
-│   ├── config.jsonc       # Project configuration
-│   ├── entities/          # Entity schema definitions
-│   └── .env.local         # Generated credentials (not committed)
-├── src/                   # App source code
-├── .env.local             # App ID for Vite (not committed)
-└── package.json
-```
-
-## Learn more
+## See also
 
 - [Base44 Documentation](https://docs.base44.com)
 - [Base44 SDK Reference](https://docs.base44.com/sdk)
