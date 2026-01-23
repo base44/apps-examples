@@ -201,6 +201,45 @@ body {
   background: var(--accent-muted);
 }
 
+/* Password Requirements */
+.password-requirements {
+  list-style: none;
+  padding: 12px 16px;
+  margin: 0;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  font-size: 0.8125rem;
+}
+
+.password-requirements li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  transition: color 0.2s;
+}
+
+.password-requirements li.met {
+  color: var(--accent);
+}
+
+.password-requirements li.unmet {
+  color: var(--text-muted);
+}
+
+.password-requirements .requirement-icon {
+  font-weight: 600;
+  width: 16px;
+  text-align: center;
+}
+
+.login-card button[type="submit"]:disabled {
+  background: var(--bg-elevated);
+  color: var(--text-muted);
+  cursor: not-allowed;
+}
+
 /* Main App Layout */
 .app {
   display: flex;

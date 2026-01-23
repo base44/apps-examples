@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { base44, Board } from "../sdk-client/base44-client";
 import type { AuthStep, User, Board as BoardType } from "../types";
 
@@ -7,12 +7,30 @@ interface Props {
   setBoards: (boards: BoardType[]) => void;
 }
 
+interface PasswordRequirement {
+  label: string;
+  met: boolean;
+}
+
+function validatePassword(password: string): PasswordRequirement[] {
+  return [
+    { label: "At least 8 characters", met: password.length >= 8 },
+    { label: "Contains uppercase letter", met: /[A-Z]/.test(password) },
+    { label: "Contains lowercase letter", met: /[a-z]/.test(password) },
+    { label: "Contains a number", met: /[0-9]/.test(password) },
+    { label: "Contains special character (!@#$%^&*)", met: /[!@#$%^&*]/.test(password) },
+  ];
+}
+
 export default function AuthPage({ setUser, setBoards }: Props) {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [otpCode, setOtpCode] = useState<string>('');
   const [isSignUp, setIsSignUp] = useState<boolean>(true);
   const [authStep, setAuthStep] = useState<AuthStep>('login');
+
+  const passwordRequirements = useMemo(() => validatePassword(password), [password]);
+  const isPasswordValid = passwordRequirements.every(req => req.met);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -84,7 +102,22 @@ export default function AuthPage({ setUser, setBoards }: Props) {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
-          <button type="submit">{isSignUp ? 'Create Account' : 'Sign In'}</button>
+          {isSignUp && password.length > 0 && (
+            <ul className="password-requirements">
+              {passwordRequirements.map((req, index) => (
+                <li key={index} className={req.met ? 'met' : 'unmet'}>
+                  <span className="requirement-icon">{req.met ? '✓' : '✗'}</span>
+                  {req.label}
+                </li>
+              ))}
+            </ul>
+          )}
+          <button
+            type="submit"
+            disabled={isSignUp && !isPasswordValid}
+          >
+            {isSignUp ? 'Create Account' : 'Sign In'}
+          </button>
         </form>
         <p className="toggle-auth">
           {isSignUp ? 'Already have an account?' : "Don't have an account?"}
