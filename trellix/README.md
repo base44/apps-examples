@@ -55,9 +55,15 @@ export const { Board, Task, Team, TeamMember, TaskSubscription, ActivityLog } = 
 **Authentication examples:**
 
 ```typescript
+// Email/password authentication
 await base44.auth.register({ email, password });
 await base44.auth.loginViaEmailPassword(email, password);
 await base44.auth.verifyOtp({ email, otpCode });
+
+// Google OAuth authentication
+base44.auth.loginWithProvider('google');
+
+// User management
 const user = await base44.auth.me();
 await base44.auth.updateMe({ full_name: 'John' });
 base44.auth.logout();
