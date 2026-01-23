@@ -2,6 +2,8 @@
 
 A Trello-style task and project management app built with React and powered by [Base44](https://base44.com) Backend-as-a-Service.
 
+🔗 **[View Live Demo](https://trellix-example-64ad1623.base44.app/)**
+
 ## Project structure
 
 ```
