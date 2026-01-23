@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { base44, Board } from "../sdk-client/base44-client";
 import type { AuthStep, User, Board as BoardType } from "../types";
 
@@ -7,51 +7,44 @@ interface Props {
   setBoards: (boards: BoardType[]) => void;
 }
 
-interface PasswordRequirement {
-  label: string;
-  met: boolean;
-}
-
-function validatePassword(password: string): PasswordRequirement[] {
-  return [
-    { label: "At least 8 characters", met: password.length >= 8 },
-    { label: "Contains uppercase letter", met: /[A-Z]/.test(password) },
-    { label: "Contains lowercase letter", met: /[a-z]/.test(password) },
-    { label: "Contains a number", met: /[0-9]/.test(password) },
-    { label: "Contains special character (!@#$%^&*)", met: /[!@#$%^&*]/.test(password) },
-  ];
-}
-
 export default function AuthPage({ setUser, setBoards }: Props) {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [otpCode, setOtpCode] = useState<string>('');
   const [isSignUp, setIsSignUp] = useState<boolean>(true);
   const [authStep, setAuthStep] = useState<AuthStep>('login');
-
-  const passwordRequirements = useMemo(() => validatePassword(password), [password]);
-  const isPasswordValid = passwordRequirements.every(req => req.met);
+  const [error, setError] = useState<string>('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (isSignUp) {
-      await base44.auth.register({ email, password });
-      setAuthStep('verify');
-    } else {
-      await base44.auth.loginViaEmailPassword(email, password);
-      const me = await base44.auth.me();
-      setUser(me);
-      Board.list().then(setBoards);
+    setError('');
+    try {
+      if (isSignUp) {
+        await base44.auth.register({ email, password });
+        setAuthStep('verify');
+      } else {
+        await base44.auth.loginViaEmailPassword(email, password);
+        const me = await base44.auth.me();
+        setUser(me);
+        Board.list().then(setBoards);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
     }
   };
 
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
-    await base44.auth.verifyOtp({ email, otpCode });
-    await base44.auth.loginViaEmailPassword(email, password);
-    const me = await base44.auth.me();
-    setUser(me);
-    Board.list().then(setBoards);
+    setError('');
+    try {
+      await base44.auth.verifyOtp({ email, otpCode });
+      await base44.auth.loginViaEmailPassword(email, password);
+      const me = await base44.auth.me();
+      setUser(me);
+      Board.list().then(setBoards);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
+    }
   };
 
 
@@ -70,6 +63,7 @@ export default function AuthPage({ setUser, setBoards }: Props) {
               autoFocus
               required
             />
+            {error && <p className="auth-error">{error}</p>}
             <button type="submit">Verify & Continue</button>
           </form>
           <p className="toggle-auth">
@@ -102,20 +96,8 @@ export default function AuthPage({ setUser, setBoards }: Props) {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
-          {isSignUp && password.length > 0 && (
-            <ul className="password-requirements">
-              {passwordRequirements.map((req, index) => (
-                <li key={index} className={req.met ? 'met' : 'unmet'}>
-                  <span className="requirement-icon">{req.met ? '✓' : '✗'}</span>
-                  {req.label}
-                </li>
-              ))}
-            </ul>
-          )}
-          <button
-            type="submit"
-            disabled={isSignUp && !isPasswordValid}
-          >
+          {error && <p className="auth-error">{error}</p>}
+          <button type="submit">
             {isSignUp ? 'Create Account' : 'Sign In'}
           </button>
         </form>
