@@ -1,23 +1,23 @@
 # Trellix
 
-A Trello-style task and project management application built with React and powered by **Base44** Backend-as-a-Service.
+A Trello-style task and project management app built with React and powered by [Base44](https://base44.com) Backend-as-a-Service.
 
-## Project Structure
+## Project structure
 
 ```
 trellix/
 ├── base44/                    # Base44 BaaS configuration
-│   ├── config.jsonc           # Project & hosting configuration
+│   ├── config.jsonc           # Project configuration
 │   └── entities/              # Entity schema definitions
 ├── src/
-│   ├── app.tsx                # Root component with routing
-│   ├── app.css                # Global styles
+│   ├── App.tsx                # Root component with routing
+│   ├── App.css                # Global styles
 │   ├── types.ts               # TypeScript type definitions
 │   ├── sdk-client/            # Base44 SDK client setup
 │   ├── components/            # Reusable UI components
 │   │   ├── board/             # Board-related components
 │   │   ├── sidebar/           # Navigation sidebar
-│   │   └── task/              # Task card & modal
+│   │   └── task/              # Task card and modal
 │   └── pages/                 # Page components
 │       ├── auth.tsx           # Authentication page
 │       ├── board-list.tsx     # Board listing/grid
@@ -27,19 +27,17 @@ trellix/
 └── dist/                      # Build output
 ```
 
----
-
-## Base44 Integration
+## Base44 integration
 
 Trellix uses [Base44](https://base44.com) as its Backend-as-a-Service, eliminating the need for a custom backend. Base44 provides:
 
-- **Authentication** - Email/password auth with OTP verification
-- **Database** - Entity-based data storage with CRUD operations
-- **Hosting** - Build and deployment configuration
+- **Authentication:** Email/password auth with OTP verification
+- **Database:** Entity-based data storage with CRUD operations
+- **Hosting:** Build and deployment configuration
 
-### SDK Client (`src/sdk-client/base44-client.ts`)
+### SDK client
 
-The Base44 SDK is initialized with the server URL and app ID:
+The Base44 SDK is initialized in `src/sdk-client/base44-client.ts`:
 
 ```typescript
 import { createClient } from '@base44/sdk';
@@ -52,18 +50,20 @@ export const base44 = createClient({
 export const { Board, Task, Team, TeamMember, TaskSubscription, ActivityLog } = base44.entities;
 ```
 
-**Usage examples:**
+**Authentication examples:**
 
 ```typescript
-// Authentication
 await base44.auth.register({ email, password });
 await base44.auth.loginViaEmailPassword(email, password);
 await base44.auth.verifyOtp({ email, otpCode });
 const user = await base44.auth.me();
 await base44.auth.updateMe({ full_name: 'John' });
 base44.auth.logout();
+```
 
-// Entity CRUD operations
+**Entity CRUD examples:**
+
+```typescript
 const boards = await Board.list();
 const board = await Board.create({ name: 'My Board', color: 'blue' });
 const filtered = await Board.filter({ name: 'My Board' });
@@ -71,14 +71,12 @@ const updated = await Board.update(id, { name: 'New Name' });
 await Board.delete(id);
 ```
 
----
+### Entity definitions
 
-### Entity Definitions (`base44/entities/`)
-
-Entities are defined as JSONC schemas. Base44 uses these to generate the database structure and provide typed SDK methods.
+Entities are defined as JSONC schemas in `base44/entities/`. Base44 uses these to generate the database structure and provide typed SDK methods.
 
 | Entity | Description |
-|--------|-------------|
+| --- | --- |
 | `board.jsonc` | Kanban boards with name, description, and color |
 | `task.jsonc` | Tasks with title, status, priority, due date, labels |
 | `team.jsonc` | Teams for collaborative workspaces |
@@ -113,11 +111,9 @@ Entities are defined as JSONC schemas. Base44 uses these to generate the databas
 }
 ```
 
----
+### Project configuration
 
-### Project Configuration (`base44/config.jsonc`)
-
-Defines project metadata and hosting/build settings:
+The `base44/config.jsonc` file defines project metadata and hosting/build settings:
 
 ```jsonc
 {
@@ -132,30 +128,11 @@ Defines project metadata and hosting/build settings:
 }
 ```
 
----
-
 ## Development
 
-```bash
-# Install dependencies
-npm install
+See the [Getting started](../README.md#getting-started) guide in the top-level README for setup instructions.
 
-# Start dev server
-npm run dev
-
-# Build for production
-npm run build
-```
-
-**Environment Variables:**
-
-Create a `.env` file with:
-
-```
-VITE_BASE44_APP_ID=your_app_id
-```
-
-## Tech Stack
+## Tech stack
 
 - **Frontend:** React 18, TypeScript, Vite
 - **Backend:** Base44 BaaS
