@@ -13,27 +13,38 @@ export default function AuthPage({ setUser, setBoards }: Props) {
   const [otpCode, setOtpCode] = useState<string>('');
   const [isSignUp, setIsSignUp] = useState<boolean>(true);
   const [authStep, setAuthStep] = useState<AuthStep>('login');
+  const [error, setError] = useState<string>('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (isSignUp) {
-      await base44.auth.register({ email, password });
-      setAuthStep('verify');
-    } else {
-      await base44.auth.loginViaEmailPassword(email, password);
-      const me = await base44.auth.me();
-      setUser(me);
-      Board.list().then(setBoards);
+    setError('');
+    try {
+      if (isSignUp) {
+        await base44.auth.register({ email, password });
+        setAuthStep('verify');
+      } else {
+        await base44.auth.loginViaEmailPassword(email, password);
+        const me = await base44.auth.me();
+        setUser(me);
+        Board.list().then(setBoards);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
     }
   };
 
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
-    await base44.auth.verifyOtp({ email, otpCode });
-    await base44.auth.loginViaEmailPassword(email, password);
-    const me = await base44.auth.me();
-    setUser(me);
-    Board.list().then(setBoards);
+    setError('');
+    try {
+      await base44.auth.verifyOtp({ email, otpCode });
+      await base44.auth.loginViaEmailPassword(email, password);
+      const me = await base44.auth.me();
+      setUser(me);
+      Board.list().then(setBoards);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
+    }
   };
 
 
@@ -52,6 +63,7 @@ export default function AuthPage({ setUser, setBoards }: Props) {
               autoFocus
               required
             />
+            {error && <p className="auth-error">{error}</p>}
             <button type="submit">Verify & Continue</button>
           </form>
           <p className="toggle-auth">
@@ -84,7 +96,10 @@ export default function AuthPage({ setUser, setBoards }: Props) {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
-          <button type="submit">{isSignUp ? 'Create Account' : 'Sign In'}</button>
+          {error && <p className="auth-error">{error}</p>}
+          <button type="submit">
+            {isSignUp ? 'Create Account' : 'Sign In'}
+          </button>
         </form>
         <p className="toggle-auth">
           {isSignUp ? 'Already have an account?' : "Don't have an account?"}

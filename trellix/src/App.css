@@ -201,6 +201,17 @@ body {
   background: var(--accent-muted);
 }
 
+/* Auth Error Message */
+.auth-error {
+  margin: 0;
+  padding: 12px 16px;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: var(--radius-md);
+  color: #ef4444;
+  font-size: 0.875rem;
+}
+
 /* Main App Layout */
 .app {
   display: flex;
