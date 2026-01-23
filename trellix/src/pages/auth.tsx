@@ -15,37 +15,37 @@ export default function AuthPage({ setUser, setBoards }: Props) {
   const [authStep, setAuthStep] = useState<AuthStep>('login');
   const [error, setError] = useState<string>('');
 
-  const completeLogin = async () => {
-    const me = await base44.auth.me();
-    setUser(me);
-    Board.list().then(setBoards);
-  };
-
-  const withErrorHandling = (fn: () => Promise<void>) => async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     try {
-      await fn();
+      if (isSignUp) {
+        await base44.auth.register({ email, password });
+        setAuthStep('verify');
+      } else {
+        await base44.auth.loginViaEmailPassword(email, password);
+        const me = await base44.auth.me();
+        setUser(me);
+        Board.list().then(setBoards);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
     }
   };
 
-  const handleSubmit = withErrorHandling(async () => {
-    if (isSignUp) {
-      await base44.auth.register({ email, password });
-      setAuthStep('verify');
-    } else {
+  const handleVerify = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    try {
+      await base44.auth.verifyOtp({ email, otpCode });
       await base44.auth.loginViaEmailPassword(email, password);
-      await completeLogin();
+      const me = await base44.auth.me();
+      setUser(me);
+      Board.list().then(setBoards);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'An error occurred');
     }
-  });
-
-  const handleVerify = withErrorHandling(async () => {
-    await base44.auth.verifyOtp({ email, otpCode });
-    await base44.auth.loginViaEmailPassword(email, password);
-    await completeLogin();
-  });
+  };
 
 
   if (authStep === 'verify') {
