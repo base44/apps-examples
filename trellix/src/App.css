@@ -212,6 +212,66 @@ body {
   font-size: 0.875rem;
 }
 
+/* Social Login */
+.social-divider {
+  display: flex;
+  align-items: center;
+  margin: 24px 0;
+  gap: 16px;
+}
+
+.social-divider::before,
+.social-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.social-divider span {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  text-transform: lowercase;
+}
+
+.social-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.social-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 16px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  color: var(--text);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.social-btn:hover {
+  background: var(--bg-hover);
+  border-color: var(--border-focus);
+}
+
+.social-btn svg {
+  flex-shrink: 0;
+}
+
+.social-btn.google:hover {
+  border-color: #4285F4;
+  background: rgba(66, 133, 244, 0.08);
+}
+
 /* Main App Layout */
 .app {
   display: flex;
