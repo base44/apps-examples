@@ -1,6 +1,6 @@
 # Base44 Example Apps
 
-This repository contains example apps built with [Base44](https://base44.com). Use these examples to learn how Base44 works and as starting points for your own projects.
+This repository contains example apps built with [Base44](https://base44.com) Backend-as-a-Service. Use these examples to learn how Base44 Backend-as-a-Service works and as starting points for your own projects.
 
 ## Getting started
 
