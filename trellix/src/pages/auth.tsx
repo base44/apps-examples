@@ -126,6 +126,7 @@ export default function AuthPage({ setUser, setBoards }: Props) {
             </svg>
             Google
           </button>
+          {/* TODO: Enable when providers are configured
           <button
             type="button"
             className="social-btn microsoft"
@@ -149,6 +150,7 @@ export default function AuthPage({ setUser, setBoards }: Props) {
             </svg>
             Facebook
           </button>
+          */}
         </div>
 
         <p className="toggle-auth">
