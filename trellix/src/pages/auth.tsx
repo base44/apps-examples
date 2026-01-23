@@ -15,6 +15,16 @@ export default function AuthPage({ setUser, setBoards }: Props) {
   const [authStep, setAuthStep] = useState<AuthStep>('login');
   const [error, setError] = useState<string>('');
 
+  const handleAuthError = (err: unknown) => {
+    setError(err instanceof Error ? err.message : 'An error occurred');
+  };
+
+  const completeLogin = async () => {
+    const me = await base44.auth.me();
+    setUser(me);
+    Board.list().then(setBoards);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -24,12 +34,10 @@ export default function AuthPage({ setUser, setBoards }: Props) {
         setAuthStep('verify');
       } else {
         await base44.auth.loginViaEmailPassword(email, password);
-        const me = await base44.auth.me();
-        setUser(me);
-        Board.list().then(setBoards);
+        await completeLogin();
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      handleAuthError(err);
     }
   };
 
@@ -39,11 +47,9 @@ export default function AuthPage({ setUser, setBoards }: Props) {
     try {
       await base44.auth.verifyOtp({ email, otpCode });
       await base44.auth.loginViaEmailPassword(email, password);
-      const me = await base44.auth.me();
-      setUser(me);
-      Board.list().then(setBoards);
+      await completeLogin();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      handleAuthError(err);
     }
   };
 
