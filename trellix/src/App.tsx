@@ -7,7 +7,7 @@ import BoardModal from './components/board/board-modal';
 import Sidebar from './components/sidebar/sidebar';
 import { base44, Board } from './sdk-client/base44-client';
 import type { View, User, Board as BoardType, BoardColor } from './types';
-import './app.css';
+import './App.css';
 
 function getViewFromUrl(): View {
   if (window.location.pathname === '/profile') return { type: 'profile' };
