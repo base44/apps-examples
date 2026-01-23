@@ -126,31 +126,6 @@ export default function AuthPage({ setUser, setBoards }: Props) {
             </svg>
             Google
           </button>
-          {/* TODO: Enable when providers are configured
-          <button
-            type="button"
-            className="social-btn microsoft"
-            onClick={() => handleSocialLogin('microsoft')}
-          >
-            <svg viewBox="0 0 24 24" width="20" height="20">
-              <path fill="#F25022" d="M1 1h10v10H1z"/>
-              <path fill="#00A4EF" d="M1 13h10v10H1z"/>
-              <path fill="#7FBA00" d="M13 1h10v10H13z"/>
-              <path fill="#FFB900" d="M13 13h10v10H13z"/>
-            </svg>
-            Microsoft
-          </button>
-          <button
-            type="button"
-            className="social-btn facebook"
-            onClick={() => handleSocialLogin('facebook')}
-          >
-            <svg viewBox="0 0 24 24" width="20" height="20">
-              <path fill="#1877F2" d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-            </svg>
-            Facebook
-          </button>
-          */}
         </div>
 
         <p className="toggle-auth">
