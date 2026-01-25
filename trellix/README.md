@@ -31,7 +31,7 @@ trellix/
 
 ## Base44 integration
 
-Trellix uses [Base44](https://base44.com) as its Backend-as-a-Service, eliminating the need for a custom backend. Base44 provides:
+Trellix uses [Base44](https://base44.com) as its backend services, eliminating the need for a custom backend. Base44 provides:
 
 - **Authentication:** Email/password auth with OTP verification
 - **Database:** Entity-based data storage with CRUD operations

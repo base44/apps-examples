@@ -6,7 +6,7 @@ This repository contains example apps built with [Base44](https://base44.com) Ba
 
 Follow these steps to run any example app locally.
 
-> **Note:** Before you begin, make sure you have [Node.js](https://nodejs.org/) v18 or later, a Base44 account at [app.base44.com](https://app.base44.com), and the Base44 CLI installed globally: `npm install -g base44 --registry https://registry.npmjs.org`
+> **Note:** Before you begin, make sure you have [Node.js](https://nodejs.org/) v18 or later, a Base44 account at [app.base44.com](https://app.base44.com), and the Base44 CLI installed globally: `npm install -g base44 --registry https://registry.npmjs.org`.
 
 1. Clone this repository and navigate to it:
 
