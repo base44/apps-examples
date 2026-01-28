@@ -1,5 +1,5 @@
 interface Props {
-  name: 'sun' | 'moon' | 'board' | 'calendar' | 'user' | 'check' | 'plus';
+  name: 'sun' | 'moon' | 'board' | 'calendar' | 'user' | 'check' | 'plus' | 'chat' | 'send' | 'close' | 'trix';
   size?: number;
   className?: string;
 }
@@ -46,6 +46,35 @@ export default function Icon({ name, size = 20, className }: Props) {
     plus: (
       <svg width={size} height={size} viewBox="0 0 16 16" fill="none" style={style} className={className}>
         <path d="M8 3V13M3 8H13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+      </svg>
+    ),
+    chat: (
+      <svg width={size} height={size} viewBox="0 0 20 20" fill="none" style={style} className={className}>
+        <path d="M17 10c0 3.87-3.13 7-7 7a7.1 7.1 0 0 1-2.8-.58L3 18l1.58-4.2A6.93 6.93 0 0 1 3 10c0-3.87 3.13-7 7-7s7 3.13 7 7Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M7 9h6M7 12h3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+      </svg>
+    ),
+    send: (
+      <svg width={size} height={size} viewBox="0 0 20 20" fill="none" style={style} className={className}>
+        <path d="M18 2L9 11M18 2L12 18L9 11M18 2L2 8L9 11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
+    ),
+    close: (
+      <svg width={size} height={size} viewBox="0 0 16 16" fill="none" style={style} className={className}>
+        <path d="M4 4L12 12M12 4L4 12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+      </svg>
+    ),
+    trix: (
+      <svg width={size} height={size} viewBox="0 0 32 32" fill="none" style={style} className={className}>
+        {/* Head */}
+        <rect x="2" y="4" width="28" height="24" rx="5" fill="#00a884"/>
+        {/* White face plate */}
+        <rect x="5" y="7" width="22" height="18" rx="4" fill="white"/>
+        {/* Eyes */}
+        <circle cx="12" cy="14" r="2" fill="#00a884"/>
+        <circle cx="20" cy="14" r="2" fill="#00a884"/>
+        {/* Smile */}
+        <path d="M13 20C13 20 14.5 21.5 16 21.5C17.5 21.5 19 20 19 20" stroke="#00a884" strokeWidth="1.5" strokeLinecap="round"/>
       </svg>
     ),
   };

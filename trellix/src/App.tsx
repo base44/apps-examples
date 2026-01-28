@@ -5,6 +5,8 @@ import Profile from './pages/profile';
 import AuthPage from './pages/auth';
 import BoardModal from './components/board/board-modal';
 import Sidebar from './components/sidebar/sidebar';
+import AIAssistant from './components/ai-assistant';
+import Icon from './components/sidebar/icon';
 import { base44, Board } from './sdk-client/base44-client';
 import type { View, User, Board as BoardType, BoardColor } from './types';
 import './App.css';
@@ -32,6 +34,13 @@ function App() {
   const [boards, setBoards] = useState<BoardType[]>([]);
   const [loading, setLoading] = useState(true);
   const [isCreateBoardModalOpen, setIsCreateBoardModalOpen] = useState(false);
+  const [isAIOpen, setIsAIOpen] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const refreshData = () => {
+    Board.list().then(setBoards);
+    setRefreshKey((k) => k + 1);
+  };
 
   useEffect(() => {
     base44.auth.me()
@@ -93,7 +102,7 @@ function App() {
           />
         )}
         {view.type === 'board' && (
-          <BoardView boardName={view.name} onBack={() => navigate({ type: 'boards' })} />
+          <BoardView key={refreshKey} boardName={view.name} onBack={() => navigate({ type: 'boards' })} />
         )}
         {view.type === 'profile' && (
           <Profile user={user} onUpdate={setUser} onBack={() => navigate({ type: 'boards' })} />
@@ -105,6 +114,12 @@ function App() {
         onClose={() => setIsCreateBoardModalOpen(false)}
         onCreate={handleCreateBoard}
       />
+
+      <button className="ai-fab" onClick={() => setIsAIOpen(true)} title="Chat with Trix">
+        <Icon name="trix" size={32} />
+      </button>
+
+      <AIAssistant isOpen={isAIOpen} onClose={() => setIsAIOpen(false)} user={user} onDataChange={refreshData} />
     </div>
   );
 }
