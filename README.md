@@ -40,12 +40,12 @@ Follow these steps to run any example app locally.
     base44 link
     ```
 
-    This command creates a new Base44 project and generates a `base44/.env.local` file containing your `BASE44_CLIENT_ID`.
+    This command creates a new Base44 project and generates a `base44/.app.jsonc` file containing your `BASE44_CLIENT_ID`.
 
 6. Create the root environment file from the generated credentials:
 
     ```bash
-    sed 's/BASE44_CLIENT_ID/VITE_BASE44_APP_ID/' base44/.env.local > .env.local
+    echo "VITE_BASE44_APP_ID=$(grep '"id"' base44/.app.jsonc | cut -d'"' -f4)" > .env.local
     ```
 
 7. Push the entities:
