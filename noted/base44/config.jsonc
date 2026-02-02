@@ -1,0 +1,16 @@
+// JSONC enables inline documentation and discoverability directly in config files.
+// Commented-out properties show available options you can enable.
+
+{
+  "name": "Noted",
+  "description": "A calm, no-nonsense to-do list for getting things out of your head and actually done.",
+
+  // Site/hosting configuration
+  // Docs: https://docs.base44.com/configuration/hosting
+  "site": {
+    "installCommand": "npm install",
+    "buildCommand": "npm run build",
+    "serveCommand": "npm run dev",
+    "outputDirectory": "./dist"
+  }
+}
