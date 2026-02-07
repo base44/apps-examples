@@ -1,0 +1,25 @@
+{
+  "name": "SavedSession",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "AI-generated session name"
+    },
+    "tabs": {
+      "type": "array",
+      "items": { "type": "object" },
+      "description": "Array of saved tabs with url, title, favicon"
+    },
+    "tab_count": {
+      "type": "number",
+      "description": "Number of tabs in session"
+    },
+    "groups": {
+      "type": "array",
+      "items": { "type": "object" },
+      "description": "Tab groups within this session"
+    }
+  },
+  "required": ["name", "tabs", "tab_count"]
+}
