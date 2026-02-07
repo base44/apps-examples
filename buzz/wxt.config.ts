@@ -5,7 +5,7 @@ export default defineConfig({
   modules: ['@wxt-dev/module-react'],
   manifest: {
     name: 'Buzz',
-    description: 'Your AI-powered browser sidekick by Base44. Chat, organize tabs, and browse smarter.',
+    description: 'Your AI-powered browser sidekick. Chat, organize tabs, and browse smarter.',
     permissions: [
       'tabs',
       'tabGroups',

@@ -3,14 +3,6 @@
 // Full-stack template with backend and client configuration.
 
 {
-  "name": "tab-wrangler",
-
-  // Site/hosting configuration for the client application
-  // Docs: https://docs.base44.com/configuration/hosting
-  "site": {
-    "installCommand": "npm install",
-    "buildCommand": "npm run build",
-    "serveCommand": "npm run dev",
-    "outputDirectory": "./dist"
-  }
+  "name": "Buzz",
+  "description": "AI-powered browser sidekick"
 }
