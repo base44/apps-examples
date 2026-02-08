@@ -1,0 +1,8 @@
+// Base44 Project Configuration
+// JSONC enables inline documentation and discoverability directly in config files.
+// Full-stack template with backend and client configuration.
+
+{
+  "name": "Buzz",
+  "description": "AI-powered browser sidekick"
+}
