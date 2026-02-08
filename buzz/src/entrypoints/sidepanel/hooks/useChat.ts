@@ -32,27 +32,35 @@ export function useChat({ buildContext, refreshContext, readPage }: UseChatOptio
     if (serverMsgs.length === 0) return;
 
     const lastServerMsg = serverMsgs[serverMsgs.length - 1];
-    const content = typeof lastServerMsg?.content === "string" ? lastServerMsg.content : "";
+    const rawContent = lastServerMsg?.content;
+    const content = typeof rawContent === "string"
+      ? rawContent
+      : rawContent != null
+        ? JSON.stringify(rawContent)
+        : "";
+    const isGenerating = (updatedConversation as AgentConversation & { is_generating?: boolean }).is_generating;
 
-    if (lastServerMsg?.role === "assistant" && content) {
-      const displayMsg: DisplayMessage = {
-        role: lastServerMsg.role,
-        content: content
-      };
-      setMessages(prev => {
-        if (prev.length > 0 && prev[prev.length - 1].role === "assistant") {
-          const updated = [...prev];
-          updated[updated.length - 1] = displayMsg;
-          return updated;
-        } else {
-          return [...prev, displayMsg];
-        }
-      });
+    if (lastServerMsg?.role === "assistant") {
+      if (content) {
+        const displayMsg: DisplayMessage = {
+          role: lastServerMsg.role,
+          content: content
+        };
+        setMessages(prev => {
+          if (prev.length > 0 && prev[prev.length - 1].role === "assistant") {
+            const updated = [...prev];
+            updated[updated.length - 1] = displayMsg;
+            return updated;
+          } else {
+            return [...prev, displayMsg];
+          }
+        });
+      }
 
-      if (!(updatedConversation as AgentConversation & { is_generating?: boolean }).is_generating) {
+      if (!isGenerating) {
         setIsWaiting(false);
 
-        if (content !== lastExecutedContentRef.current) {
+        if (content && content !== lastExecutedContentRef.current) {
           const actions = parseActions(content);
           if (actions.length > 0) {
             lastExecutedContentRef.current = content;
@@ -96,6 +104,11 @@ export function useChat({ buildContext, refreshContext, readPage }: UseChatOptio
         role: "user",
         content: messageContent
       });
+
+      // Fetch conversation to get AI response as fallback
+      // (subscription may not fire reliably in extension context)
+      const updated = await base44.agents.getConversation(conv.id);
+      handleConversationUpdate(updated as AgentConversation);
 
     } catch (error) {
       console.error("Chat error:", error);
