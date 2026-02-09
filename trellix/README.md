@@ -41,11 +41,11 @@ A Trello-style task and project management app powered by the [Base44](https://b
 
 ## Features
 
-- **Boards** – Create and manage Kanban boards with custom colors
-- **Tasks** – Add tasks with status, priority, due dates, and labels
-- **Teams** – Collaborative workspaces with roles (admin, member, viewer)
-- **Authentication** – Email/password with OTP and Google OAuth
-- **AI assistant** – In-app assistant (when configured)
+- **Boards**: Create and manage Kanban boards with custom colors.
+- **Tasks**: Add tasks with status, priority, due dates, and labels.
+- **Teams**: Collaborative workspaces with roles (admin, member, viewer).
+- **Authentication**: Email/password with OTP and Google OAuth.
+- **AI assistant**: In-app assistant (when configured).
 
 ## Project structure
 
@@ -75,11 +75,11 @@ trellix/
 
 ## Tech stack
 
-- **[React](https://react.dev)** - UI library
-- **[TypeScript](https://www.typescriptlang.org)** - Type-safe JavaScript
-- **[Vite](https://vitejs.dev)** - Build tool and dev server
-- **[Base44](https://base44.com)** - Backend (auth, data, hosting)
-- **CSS** - Custom styles (no framework)
+- **[React](https://react.dev)**: UI library.
+- **[TypeScript](https://www.typescriptlang.org)**: Type-safe JavaScript.
+- **[Vite](https://vitejs.dev)**: Build tool and dev server.
+- **[Base44](https://base44.com)**: Backend (auth, data, hosting).
+- **[CSS](https://developer.mozilla.org/en-US/docs/Web/CSS)**. Custom styles (no framework).
 
 ## Scripts
 
@@ -96,9 +96,9 @@ npm commands you can run from the project root:
 
 How this app connects to Base44: SDK setup, entities, and config. Trellix uses [Base44](https://base44.com) for:
 
-- **Authentication:** Email/password auth with OTP verification
-- **Database:** Entity-based data storage with CRUD operations
-- **Hosting:** Build and deployment configuration
+- **Authentication**: Email/password auth with OTP verification.
+- **Database**: Entity-based data storage with CRUD operations.
+- **Hosting**: Build and deployment configuration.
 
 ### SDK client
 

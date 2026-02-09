@@ -107,13 +107,15 @@ buzz/
 | `utils/` | Pure utility functions (no React) |
 | `types/` | TypeScript type definitions |
 
+Buzz uses [Base44](https://base44.com) for authentication, the AI agent, and saved-session data. The SDK (`src/api/base44Client.ts`) reads `VITE_BASE44_APP_ID` from `.env.local` (see Getting started).
+
 ## Tech stack
 
-- **[WXT](https://wxt.dev)** - Browser extension framework
-- **[React](https://react.dev)** - UI library
-- **[TypeScript](https://www.typescriptlang.org)** - Type-safe JavaScript
-- **[Tailwind CSS](https://tailwindcss.com)** - Utility-first CSS
-- **[Base44](https://base44.com)** - Backend (auth, agents, entities)
+- **[WXT](https://wxt.dev)**: Browser extension framework.
+- **[React](https://react.dev)**: UI library.
+- **[TypeScript](https://www.typescriptlang.org)**: Type-safe JavaScript.
+- **[Tailwind CSS](https://tailwindcss.com)**: Utility-first CSS.
+- **[Base44](https://base44.com)**: Backend (auth, agents, entities).
 
 ## Scripts
 
@@ -127,10 +129,6 @@ npm commands you can run from the project root:
 | `npm run build:firefox` | Build for production (Firefox) |
 | `npm run zip` | Build and create ZIP for distribution |
 | `npm run zip:firefox` | Build and create ZIP for Firefox |
-
-## Base44 integration
-
-How this app connects to Base44: SDK location and backend config. Buzz uses [Base44](https://base44.com) for authentication, the AI agent, and saved-session data. The SDK is in `src/api/base44Client.ts` and reads `VITE_BASE44_APP_ID` from `.env.local`. Backend config lives in `base44/` (agents, entities, `config.jsonc`).
 
 ## AI Actions
 
