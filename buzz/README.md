@@ -72,21 +72,21 @@ buzz/
 │           ├── index.css           # Styles
 │           ├── index.html          # HTML template
 │           ├── main.tsx            # React entry point
-│           ├── components/
+│           ├── components/         # React UI components
 │           │   ├── index.ts        # Component exports
 │           │   ├── Icons.tsx       # SVG icon components
 │           │   ├── AuthScreen.tsx  # Authentication UI
 │           │   └── MainApp.tsx     # Main chat interface
-│           ├── hooks/
+│           ├── hooks/              # Custom React hooks for state management
 │           │   ├── index.ts        # Hook exports
 │           │   ├── useBrowserContext.ts  # Browser tabs/groups state
 │           │   └── useChat.ts      # AI conversation logic
-│           ├── utils/
+│           ├── utils/              # Pure utility functions (no React)
 │           │   ├── index.ts        # Utility exports
 │           │   ├── actions.ts      # Parse & execute AI actions
 │           │   ├── messages.ts     # Message formatting helpers
 │           │   └── quickActions.ts # One-click tool actions
-│           └── types/
+│           └── types/               # TypeScript type definitions
 │               └── index.ts        # TypeScript interfaces
 ├── base44/                         # Backend configuration
 │   ├── config.jsonc                # Project settings
@@ -99,13 +99,6 @@ buzz/
 ├── tailwind.config.ts              # Tailwind configuration
 └── package.json
 ```
-
-| Directory | Purpose |
-|-----------|---------|
-| `components/` | React UI components |
-| `hooks/` | Custom React hooks for state management |
-| `utils/` | Pure utility functions (no React) |
-| `types/` | TypeScript type definitions |
 
 Buzz uses [Base44](https://base44.com) for authentication, the AI agent, and saved-session data. The SDK (`src/api/base44Client.ts`) reads `VITE_BASE44_APP_ID` from `.env.local` (see Getting started).
 
