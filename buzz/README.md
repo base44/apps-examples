@@ -136,9 +136,9 @@ npm commands you can run from the project root:
 
 How this app connects to Base44: SDK setup, agents, and config. Buzz uses [Base44](https://base44.com) for:
 
-- **Authentication**: Email/password auth with OTP verification.
-- **AI agent**: Conversational assistant for conversations and messages via [agents](https://docs.base44.com/developers/backend/resources/agents-config).
-- **Data**: Saved-session entity for session state (see `base44/entities/saved-session.jsonc`).
+- **[Authentication](https://docs.base44.com/developers/references/sdk/docs/interfaces/auth)**: Email/password auth with OTP verification.
+- **[AI agent](https://docs.base44.com/developers/backend/resources/agents-config)**: Conversational assistant for conversations and messages.
+- **[Data](https://docs.base44.com/developers/backend/resources/entities/overview)**: Saved-session entity for session state.
 
 ## Troubleshooting
 
