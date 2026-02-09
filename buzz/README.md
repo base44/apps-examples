@@ -125,12 +125,12 @@ Run these npm commands from the project root.
 
 | Command | Description |
 |---------|-------------|
-| `npm run dev` | Start development with hot reload (Chrome; output in `.output/chrome-mv3/`) |
-| `npm run dev:firefox` | Start development for Firefox |
-| `npm run build` | Build for production (Chrome) |
-| `npm run build:firefox` | Build for production (Firefox) |
-| `npm run zip` | Build and create ZIP for distribution |
-| `npm run zip:firefox` | Build and create ZIP for Firefox |
+| `npm run dev` | Start development with hot reload for Chrome. Output in `.output/chrome-mv3/`. |
+| `npm run dev:firefox` | Start development for Firefox. |
+| `npm run build` | Build for production for Chrome. |
+| `npm run build:firefox` | Build for production for Firefox. |
+| `npm run zip` | Build and create ZIP for distribution. |
+| `npm run zip:firefox` | Build and create ZIP for Firefox. |
 
 ## Base44 integration
 
