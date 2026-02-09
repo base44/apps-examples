@@ -20,9 +20,9 @@ A Chrome extension powered by AI that helps you manage browser tabs and browse s
    npx base44 link
    ```
 
-   This creates a Base44 project and writes `base44/.app.jsonc` with your app id.
+   This creates a Base44 project and writes `base44/.app.jsonc` with your app ID.
 
-3. Create the env file from the generated app id:
+3. Create the env file from the generated app ID:
 
    ```bash
    echo "VITE_BASE44_APP_ID=$(grep '"id"' base44/.app.jsonc | cut -d'"' -f4)" > .env.local
@@ -51,21 +51,22 @@ A Chrome extension powered by AI that helps you manage browser tabs and browse s
 
 ## Features
 
-- **AI Chat**: Conversation UI in the side panel, powered by a [Base44 AI agent](https://docs.base44.com/developers/backend/resources/agents-config); understands your browser context. AI actions you can run via chat:
+- **AI Chat**: Conversation UI in the side panel, powered by a [Base44 AI agent](https://docs.base44.com/developers/backend/resources/agents-config) that understands your browser context. AI actions you can run via chat:
   - `close_tabs`: Close specific tabs by ID.
   - `group_tabs`: Group tabs with a name and color.
   - `open_url`: Open a URL in a new tab.
   - `focus_tab`: Switch to a specific tab.
   - `read_page`: Read the current page's content.
-- **Tab Management**: Close, group, focus, and organize tabs via chat or quick actions.
-- **Page Reading**: Read and summarize the content of any page.
-- **Quick Actions**: One-click tools in the side panel (no chat needed):
+- **Quick Actions**: One-click tools in the side panel without chat:
   - Screenshot: Capture visible tab.
   - Bookmark: Bookmark current tab.
   - Share: Copy URL to clipboard.
   - Close Duplicates: Remove duplicate tabs.
   - Select Element: Pick a page element for context.
   - Read Page: Load page content for AI analysis.
+- **Tab Management**: Close, group, focus, and organize tabs via chat or quick actions.
+- **Page Reading**: Read and summarize the content of any page.
+
 - **Element Picker**: Select page elements to add to the AI context.
 
 ## Project structure
@@ -121,7 +122,7 @@ buzz/
 
 ## Available commands
 
-You can run these npm commands from the project root:
+Run these npm commands from the project root:
 
 | Command | Description |
 |---------|-------------|
@@ -151,7 +152,7 @@ How this app connects to Base44: SDK setup, agents, and config. Buzz uses [Base4
 ### API errors?
 
 1. Ensure you're logged in by running `npx base44 whoami`.
-2. Verify the project is linked by checking `base44/config.jsonc` for `appId`.
+2. Verify the project is linked by checking that `base44/.app.jsonc` exists and contains your app ID.
 3. Push the latest configs with `npx base44 agents push`.
 
 ### Hot reload not working?

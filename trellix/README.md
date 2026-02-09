@@ -22,9 +22,9 @@ A Trello-style task and project management app powered by the [Base44](https://b
    npx base44 link
    ```
 
-   This creates a Base44 project and writes `base44/.app.jsonc` with your app id.
+   This creates a Base44 project and writes `base44/.app.jsonc` with your app ID.
 
-3. Create the env file from the generated app id:
+3. Create the env file from the generated app ID:
 
    ```bash
    echo "VITE_BASE44_APP_ID=$(grep '"id"' base44/.app.jsonc | cut -d'"' -f4)" > .env.local
@@ -99,6 +99,13 @@ Run these npm commands from the project root:
 | `npm run preview` | Preview production build locally |
 | `npm run lint` | Run ESLint |
 
+## Base44 integration
+
+How this app connects to Base44: SDK setup, entities, and config. Trellix uses [Base44](https://base44.com) for:
+
+- **[Authentication](https://docs.base44.com/developers/references/sdk/docs/interfaces/auth)**: Email/password auth with OTP verification.
+- **[Database](https://docs.base44.com/developers/backend/resources/entities/overview)**: Entity-based data storage with CRUD operations.
+
 ## Troubleshooting
 
 ### App won't start or shows a blank page?
@@ -110,7 +117,7 @@ Run these npm commands from the project root:
 ### API or login errors?
 
 1. Ensure you're logged in by running `npx base44 whoami`.
-2. Verify the project is linked by checking that `base44/.app.jsonc` exists and contains your app id.
+2. Verify the project is linked by checking that `base44/.app.jsonc` exists and contains your app ID.
 3. Push entities again with `npx base44 entities push`.
 
 ### Build fails?
@@ -121,6 +128,4 @@ Run `npm run lint` to check for type or lint errors. Fix any reported issues and
 
 - [Base44 Documentation](https://docs.base44.com)
 - [Base44 SDK Reference](https://docs.base44.com/sdk)
-- [Authentication](https://docs.base44.com/developers/references/sdk/docs/interfaces/auth)
-- [Entities](https://docs.base44.com/developers/backend/resources/entities/overview)
 - [Base44 CLI Overview](https://docs.base44.com/developers/references/cli/get-started/overview)
