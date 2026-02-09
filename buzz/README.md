@@ -119,9 +119,9 @@ buzz/
 - **[Tailwind CSS](https://tailwindcss.com)**: Utility-first CSS.
 - **[Base44](https://base44.com)**: Backend (auth, agents, entities).
 
-## Scripts
+## Available commands
 
-npm commands you can run from the project root:
+You can run these npm commands from the project root:
 
 | Command | Description |
 |---------|-------------|
@@ -144,21 +144,21 @@ How this app connects to Base44: SDK setup, agents, and config. Buzz uses [Base4
 
 ### Extension not loading?
 
-1. Make sure you've run `npm run build` or `npm run dev`
-2. Check that you're loading from `.output/chrome-mv3` (not `src/`)
-3. Check the Chrome extensions page for errors
+1. Make sure you've run `npm run build` or `npm run dev`.
+2. Check that you're loading from `.output/chrome-mv3` (not `src/`).
+3. Check the Chrome extensions page for errors.
 
 ### API errors?
 
-1. Ensure you're logged in: `npx base44 whoami`
-2. Verify the project is linked: check `base44/config.jsonc` for `appId`
-3. Push the latest configs: `npx base44 agents push`
+1. Ensure you're logged in by running `npx base44 whoami`.
+2. Verify the project is linked by checking `base44/config.jsonc` for `appId`.
+3. Push the latest configs with `npx base44 agents push`.
 
 ### Hot reload not working?
 
 WXT's HMR works for most changes. If changes aren't reflecting:
-1. Try refreshing the extension in `chrome://extensions`
-2. Close and reopen the side panel
+1. Try refreshing the extension in `chrome://extensions`.
+2. Close and reopen the side panel.
 
 ## See also
 

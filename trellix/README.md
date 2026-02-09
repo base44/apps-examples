@@ -81,9 +81,9 @@ trellix/
 - **[Base44](https://base44.com)**: Backend (auth, data, hosting).
 - **[CSS](https://developer.mozilla.org/en-US/docs/Web/CSS)**: Custom styles (no framework).
 
-## Scripts
+## Available commands
 
-npm commands you can run from the project root:
+Run these npm commands from the project root:
 
 | Command | Description |
 |---------|-------------|
@@ -208,9 +208,9 @@ The `base44/config.jsonc` file defines project metadata and hosting/build settin
 
 ### API or login errors?
 
-1. Ensure you're logged in: `npx base44 whoami`
-2. Verify the project is linked: check that `base44/.app.jsonc` exists and contains your app id.
-3. Push entities again: `npx base44 entities push`
+1. Ensure you're logged in by running `npx base44 whoami`.
+2. Verify the project is linked by checking that `base44/.app.jsonc` exists and contains your app id.
+3. Push entities again with `npx base44 entities push`.
 
 ### Build fails?
 
