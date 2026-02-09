@@ -8,14 +8,14 @@ A Trello-style task and project management app powered by the [Base44](https://b
 
 > **Note:** Node.js 18+ and a [Base44 account](https://app.base44.com) are required. Commands use `npx` (no global CLI install).
 
-1. From the repo root, go to the app and install dependencies:
+1. From the repo root, go to the app and install dependencies.
 
    ```bash
    cd trellix
    npm install
    ```
 
-2. Log in and link the project:
+2. Log in and link the project.
 
    ```bash
    npx base44 login
@@ -24,13 +24,13 @@ A Trello-style task and project management app powered by the [Base44](https://b
 
    This creates a Base44 project and writes `base44/.app.jsonc` with your app ID.
 
-3. Create the env file from the generated app ID:
+3. Create the env file from the generated app ID.
 
    ```bash
    echo "VITE_BASE44_APP_ID=$(grep '"id"' base44/.app.jsonc | cut -d'"' -f4)" > .env.local
    ```
 
-4. Push entities and start the dev server:
+4. Push entities and start the dev server.
 
    ```bash
    npx base44 entities push
@@ -90,37 +90,39 @@ trellix/
 
 ## Available commands
 
-Run these npm commands from the project root:
+Run these npm commands from the project root.
 
 | Command | Description |
 |---------|-------------|
-| `npm run dev` | Start development server (http://localhost:5173) |
-| `npm run build` | Type-check and build for production |
-| `npm run preview` | Preview production build locally |
-| `npm run lint` | Run ESLint |
+| `npm run dev` | Start development server at `http://localhost:5173`. |
+| `npm run build` | Type-check and build for production. |
+| `npm run preview` | Preview production build locally. |
+| `npm run lint` | Run ESLint. |
 
 ## Base44 integration
 
-How this app connects to Base44: SDK setup, entities, and config. Trellix uses [Base44](https://base44.com) for:
+How this app connects to Base44. SDK setup, entities, and config. Trellix uses [Base44](https://base44.com) for the following.
 
 - **[Authentication](https://docs.base44.com/developers/references/sdk/docs/interfaces/auth)**: Email/password auth with OTP verification.
 - **[Database](https://docs.base44.com/developers/backend/resources/entities/overview)**: Entity-based data storage with CRUD operations.
 
 ## Troubleshooting
 
-### App won't start or shows a blank page?
+Possible issues and how to fix them.
+
+### App won't start or shows a blank page
 
 1. Make sure you created `.env.local` with `VITE_BASE44_APP_ID` (step 3 in Getting started).
 2. Run `npm run dev` from the `trellix` folder and check the terminal for errors.
 3. Confirm Node.js is v18 or later: `node -v`.
 
-### API or login errors?
+### API or login errors
 
 1. Ensure you're logged in by running `npx base44 whoami`.
 2. Verify the project is linked by checking that `base44/.app.jsonc` exists and contains your app ID.
 3. Push entities again with `npx base44 entities push`.
 
-### Build fails?
+### Build fails
 
 Run `npm run lint` to check for type or lint errors. Fix any reported issues and try `npm run build` again.
 

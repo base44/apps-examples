@@ -4,12 +4,12 @@ This repository contains example apps built with the [Base44](https://base44.com
 
 ## Getting started
 
-You need [Node.js](https://nodejs.org/) v18 or later and a [Base44 account](https://app.base44.com). Clone this repository, then open an app's folder and follow the **Getting started** section in that app's README:
+You need [Node.js](https://nodejs.org/) v18 or later and a [Base44 account](https://app.base44.com). Clone this repository, then open an app's folder and follow the **Getting started** section in that app's README.
 
 | App | Description | Live demo |
 | --- | --- | --- |
-| [Trellix](./trellix/) | Trello-style task and project management (React, Vite) | [Try it](https://trellix-example-64ad1623.base44.app/) |
-| [Buzz](./buzz/) | AI browser sidekick Chrome extension (WXT, React) | n/a |
+| [Trellix](./trellix/) | Trello-style task and project management with React and Vite. | [Try it](https://trellix-example-64ad1623.base44.app/) |
+| [Buzz](./buzz/) | AI browser sidekick Chrome extension with WXT and React. | n/a. |
 
 ## See also
 

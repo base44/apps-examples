@@ -6,14 +6,14 @@ A Chrome extension powered by AI that helps you manage browser tabs and browse s
 
 > **Note:** Node.js 18+ and a [Base44 account](https://app.base44.com) are required. Commands use `npx` (no global CLI install).
 
-1. From the repo root, go to the app and install dependencies:
+1. From the repo root, go to the app and install dependencies.
 
    ```bash
    cd buzz
    npm install
    ```
 
-2. Log in and link the project:
+2. Log in and link the project.
 
    ```bash
    npx base44 login
@@ -22,20 +22,20 @@ A Chrome extension powered by AI that helps you manage browser tabs and browse s
 
    This creates a Base44 project and writes `base44/.app.jsonc` with your app ID.
 
-3. Create the env file from the generated app ID:
+3. Create the env file from the generated app ID.
 
    ```bash
    echo "VITE_BASE44_APP_ID=$(grep '"id"' base44/.app.jsonc | cut -d'"' -f4)" > .env.local
    ```
 
-4. Push backend configuration (entities and agents):
+4. Push backend configuration (entities and agents).
 
    ```bash
    npx base44 entities push
    npx base44 agents push
    ```
 
-5. Start development:
+5. Start development.
 
    ```bash
    npm run dev
@@ -43,7 +43,7 @@ A Chrome extension powered by AI that helps you manage browser tabs and browse s
 
    This builds the extension in watch mode, opens Chrome with it loaded, and hot-reloads on changes.
 
-6. Optional: Manual extension loading:
+6. Optional: Manual extension loading.
 
    - Open `chrome://extensions` in Chrome
    - Enable **Developer mode**, click **Load unpacked**, and select `.output/chrome-mv3`
@@ -66,7 +66,6 @@ A Chrome extension powered by AI that helps you manage browser tabs and browse s
   - Read Page: Load page content for AI analysis.
 - **Tab Management**: Close, group, focus, and organize tabs via chat or quick actions.
 - **Page Reading**: Read and summarize the content of any page.
-
 - **Element Picker**: Select page elements to add to the AI context.
 
 ## Project structure
@@ -122,7 +121,7 @@ buzz/
 
 ## Available commands
 
-Run these npm commands from the project root:
+Run these npm commands from the project root.
 
 | Command | Description |
 |---------|-------------|
@@ -135,7 +134,7 @@ Run these npm commands from the project root:
 
 ## Base44 integration
 
-How this app connects to Base44: SDK setup, agents, and config. Buzz uses [Base44](https://base44.com) for:
+How this app connects to Base44. SDK setup, agents, and config. Buzz uses [Base44](https://base44.com) for the following.
 
 - **[Authentication](https://docs.base44.com/developers/references/sdk/docs/interfaces/auth)**: Email/password auth with OTP verification.
 - **[AI agent](https://docs.base44.com/developers/backend/resources/agents-config)**: Conversational assistant for conversations and messages.
@@ -143,21 +142,23 @@ How this app connects to Base44: SDK setup, agents, and config. Buzz uses [Base4
 
 ## Troubleshooting
 
-### Extension not loading?
+Possible issues and how to fix them.
+
+### Extension not loading
 
 1. Make sure you've run `npm run build` or `npm run dev`.
 2. Check that you're loading from `.output/chrome-mv3` (not `src/`).
 3. Check the Chrome extensions page for errors.
 
-### API errors?
+### API errors
 
 1. Ensure you're logged in by running `npx base44 whoami`.
 2. Verify the project is linked by checking that `base44/.app.jsonc` exists and contains your app ID.
 3. Push the latest configs with `npx base44 agents push`.
 
-### Hot reload not working?
+### Hot reload not working
 
-WXT's HMR works for most changes. If changes aren't reflecting:
+WXT's HMR works for most changes. If changes aren't reflecting, try the following.
 1. Try refreshing the extension in `chrome://extensions`.
 2. Close and reopen the side panel.
 
