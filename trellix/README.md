@@ -65,7 +65,8 @@ trellix/
 │   ├── App.tsx                # Root component with routing
 │   ├── App.css                # Global styles
 │   ├── types.ts               # TypeScript type definitions
-│   ├── sdk-client/            # Base44 SDK client setup
+│   ├── sdk-client/            # Base44 SDK client
+│   │   └── base44-client.ts   # createClient + entity exports
 │   ├── components/            # Reusable UI components
 │   │   ├── board/             # Board-related components
 │   │   ├── sidebar/           # Navigation sidebar
@@ -84,7 +85,7 @@ trellix/
 - **[React](https://react.dev)**: UI library.
 - **[TypeScript](https://www.typescriptlang.org)**: Type-safe JavaScript.
 - **[Vite](https://vitejs.dev)**: Build tool and dev server.
-- **[Base44](https://base44.com)**: Backend (auth, data, hosting).
+- **[Base44](https://base44.com)**: Backend (auth, data).
 - **[CSS](https://developer.mozilla.org/en-US/docs/Web/CSS)**: Custom styles (no framework).
 
 ## Available commands
@@ -97,82 +98,6 @@ Run these npm commands from the project root:
 | `npm run build` | Type-check and build for production |
 | `npm run preview` | Preview production build locally |
 | `npm run lint` | Run ESLint |
-
-## Base44 integration
-
-How this app connects to Base44: SDK setup, entities, and config. Trellix uses [Base44](https://base44.com) for:
-
-- **Authentication**: Email/password auth with OTP verification.
-- **Database**: Entity-based data storage with CRUD operations.
-- **Hosting**: Build and deployment configuration.
-
-### SDK client
-
-The Base44 SDK is initialized in `src/sdk-client/base44-client.ts`:
-
-```typescript
-import { createClient } from '@base44/sdk';
-
-export const base44 = createClient({
-  appId: import.meta.env.VITE_BASE44_APP_ID,
-});
-
-export const { Board, Task, Team, TeamMember, TaskSubscription, ActivityLog } = base44.entities;
-```
-
-**Authentication examples:**
-
-```typescript
-// Email/password authentication
-await base44.auth.register({ email, password });
-await base44.auth.loginViaEmailPassword(email, password);
-await base44.auth.verifyOtp({ email, otpCode });
-
-// Google OAuth authentication
-base44.auth.loginWithProvider('google');
-
-// User management
-const user = await base44.auth.me();
-await base44.auth.updateMe({ full_name: 'John' });
-base44.auth.logout();
-```
-
-**Entity CRUD examples:**
-
-```typescript
-const boards = await Board.list();
-const board = await Board.create({ name: 'My Board', color: 'blue' });
-const filtered = await Board.filter({ name: 'My Board' });
-const updated = await Board.update(id, { name: 'New Name' });
-await Board.delete(id);
-```
-
-**Example entity schema (`base44/entities/task.jsonc`):**
-
-```jsonc
-{
-  "name": "Task",
-  "type": "object",
-  "properties": {
-    "title": { "type": "string" },
-    "status": {
-      "type": "string",
-      "enum": ["todo", "in_progress", "done"],
-      "default": "todo"
-    },
-    "priority": {
-      "type": "string",
-      "enum": ["low", "medium", "high"],
-      "default": "medium"
-    },
-    "board_id": { "type": "string" },
-    "assignee_email": { "type": "string" },
-    "due_date": { "type": "string", "format": "date" },
-    "labels": { "type": "array", "items": { "type": "string" } }
-  },
-  "required": ["title"]
-}
-```
 
 ## Troubleshooting
 
@@ -196,4 +121,6 @@ Run `npm run lint` to check for type or lint errors. Fix any reported issues and
 
 - [Base44 Documentation](https://docs.base44.com)
 - [Base44 SDK Reference](https://docs.base44.com/sdk)
+- [Authentication](https://docs.base44.com/developers/references/sdk/docs/interfaces/auth)
+- [Entities](https://docs.base44.com/developers/backend/resources/entities/overview)
 - [Base44 CLI Overview](https://docs.base44.com/developers/references/cli/get-started/overview)
