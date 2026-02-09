@@ -79,7 +79,7 @@ trellix/
 - **[TypeScript](https://www.typescriptlang.org)**: Type-safe JavaScript.
 - **[Vite](https://vitejs.dev)**: Build tool and dev server.
 - **[Base44](https://base44.com)**: Backend (auth, data, hosting).
-- **[CSS](https://developer.mozilla.org/en-US/docs/Web/CSS)**. Custom styles (no framework).
+- **[CSS](https://developer.mozilla.org/en-US/docs/Web/CSS)**: Custom styles (no framework).
 
 ## Scripts
 
