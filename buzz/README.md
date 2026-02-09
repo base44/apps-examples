@@ -135,11 +135,11 @@ Buzz can execute these actions via chat:
 
 | Action | Description |
 |--------|-------------|
-| `close_tabs` | Close specific tabs by ID |
-| `group_tabs` | Group tabs with a name and color |
-| `open_url` | Open a URL in a new tab |
-| `focus_tab` | Switch to a specific tab |
-| `read_page` | Read the current page's content |
+| `close_tabs` | Close specific tabs by ID. |
+| `group_tabs` | Group tabs with a name and color. |
+| `open_url` | Open a URL in a new tab. |
+| `focus_tab` | Switch to a specific tab. |
+| `read_page` | Read the current page's content. |
 
 ## Quick Action Tools
 
