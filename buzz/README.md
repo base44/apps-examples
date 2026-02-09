@@ -51,10 +51,21 @@ A Chrome extension powered by AI that helps you manage browser tabs and browse s
 
 ## Features
 
-- **AI Chat**: Conversational assistant that understands your browser context.
+- **AI Chat**: Conversation UI in the side panel, powered by a [Base44 AI agent](https://docs.base44.com/developers/backend/resources/agents-config); understands your browser context. AI actions you can run via chat:
+  - `close_tabs`: Close specific tabs by ID.
+  - `group_tabs`: Group tabs with a name and color.
+  - `open_url`: Open a URL in a new tab.
+  - `focus_tab`: Switch to a specific tab.
+  - `read_page`: Read the current page's content.
 - **Tab Management**: Close, group, focus, and organize tabs via chat or quick actions.
 - **Page Reading**: Read and summarize the content of any page.
-- **Quick Actions**: One-click screenshot, bookmark, share URL, close duplicates, and more.
+- **Quick Actions**: One-click tools in the side panel (no chat needed):
+  - Screenshot: Capture visible tab.
+  - Bookmark: Bookmark current tab.
+  - Share: Copy URL to clipboard.
+  - Close Duplicates: Remove duplicate tabs.
+  - Select Element: Pick a page element for context.
+  - Read Page: Load page content for AI analysis.
 - **Element Picker**: Select page elements to add to the AI context.
 
 ## Project structure
@@ -126,31 +137,8 @@ npm commands you can run from the project root:
 How this app connects to Base44: SDK setup, agents, and config. Buzz uses [Base44](https://base44.com) for:
 
 - **Authentication**: Email/password auth with OTP verification.
-- **AI agent**: Conversational assistant; conversations and messages via the agents API.
+- **AI agent**: Conversational assistant for conversations and messages via [agents](https://docs.base44.com/developers/backend/resources/agents-config).
 - **Data**: Saved-session entity for session state (see `base44/entities/saved-session.jsonc`).
-
-## AI Actions
-
-Buzz can execute these actions via chat:
-
-| Action | Description |
-|--------|-------------|
-| `close_tabs` | Close specific tabs by ID. |
-| `group_tabs` | Group tabs with a name and color. |
-| `open_url` | Open a URL in a new tab. |
-| `focus_tab` | Switch to a specific tab. |
-| `read_page` | Read the current page's content. |
-
-## Quick Action Tools
-
-| Tool | Description |
-|------|-------------|
-| Screenshot | Capture visible tab. |
-| Bookmark | Bookmark current tab. |
-| Share | Copy URL to clipboard. |
-| Close Duplicates | Remove duplicate tabs. |
-| Select Element | Pick a page element for context. |
-| Read Page | Load page content for AI analysis. |
 
 ## Troubleshooting
 
