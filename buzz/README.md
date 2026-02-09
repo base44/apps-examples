@@ -100,14 +100,6 @@ buzz/
 └── package.json
 ```
 
-## Base44 integration
-
-How this app connects to Base44: SDK setup, agents, and config. Buzz uses [Base44](https://base44.com) for:
-
-- **Authentication**: Email/password auth with OTP verification.
-- **AI agent**: Conversational assistant; conversations and messages via the agents API.
-- **Data**: Saved-session entity for session state (see `base44/entities/saved-session.jsonc`).
-
 ## Tech stack
 
 - **[WXT](https://wxt.dev)**: Browser extension framework.
@@ -128,6 +120,14 @@ npm commands you can run from the project root:
 | `npm run build:firefox` | Build for production (Firefox) |
 | `npm run zip` | Build and create ZIP for distribution |
 | `npm run zip:firefox` | Build and create ZIP for Firefox |
+
+## Base44 integration
+
+How this app connects to Base44: SDK setup, agents, and config. Buzz uses [Base44](https://base44.com) for:
+
+- **Authentication**: Email/password auth with OTP verification.
+- **AI agent**: Conversational assistant; conversations and messages via the agents API.
+- **Data**: Saved-session entity for session state (see `base44/entities/saved-session.jsonc`).
 
 ## AI Actions
 
