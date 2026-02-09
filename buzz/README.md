@@ -145,12 +145,12 @@ Buzz can execute these actions via chat:
 
 | Tool | Description |
 |------|-------------|
-| Screenshot | Capture visible tab |
-| Bookmark | Bookmark current tab |
-| Share | Copy URL to clipboard |
-| Close Duplicates | Remove duplicate tabs |
-| Select Element | Pick a page element for context |
-| Read Page | Load page content for AI analysis |
+| Screenshot | Capture visible tab. |
+| Bookmark | Bookmark current tab. |
+| Share | Copy URL to clipboard. |
+| Close Duplicates | Remove duplicate tabs. |
+| Select Element | Pick a page element for context. |
+| Read Page | Load page content for AI analysis. |
 
 ## Troubleshooting
 
