@@ -1,24 +1,63 @@
 # Buzz - AI Browser Sidekick
 
-A Chrome extension powered by AI that helps you manage browser tabs and browse smarter. Built with [WXT](https://wxt.dev), React, TypeScript, and [Base44](https://base44.com).
+A Chrome extension powered by AI that helps you manage browser tabs and browse smarter.
+
+## Getting started
+
+> **Note:** Node.js 18+ and a [Base44 account](https://app.base44.com) are required. Commands use `npx` (no global CLI install).
+
+1. From the repo root, go to the app and install dependencies:
+
+   ```bash
+   cd buzz
+   npm install
+   ```
+
+2. Log in and link the project:
+
+   ```bash
+   npx base44 login
+   npx base44 link
+   ```
+
+   This creates a Base44 project and writes `base44/.app.jsonc` with your app id.
+
+3. Create the env file from the generated app id:
+
+   ```bash
+   echo "VITE_BASE44_APP_ID=$(grep '"id"' base44/.app.jsonc | cut -d'"' -f4)" > .env.local
+   ```
+
+4. Push backend configuration (entities and agents):
+
+   ```bash
+   npx base44 entities push
+   npx base44 agents push
+   ```
+
+5. Start development:
+
+   ```bash
+   npm run dev
+   ```
+
+   This builds the extension in watch mode, opens Chrome with it loaded, and hot-reloads on changes.
+
+6. Optional: Manual extension loading:
+
+   - Open `chrome://extensions` in Chrome
+   - Enable **Developer mode**, click **Load unpacked**, and select `.output/chrome-mv3`
+   - Open the Buzz icon in the toolbar to use the side panel
 
 ## Features
 
-- **AI Chat** - Conversational assistant that understands your browser context
-- **Tab Management** - Close, group, focus, and organize tabs via chat or quick actions
-- **Page Reading** - Read and summarize the content of any page
-- **Quick Actions** - One-click screenshot, bookmark, share URL, close duplicates, and more
-- **Element Picker** - Select page elements to add to the AI context
+- **AI Chat**: Conversational assistant that understands your browser context.
+- **Tab Management**: Close, group, focus, and organize tabs via chat or quick actions.
+- **Page Reading**: Read and summarize the content of any page.
+- **Quick Actions**: One-click screenshot, bookmark, share URL, close duplicates, and more.
+- **Element Picker**: Select page elements to add to the AI context.
 
-## Tech Stack
-
-- **[WXT](https://wxt.dev)** - Next-gen browser extension framework
-- **[React](https://react.dev)** - UI library
-- **[TypeScript](https://www.typescriptlang.org)** - Type-safe JavaScript
-- **[Tailwind CSS](https://tailwindcss.com)** - Utility-first CSS
-- **[Base44](https://base44.com)** - Backend platform (auth, agents, entities)
-
-## Project Structure
+## Project structure
 
 ```
 buzz/
@@ -53,16 +92,13 @@ buzz/
 │   ├── config.jsonc                # Project settings
 │   ├── agents/
 │   │   └── assistant.jsonc         # AI agent instructions
-│   ├── entities/
-│   │   └── saved-session.jsonc     # Data schemas
-│   └── functions/                  # Serverless functions
+│   └── entities/
+│       └── saved-session.jsonc     # Data schemas
 ├── public/                         # Static assets (icons)
 ├── wxt.config.ts                   # WXT configuration
 ├── tailwind.config.ts              # Tailwind configuration
 └── package.json
 ```
-
-### Code Organization
 
 | Directory | Purpose |
 |-----------|---------|
@@ -71,78 +107,30 @@ buzz/
 | `utils/` | Pure utility functions (no React) |
 | `types/` | TypeScript type definitions |
 
-## Prerequisites
+## Tech stack
 
-- [Node.js](https://nodejs.org) 18+
-- npm, yarn, or pnpm
-- A [Base44](https://base44.com) account
-
-## Getting Started
-
-### 1. Clone and Install
-
-```bash
-git clone <repository-url>
-cd buzz
-npm install
-```
-
-### 2. Link to Base44
-
-Login to your Base44 account and link the project:
-
-```bash
-npx base44 login
-npx base44 link
-```
-
-### 3. Push Backend Configuration
-
-Deploy the agent and entity configurations to Base44:
-
-```bash
-npx base44 entities push
-npx base44 agents push
-npx base44 functions deploy
-```
-
-### 4. Start Development
-
-```bash
-npm run dev
-```
-
-This will:
-
-- Build the extension in watch mode
-- Automatically open Chrome with the extension loaded
-- Hot reload on file changes
-
-### 5. Manual Extension Loading (if needed)
-
-If the extension doesn't auto-load:
-
-1. Open `chrome://extensions` in Chrome
-2. Enable **Developer mode** (toggle in top right)
-3. Click **Load unpacked**
-4. Select the `.output/chrome-mv3` folder
-5. Click the Buzz icon in the toolbar to open the side panel
+- **[WXT](https://wxt.dev)** - Browser extension framework
+- **[React](https://react.dev)** - UI library
+- **[TypeScript](https://www.typescriptlang.org)** - Type-safe JavaScript
+- **[Tailwind CSS](https://tailwindcss.com)** - Utility-first CSS
+- **[Base44](https://base44.com)** - Backend (auth, agents, entities)
 
 ## Scripts
 
+npm commands you can run from the project root:
+
 | Command | Description |
 |---------|-------------|
-| `npm run dev` | Start development with hot reload |
+| `npm run dev` | Start development with hot reload (Chrome; output in `.output/chrome-mv3/`) |
 | `npm run dev:firefox` | Start development for Firefox |
 | `npm run build` | Build for production (Chrome) |
 | `npm run build:firefox` | Build for production (Firefox) |
 | `npm run zip` | Build and create ZIP for distribution |
 | `npm run zip:firefox` | Build and create ZIP for Firefox |
 
-## Build Output
+## Base44 integration
 
-- **Chrome**: `.output/chrome-mv3/`
-- **Firefox**: `.output/firefox-mv3/`
+How this app connects to Base44: SDK location and backend config. Buzz uses [Base44](https://base44.com) for authentication, the AI agent, and saved-session data. The SDK is in `src/api/base44Client.ts` and reads `VITE_BASE44_APP_ID` from `.env.local`. Backend config lives in `base44/` (agents, entities, `config.jsonc`).
 
 ## AI Actions
 
@@ -167,16 +155,6 @@ Buzz can execute these actions via chat:
 | Select Element | Pick a page element for context |
 | Read Page | Load page content for AI analysis |
 
-## Base44 CLI Commands
-
-```bash
-npx base44 login            # Authenticate with Base44
-npx base44 link             # Link to an existing project
-npx base44 entities push    # Push entity schemas
-npx base44 agents push      # Push agent configurations
-npx base44 functions deploy # Deploy serverless functions
-```
-
 ## Troubleshooting
 
 ### Extension not loading?
@@ -197,6 +175,8 @@ WXT's HMR works for most changes. If changes aren't reflecting:
 1. Try refreshing the extension in `chrome://extensions`
 2. Close and reopen the side panel
 
-## License
+## See also
 
-MIT
+- [Base44 Documentation](https://docs.base44.com)
+- [Base44 SDK Reference](https://docs.base44.com/sdk)
+- [Base44 CLI Overview](https://docs.base44.com/developers/references/cli/get-started/overview)

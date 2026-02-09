@@ -1,15 +1,59 @@
 # Trellix
 
-A Trello-style task and project management app built with React and powered by [Base44](https://base44.com) Backend-as-a-Service.
+A Trello-style task and project management app powered by the [Base44](https://base44.com) backend.
 
 🔗 **[View Live Demo](https://trellix-example-64ad1623.base44.app/)**
+
+## Getting started
+
+> **Note:** Node.js 18+ and a [Base44 account](https://app.base44.com) are required. Commands use `npx` (no global CLI install).
+
+1. From the repo root, go to the app and install dependencies:
+
+   ```bash
+   cd trellix
+   npm install
+   ```
+
+2. Log in and link the project:
+
+   ```bash
+   npx base44 login
+   npx base44 link
+   ```
+
+   This creates a Base44 project and writes `base44/.app.jsonc` with your app id.
+
+3. Create the env file from the generated app id:
+
+   ```bash
+   echo "VITE_BASE44_APP_ID=$(grep '"id"' base44/.app.jsonc | cut -d'"' -f4)" > .env.local
+   ```
+
+4. Push entities and start the dev server:
+
+   ```bash
+   npx base44 entities push
+   npm run dev
+   ```
+
+   The app runs at **http://localhost:5173/**.
+
+## Features
+
+- **Boards** – Create and manage Kanban boards with custom colors
+- **Tasks** – Add tasks with status, priority, due dates, and labels
+- **Teams** – Collaborative workspaces with roles (admin, member, viewer)
+- **Authentication** – Email/password with OTP and Google OAuth
+- **AI assistant** – In-app assistant (when configured)
 
 ## Project structure
 
 ```
 trellix/
-├── base44/                    # Base44 BaaS configuration
+├── base44/                    # Base44 backend configuration
 │   ├── config.jsonc           # Project configuration
+│   ├── agents/                # AI agent instructions (optional)
 │   └── entities/              # Entity schema definitions
 ├── src/
 │   ├── App.tsx                # Root component with routing
@@ -29,9 +73,28 @@ trellix/
 └── dist/                      # Build output
 ```
 
+## Tech stack
+
+- **[React](https://react.dev)** - UI library
+- **[TypeScript](https://www.typescriptlang.org)** - Type-safe JavaScript
+- **[Vite](https://vitejs.dev)** - Build tool and dev server
+- **[Base44](https://base44.com)** - Backend (auth, data, hosting)
+- **CSS** - Custom styles (no framework)
+
+## Scripts
+
+npm commands you can run from the project root:
+
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start development server (http://localhost:5173) |
+| `npm run build` | Type-check and build for production |
+| `npm run preview` | Preview production build locally |
+| `npm run lint` | Run ESLint |
+
 ## Base44 integration
 
-Trellix uses [Base44](https://base44.com) as its backend services, eliminating the need for a custom backend. Base44 provides:
+How this app connects to Base44: SDK setup, entities, and config. Trellix uses [Base44](https://base44.com) for:
 
 - **Authentication:** Email/password auth with OTP verification
 - **Database:** Entity-based data storage with CRUD operations
@@ -135,12 +198,26 @@ The `base44/config.jsonc` file defines project metadata and hosting/build settin
 }
 ```
 
-## Development
+## Troubleshooting
 
-See the [Getting started](../README.md#getting-started) guide in the top-level README for setup instructions.
+### App won't start or shows a blank page?
 
-## Tech stack
+1. Make sure you created `.env.local` with `VITE_BASE44_APP_ID` (step 3 in Getting started).
+2. Run `npm run dev` from the `trellix` folder and check the terminal for errors.
+3. Confirm Node.js is v18 or later: `node -v`.
 
-- **Frontend:** React 18, TypeScript, Vite
-- **Backend:** Base44 BaaS
-- **Styling:** CSS (custom)
+### API or login errors?
+
+1. Ensure you're logged in: `npx base44 whoami`
+2. Verify the project is linked: check that `base44/.app.jsonc` exists and contains your app id.
+3. Push entities again: `npx base44 entities push`
+
+### Build fails?
+
+Run `npm run lint` to check for type or lint errors. Fix any reported issues and try `npm run build` again.
+
+## See also
+
+- [Base44 Documentation](https://docs.base44.com)
+- [Base44 SDK Reference](https://docs.base44.com/sdk)
+- [Base44 CLI Overview](https://docs.base44.com/developers/references/cli/get-started/overview)
