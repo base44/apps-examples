@@ -100,7 +100,13 @@ buzz/
 └── package.json
 ```
 
-Buzz uses [Base44](https://base44.com) for authentication, the AI agent, and saved-session data. The SDK (`src/api/base44Client.ts`) reads `VITE_BASE44_APP_ID` from `.env.local` (see Getting started).
+## Base44 integration
+
+How this app connects to Base44: SDK setup, agents, and config. Buzz uses [Base44](https://base44.com) for:
+
+- **Authentication**: Email/password auth with OTP verification.
+- **AI agent**: Conversational assistant; conversations and messages via the agents API.
+- **Data**: Saved-session entity for session state (see `base44/entities/saved-session.jsonc`).
 
 ## Tech stack
 
