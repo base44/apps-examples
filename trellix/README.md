@@ -1,4 +1,4 @@
-# Trellix
+# Trellix - Task and Project Manager
 
 A Trello-style task and project management app powered by the [Base44](https://base44.com) backend.
 
