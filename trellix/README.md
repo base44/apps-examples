@@ -54,7 +54,13 @@ trellix/
 ├── base44/                    # Base44 backend configuration
 │   ├── config.jsonc           # Project configuration
 │   ├── agents/                # AI agent instructions (optional)
-│   └── entities/              # Entity schema definitions
+│   └── entities/              # JSONC schemas (DB + typed SDK)
+│       ├── board.jsonc         # Kanban boards: name, description, color
+│       ├── task.jsonc          # Tasks: title, status, priority, due date, labels
+│       ├── team.jsonc          # Teams for collaborative workspaces
+│       ├── team-member.jsonc   # Membership with roles (admin/member/viewer)
+│       ├── task-subscription.jsonc  # Task notification subscriptions
+│       └── activity-log.jsonc  # Audit log for task actions
 ├── src/
 │   ├── App.tsx                # Root component with routing
 │   ├── App.css                # Global styles
@@ -141,20 +147,7 @@ const updated = await Board.update(id, { name: 'New Name' });
 await Board.delete(id);
 ```
 
-### Entity definitions
-
-Entities are defined as JSONC schemas in `base44/entities/`. Base44 uses these to generate the database structure and provide typed SDK methods.
-
-| Entity | Description |
-| --- | --- |
-| `board.jsonc` | Kanban boards with name, description, and color |
-| `task.jsonc` | Tasks with title, status, priority, due date, labels |
-| `team.jsonc` | Teams for collaborative workspaces |
-| `team-member.jsonc` | Team membership with roles (admin/member/viewer) |
-| `task-subscription.jsonc` | Task notification subscriptions |
-| `activity-log.jsonc` | Audit log for task actions |
-
-**Example entity schema (`task.jsonc`):**
+**Example entity schema (`base44/entities/task.jsonc`):**
 
 ```jsonc
 {
@@ -178,23 +171,6 @@ Entities are defined as JSONC schemas in `base44/entities/`. Base44 uses these t
     "labels": { "type": "array", "items": { "type": "string" } }
   },
   "required": ["title"]
-}
-```
-
-### Project configuration
-
-The `base44/config.jsonc` file defines project metadata and hosting/build settings:
-
-```jsonc
-{
-  "name": "Trellix",
-  "description": "Task and project management solution",
-  "site": {
-    "installCommand": "npm install",
-    "buildCommand": "npm run build",
-    "serveCommand": "npm run dev",
-    "outputDirectory": "./dist"
-  }
 }
 ```
 
