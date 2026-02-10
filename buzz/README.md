@@ -1,6 +1,6 @@
 # Buzz - AI Browser Sidekick
 
-A Chrome extension powered by AI that helps you manage browser tabs and browse smarter.
+A browser extension for Chrome and Firefox, powered by AI, that helps you manage browser tabs and browse smarter.
 
 ## Getting started
 
@@ -37,17 +37,16 @@ A Chrome extension powered by AI that helps you manage browser tabs and browse s
 
 5. Start development.
 
-   ```bash
-   npm run dev
-   ```
+   - **Chrome:** `npm run dev`
+   - **Firefox:** `npm run dev:firefox`
 
-   This builds the extension in watch mode, opens Chrome with it loaded, and hot-reloads on changes.
+   This builds the extension in watch mode, opens the browser with it loaded, and hot-reloads on changes.
 
 6. Optional: Manual extension loading.
 
-   - Open `chrome://extensions` in Chrome
-   - Enable **Developer mode**, click **Load unpacked**, and select `.output/chrome-mv3`
-   - Open the Buzz icon in the toolbar to use the side panel
+   - **Chrome:** Open `chrome://extensions`, enable **Developer mode**, click **Load unpacked**, and select `.output/chrome-mv3`.
+   - **Firefox:** Open `about:debugging`, click **This Firefox**, **Load Temporary Add-on**, and select a file in `.output/firefox-mv2`.
+   - Open the Buzz icon in the toolbar to use the side panel.
 
 ## Features
 
@@ -125,11 +124,11 @@ Run these npm commands from the project root.
 
 | Command | Description |
 |---------|-------------|
-| `npm run dev` | Start development with hot reload for Chrome. Output in `.output/chrome-mv3/`. |
-| `npm run dev:firefox` | Start development for Firefox. |
+| `npm run dev` | Start development for Chrome. Output in `.output/chrome-mv3/`. |
+| `npm run dev:firefox` | Start development for Firefox. Output in `.output/firefox-mv2/`. |
 | `npm run build` | Build for production for Chrome. |
 | `npm run build:firefox` | Build for production for Firefox. |
-| `npm run zip` | Build and create ZIP for distribution. |
+| `npm run zip` | Build and create ZIP for Chrome. |
 | `npm run zip:firefox` | Build and create ZIP for Firefox. |
 
 ## Base44 integration

@@ -9,7 +9,7 @@ You need [Node.js](https://nodejs.org/) v18 or later and a [Base44 account](http
 | App | Description | Live demo |
 | --- | --- | --- |
 | [Trellix](./trellix/) | Trello-style task and project management with React and Vite. | [Trellix live demo](https://trellix-example-64ad1623.base44.app/). |
-| [Buzz](./buzz/) | AI browser sidekick Chrome extension with WXT and React. | n/a. |
+| [Buzz](./buzz/) | AI browser sidekick extension for Chrome and Firefox with WXT and React. | n/a. |
 
 ## See also
 
