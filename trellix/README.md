@@ -4,7 +4,7 @@ A Trello-style task and project management app powered by the [Base44](https://b
 
 🔗 **[View Live Demo](https://trellix-example-64ad1623.base44.app/)**
 
-## Getting started
+## Get Started
 
 > **Note:** Node.js 18+ and a [Base44 account](https://app.base44.com) are required. Commands use `npx` (no global CLI install).
 
@@ -112,7 +112,7 @@ Possible issues and how to fix them.
 
 ### App won't start or shows a blank page
 
-1. Make sure you created `.env.local` with `VITE_BASE44_APP_ID` (step 3 in Getting started).
+1. Make sure you created `.env.local` with `VITE_BASE44_APP_ID` (step 3 in Get Started).
 2. Run `npm run dev` from the `trellix` folder and check the terminal for errors.
 3. Confirm Node.js is v18 or later: `node -v`.
 

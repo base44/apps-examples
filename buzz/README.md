@@ -2,7 +2,7 @@
 
 A browser extension for Chrome and Firefox, powered by AI, that helps you manage browser tabs and browse smarter.
 
-## Getting started
+## Get Started
 
 > **Note:** Node.js 18+ and a [Base44 account](https://app.base44.com) are required. Commands use `npx` (no global CLI install).
 
