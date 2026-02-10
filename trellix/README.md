@@ -129,5 +129,5 @@ Run `npm run lint` to check for type or lint errors. Fix any reported issues and
 ## See also
 
 - [Base44 Documentation](https://docs.base44.com)
-- [Base44 SDK Reference](https://docs.base44.com/sdk)
+- [Base44 SDK Reference](https://docs.base44.com/developers/references/sdk)
 - [Base44 CLI Overview](https://docs.base44.com/developers/references/cli/get-started/overview)

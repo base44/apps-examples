@@ -164,5 +164,5 @@ WXT's HMR works for most changes. If changes aren't reflecting, try the followin
 ## See also
 
 - [Base44 Documentation](https://docs.base44.com)
-- [Base44 SDK Reference](https://docs.base44.com/sdk)
+- [Base44 SDK Reference](https://docs.base44.com/developers/references/sdk)
 - [Base44 CLI Overview](https://docs.base44.com/developers/references/cli/get-started/overview)

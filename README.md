@@ -14,7 +14,7 @@ You need [Node.js](https://nodejs.org/) v18 or later and a [Base44 account](http
 ## See also
 
 - [Base44 Documentation](https://docs.base44.com)
-- [Base44 SDK Reference](https://docs.base44.com/sdk)
+- [Base44 SDK Reference](https://docs.base44.com/developers/references/sdk)
 - [Base44 CLI Overview](https://docs.base44.com/developers/references/cli/get-started/overview)
 
 ## License
