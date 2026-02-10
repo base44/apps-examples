@@ -2,9 +2,9 @@
 
 This repository contains example apps built with the [Base44](https://base44.com) backend. Use these examples to learn how Base44 works and as starting points for your own projects.
 
-## Get Started
+## Get started
 
-You need [Node.js](https://nodejs.org/) v20.19.0 or higher and a [Base44 account](https://app.base44.com). Clone this repository, then open an app's folder and follow the **Get Started** section in that app's README.
+You need [Node.js](https://nodejs.org/) v20.19.0 or higher and a [Base44 account](https://app.base44.com). Clone this repository, then open an app's folder and follow the **Get started** section in that app's README.
 
 | App | Description | Technologies | Live demo |
 | --- | --- | --- | --- |

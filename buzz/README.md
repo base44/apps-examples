@@ -1,6 +1,6 @@
 # Buzz - AI Browser Sidekick
 
-An AI-powered browser extension for Chrome and Firefox. It helps you manage browser tabs and browse smarter. Built with [WXT](https://wxt.dev).
+An AI-powered browser extension for Chrome and Firefox. It helps you manage browser tabs and browse smarter. It is built with [WXT](https://wxt.dev).
 
 ## Get started
 
@@ -138,7 +138,7 @@ Run these npm commands from the project root.
 
 ## Base44 integration
 
-How this app connects to Base44. SDK setup, agents, and config. Buzz uses [Base44](https://base44.com) for the following:
+Buzz uses [Base44](https://base44.com) for SDK setup, agents, and config:
 
 - **[Authentication](https://docs.base44.com/developers/references/sdk/docs/interfaces/auth)**: Email/password auth with OTP verification.
 - **[AI agent](https://docs.base44.com/developers/backend/resources/agents-config)**: Conversational assistant for conversations and messages.
@@ -146,7 +146,7 @@ How this app connects to Base44. SDK setup, agents, and config. Buzz uses [Base4
 
 ## Troubleshooting
 
-Possible issues and how to fix them.
+Here are possible issues and how to fix them.
 
 ### Extension not loading
 

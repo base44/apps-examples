@@ -112,18 +112,18 @@ Run these npm commands from the project root.
 
 ## Base44 integration
 
-How this app connects to Base44. SDK setup, entities, and config. Trellix uses [Base44](https://base44.com) for the following.
+Trellix uses [Base44](https://base44.com) for SDK setup, entities, and config:
 
 - **[Authentication](https://docs.base44.com/developers/references/sdk/docs/interfaces/auth)**: Email/password auth with OTP verification.
 - **[Database](https://docs.base44.com/developers/backend/resources/entities/overview)**: Entity-based data storage with CRUD operations.
 
 ## Troubleshooting
 
-Possible issues and how to fix them.
+Here are possible issues and how to fix them.
 
 ### App won't start or shows a blank page
 
-1. Make sure you've created `.env.local` with `VITE_BASE44_APP_ID` in step 4 of Get Started.
+1. Make sure you've created `.env.local` with `VITE_BASE44_APP_ID` in step 4 of Get started.
 2. Run `npm run dev` from the `trellix` folder and check the terminal for errors.
 3. Confirm Node.js is v20.19.0 or higher: `node -v`.
 
