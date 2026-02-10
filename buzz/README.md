@@ -1,48 +1,53 @@
 # Buzz - AI Browser Sidekick
 
-A browser extension for Chrome and Firefox, powered by AI, that helps you manage browser tabs and browse smarter.
+An AI-powered browser extension for Chrome and Firefox. It helps you manage browser tabs and browse smarter. Built with [WXT](https://wxt.dev).
 
 ## Get Started
 
-> **Note:** Node.js 20.19.0 or higher and a [Base44 account](https://app.base44.com) are required. Commands use `npx` with no global CLI install.
+> **Note:** Node.js 20.19.0 or higher and a [Base44 account](https://app.base44.com) are required.
 
-1. From the repo root, go to the app and install dependencies.
+1. Install the Base44 CLI globally.
+
+   ```bash
+   npm install -g base44
+   ```
+
+2. From the repo root, go to the app and install its dependencies.
 
    ```bash
    cd buzz
    npm install
    ```
 
-2. Log in and link the project.
+3. Log in and link the project.
 
    ```bash
-   npx base44 login
-   npx base44 link
+   base44 login
+   base44 link
    ```
 
-   This links your local project to a new or existing Base44 project. The command creates `base44/.app.jsonc` with your app ID. That file isn't in the repo. It's created when you run link.
+   This links your local project to a new or existing Base44 project. The command creates `base44/.app.jsonc` with your app ID.
 
-3. Create the app's `.env.local` from the app ID that link wrote to `base44/.app.jsonc`.
+4. Create the app's `.env.local` from the app ID that link wrote to `base44/.app.jsonc`.
 
    ```bash
    echo "VITE_BASE44_APP_ID=$(grep '"id"' base44/.app.jsonc | cut -d'"' -f4)" > .env.local
    ```
 
-4. Push your local entities and agents to Base44.
+5. Push your local entities and agents to Base44.
 
    ```bash
-   npx base44 entities push
-   npx base44 agents push
+   base44 deploy
    ```
 
-5. Start development.
+6. Start development.
 
    - **Chrome:** `npm run dev`
    - **Firefox:** `npm run dev:firefox`
 
    This builds the extension in watch mode, opens the browser with it loaded, and hot-reloads on changes.
 
-6. Optional: Manual extension loading.
+7. Optional: Manual extension loading.
 
    - **Chrome:** Open `chrome://extensions`, enable **Developer mode**, click **Load unpacked**, and select `.output/chrome-mv3`.
    - **Firefox:** Open `about:debugging`, click **This Firefox**, **Load Temporary Add-on**, and select a file in `.output/firefox-mv2`.
@@ -112,11 +117,11 @@ buzz/
 
 ## Tech stack
 
+- **[Base44](https://base44.com)**: Backend for auth, agents, and entities.
 - **[WXT](https://wxt.dev)**: Browser extension framework.
 - **[React](https://react.dev)**: UI library.
 - **[TypeScript](https://www.typescriptlang.org)**: Type-safe JavaScript.
 - **[Tailwind CSS](https://tailwindcss.com)**: Utility-first CSS.
-- **[Base44](https://base44.com)**: Backend for auth, agents, and entities.
 
 ## Available commands
 
@@ -151,15 +156,11 @@ Possible issues and how to fix them.
 
 ### API errors
 
-1. Ensure you're logged in by running `npx base44 whoami`.
+1. Ensure you're logged in by running `base44 whoami`.
 2. Verify the project is linked by checking that `base44/.app.jsonc` exists and contains your app ID.
-3. Push the latest configs with `npx base44 agents push`.
+3. Push the latest configs with `base44 deploy`.
 
-### Hot reload not working
-
-WXT's HMR works for most changes. If changes aren't reflecting, try the following.
-1. Try refreshing the extension in `chrome://extensions`.
-2. Close and reopen the side panel.
+For WXT-specific issues like hot reload, see the [WXT documentation](https://wxt.dev).
 
 ## See also
 

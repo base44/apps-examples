@@ -6,34 +6,45 @@ A Trello-style task and project management app powered by the [Base44](https://b
 
 ## Get Started
 
-> **Note:** Node.js 20.19.0 or higher and a [Base44 account](https://app.base44.com) are required. Commands use `npx` with no global CLI install.
+> **Note:** Node.js 20.19.0 or higher and a [Base44 account](https://app.base44.com) are required.
 
-1. From the repo root, go to the app and install dependencies.
+1. Install the Base44 CLI globally.
+
+   ```bash
+   npm install -g base44
+   ```
+
+2. From the repo root, go to the app and install its dependencies.
 
    ```bash
    cd trellix
    npm install
    ```
 
-2. Log in and link the project.
+3. Log in and link the project.
 
    ```bash
-   npx base44 login
-   npx base44 link
+   base44 login
+   base44 link
    ```
 
-   This links your local project to a new or existing Base44 project. The command creates `base44/.app.jsonc` with your app ID. That file isn't in the repo. It's created when you run link.
+   This links your local project to a new or existing Base44 project. The command creates `base44/.app.jsonc` with your app ID.
 
-3. Create the app's `.env.local` from the app ID that link wrote to `base44/.app.jsonc`.
+4. Create the app's `.env.local` from the app ID that link wrote to `base44/.app.jsonc`.
 
    ```bash
    echo "VITE_BASE44_APP_ID=$(grep '"id"' base44/.app.jsonc | cut -d'"' -f4)" > .env.local
    ```
 
-4. Push entities and start the dev server.
+5. Push your local entities and agents to Base44.
 
    ```bash
-   npx base44 entities push
+   base44 deploy
+   ```
+
+6. Start development.
+
+   ```bash
    npm run dev
    ```
 
@@ -82,10 +93,10 @@ trellix/
 
 ## Tech stack
 
+- **[Base44](https://base44.com)**: Backend for auth and data.
 - **[React](https://react.dev)**: UI library.
 - **[TypeScript](https://www.typescriptlang.org)**: Type-safe JavaScript.
 - **[Vite](https://vitejs.dev)**: Build tool and dev server.
-- **[Base44](https://base44.com)**: Backend for auth and data.
 - **[CSS](https://developer.mozilla.org/en-US/docs/Web/CSS)**: Custom styles with no framework.
 
 ## Available commands
@@ -112,15 +123,15 @@ Possible issues and how to fix them.
 
 ### App won't start or shows a blank page
 
-1. Make sure you've created `.env.local` with `VITE_BASE44_APP_ID` in step 3 of Get Started.
+1. Make sure you've created `.env.local` with `VITE_BASE44_APP_ID` in step 4 of Get Started.
 2. Run `npm run dev` from the `trellix` folder and check the terminal for errors.
 3. Confirm Node.js is v20.19.0 or higher: `node -v`.
 
 ### API or login errors
 
-1. Ensure you're logged in by running `npx base44 whoami`.
+1. Ensure you're logged in by running `base44 whoami`.
 2. Verify the project is linked by checking that `base44/.app.jsonc` exists and contains your app ID.
-3. Push entities again with `npx base44 entities push`.
+3. Push the latest configs with `base44 deploy`.
 
 ### Build fails
 
