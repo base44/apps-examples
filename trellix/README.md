@@ -4,7 +4,7 @@ A Trello-style task and project management app powered by the [Base44](https://b
 
 🔗 **[View Live Demo](https://trellix-example-64ad1623.base44.app/)**
 
-## Get Started
+## Get started
 
 > **Note:** Node.js 20.19.0 or higher and a [Base44 account](https://app.base44.com) are required.
 

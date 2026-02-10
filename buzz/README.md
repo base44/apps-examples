@@ -2,7 +2,7 @@
 
 An AI-powered browser extension for Chrome and Firefox. It helps you manage browser tabs and browse smarter. Built with [WXT](https://wxt.dev).
 
-## Get Started
+## Get started
 
 > **Note:** Node.js 20.19.0 or higher and a [Base44 account](https://app.base44.com) are required.
 
