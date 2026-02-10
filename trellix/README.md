@@ -6,7 +6,7 @@ A Trello-style task and project management app powered by the [Base44](https://b
 
 ## Get Started
 
-> **Note:** Node.js 18+ and a [Base44 account](https://app.base44.com) are required. Commands use `npx` (no global CLI install).
+> **Note:** Node.js 20.19.0 or higher and a [Base44 account](https://app.base44.com) are required. Commands use `npx` (no global CLI install).
 
 1. From the repo root, go to the app and install dependencies.
 
@@ -114,7 +114,7 @@ Possible issues and how to fix them.
 
 1. Make sure you created `.env.local` with `VITE_BASE44_APP_ID` (step 3 in Get Started).
 2. Run `npm run dev` from the `trellix` folder and check the terminal for errors.
-3. Confirm Node.js is v18 or later: `node -v`.
+3. Confirm Node.js is v20.19.0 or higher: `node -v`.
 
 ### API or login errors
 

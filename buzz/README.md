@@ -4,7 +4,7 @@ A browser extension for Chrome and Firefox, powered by AI, that helps you manage
 
 ## Get Started
 
-> **Note:** Node.js 18+ and a [Base44 account](https://app.base44.com) are required. Commands use `npx` (no global CLI install).
+> **Note:** Node.js 20.19.0 or higher and a [Base44 account](https://app.base44.com) are required. Commands use `npx` (no global CLI install).
 
 1. From the repo root, go to the app and install dependencies.
 
