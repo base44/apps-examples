@@ -2,8 +2,6 @@
 
 A browser extension for Chrome and Firefox, powered by AI, that helps you manage browser tabs and browse smarter.
 
-🔗 **[View Live Demo](https://buzz-live-demo-4ad83304.base44.app/)**
-
 ## Get Started
 
 > **Note:** Node.js 20.19.0 or higher and a [Base44 account](https://app.base44.com) are required. Commands use `npx` with no global CLI install.
