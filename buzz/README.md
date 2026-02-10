@@ -28,7 +28,7 @@ A browser extension for Chrome and Firefox, powered by AI, that helps you manage
    echo "VITE_BASE44_APP_ID=$(grep '"id"' base44/.app.jsonc | cut -d'"' -f4)" > .env.local
    ```
 
-4. Push backend configuration (entities and agents).
+4. Push your local entities and agents to Base44.
 
    ```bash
    npx base44 entities push
