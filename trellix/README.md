@@ -6,7 +6,7 @@ A Trello-style task and project management app powered by the [Base44](https://b
 
 ## Get Started
 
-> **Note:** Node.js 20.19.0 or higher and a [Base44 account](https://app.base44.com) are required. Commands use `npx` (no global CLI install).
+> **Note:** Node.js 20.19.0 or higher and a [Base44 account](https://app.base44.com) are required. Commands use `npx` with no global CLI install.
 
 1. From the repo root, go to the app and install dependencies.
 
@@ -22,9 +22,9 @@ A Trello-style task and project management app powered by the [Base44](https://b
    npx base44 link
    ```
 
-   This creates a Base44 project and writes `base44/.app.jsonc` with your app ID.
+   This links your local project to a new or existing Base44 project. The command creates `base44/.app.jsonc` with your app ID. That file isn't in the repo. It's created when you run link.
 
-3. Create the env file from the generated app ID.
+3. Create the app's `.env.local` from the app ID that link wrote to `base44/.app.jsonc`.
 
    ```bash
    echo "VITE_BASE44_APP_ID=$(grep '"id"' base44/.app.jsonc | cut -d'"' -f4)" > .env.local
@@ -43,9 +43,9 @@ A Trello-style task and project management app powered by the [Base44](https://b
 
 - **Boards**: Create and manage Kanban boards with custom colors.
 - **Tasks**: Add tasks with status, priority, due dates, and labels.
-- **Teams**: Collaborative workspaces with roles (admin, member, viewer).
+- **Teams**: Collaborative workspaces with roles: admin, member, viewer.
 - **Authentication**: Email/password with OTP and Google OAuth.
-- **AI assistant**: In-app assistant (when configured).
+- **AI assistant**: In-app assistant when configured.
 
 ## Project structure
 
@@ -85,8 +85,8 @@ trellix/
 - **[React](https://react.dev)**: UI library.
 - **[TypeScript](https://www.typescriptlang.org)**: Type-safe JavaScript.
 - **[Vite](https://vitejs.dev)**: Build tool and dev server.
-- **[Base44](https://base44.com)**: Backend (auth, data).
-- **[CSS](https://developer.mozilla.org/en-US/docs/Web/CSS)**: Custom styles (no framework).
+- **[Base44](https://base44.com)**: Backend for auth and data.
+- **[CSS](https://developer.mozilla.org/en-US/docs/Web/CSS)**: Custom styles with no framework.
 
 ## Available commands
 
@@ -112,7 +112,7 @@ Possible issues and how to fix them.
 
 ### App won't start or shows a blank page
 
-1. Make sure you created `.env.local` with `VITE_BASE44_APP_ID` (step 3 in Get Started).
+1. Make sure you've created `.env.local` with `VITE_BASE44_APP_ID` in step 3 of Get Started.
 2. Run `npm run dev` from the `trellix` folder and check the terminal for errors.
 3. Confirm Node.js is v20.19.0 or higher: `node -v`.
 

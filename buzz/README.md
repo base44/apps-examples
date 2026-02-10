@@ -4,7 +4,7 @@ A browser extension for Chrome and Firefox, powered by AI, that helps you manage
 
 ## Get Started
 
-> **Note:** Node.js 20.19.0 or higher and a [Base44 account](https://app.base44.com) are required. Commands use `npx` (no global CLI install).
+> **Note:** Node.js 20.19.0 or higher and a [Base44 account](https://app.base44.com) are required. Commands use `npx` with no global CLI install.
 
 1. From the repo root, go to the app and install dependencies.
 
@@ -20,9 +20,9 @@ A browser extension for Chrome and Firefox, powered by AI, that helps you manage
    npx base44 link
    ```
 
-   This creates a Base44 project and writes `base44/.app.jsonc` with your app ID.
+   This links your local project to a new or existing Base44 project. The command creates `base44/.app.jsonc` with your app ID. That file isn't in the repo. It's created when you run link.
 
-3. Create the env file from the generated app ID.
+3. Create the app's `.env.local` from the app ID that link wrote to `base44/.app.jsonc`.
 
    ```bash
    echo "VITE_BASE44_APP_ID=$(grep '"id"' base44/.app.jsonc | cut -d'"' -f4)" > .env.local
@@ -116,7 +116,7 @@ buzz/
 - **[React](https://react.dev)**: UI library.
 - **[TypeScript](https://www.typescriptlang.org)**: Type-safe JavaScript.
 - **[Tailwind CSS](https://tailwindcss.com)**: Utility-first CSS.
-- **[Base44](https://base44.com)**: Backend (auth, agents, entities).
+- **[Base44](https://base44.com)**: Backend for auth, agents, and entities.
 
 ## Available commands
 
@@ -146,7 +146,7 @@ Possible issues and how to fix them.
 ### Extension not loading
 
 1. Make sure you've run `npm run build` or `npm run dev`.
-2. Check that you're loading from `.output/chrome-mv3` (not `src/`).
+2. Check that you're loading from `.output/chrome-mv3`, not `src/`.
 3. Check the Chrome extensions page for errors.
 
 ### API errors
