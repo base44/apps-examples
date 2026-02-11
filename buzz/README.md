@@ -4,7 +4,7 @@ An AI-powered browser extension for Chrome and Firefox. It helps you manage brow
 
 ## Get started
 
-> **Note:** Node.js 20.19.0 or higher and a [Base44 account](https://app.base44.com) are required.
+> **Note:** Node.js v20.19.0 or higher and a [Base44 account](https://app.base44.com) are required.
 
 1. Install the Base44 CLI globally.
 

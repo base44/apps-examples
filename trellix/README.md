@@ -6,7 +6,7 @@ A Trello-style task and project management app powered by the [Base44](https://b
 
 ## Get started
 
-> **Note:** Node.js 20.19.0 or higher and a [Base44 account](https://app.base44.com) are required.
+> **Note:** Node.js v20.19.0 or higher and a [Base44 account](https://app.base44.com) are required.
 
 1. Install the Base44 CLI globally.
 
