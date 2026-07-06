@@ -1,0 +1,14 @@
+// Base44 Project Configuration
+// JSONC enables inline documentation and discoverability directly in config files.
+
+{
+  "name": "base44-crm",
+  "description": "Base44 CRM — a team sales CRM (à la monday.com / Salesforce) built on TanStack Start with server-side rendering, per-owner row-level security, and an AI sales assistant, hosted on Base44.",
+
+  // Site/hosting configuration
+  // Docs: https://docs.base44.com/developers/backend/overview/project-structure
+  "site": {
+    "installCommand": "npm install",
+    "buildCommand": "npm run build"
+  }
+}

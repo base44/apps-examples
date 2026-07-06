@@ -1,0 +1,31 @@
+{
+  "name": "Category",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Category display name, e.g. \"Single-Origin\""
+    },
+    "slug": {
+      "type": "string",
+      "description": "URL-safe identifier used in /category/[slug]"
+    },
+    "description": {
+      "type": "string",
+      "description": "Short blurb shown on the category page"
+    },
+    "image": {
+      "type": "string",
+      "description": "Optional hero image URL for the category"
+    }
+  },
+  "required": ["name", "slug"],
+
+  // Categories are public catalog data: anyone can read, only admins can edit.
+  "rls": {
+    "create": { "user_condition": { "role": "admin" } },
+    "read": true,
+    "update": { "user_condition": { "role": "admin" } },
+    "delete": { "user_condition": { "role": "admin" } }
+  }
+}

@@ -1,0 +1,201 @@
+---
+import Layout from "../../components/Layout.astro";
+import { getServerClient, getUser, loginUrlFor } from "../../lib/base44";
+import { setPrivateCache } from "../../lib/cache";
+import { formatDate, formatPrice } from "../../lib/format";
+import type { Order } from "../../lib/types";
+
+// PERSONALISED PAGE — never edge-cached.
+// This is the signed-in shopper's own order history, so it must always be
+// rendered per-user and served `private, no-store`. Owner-scoped RLS on the
+// Order entity means `Order.list()` already returns only this user's orders.
+setPrivateCache(Astro);
+
+const base44 = getServerClient(Astro);
+const user = await getUser(base44);
+const loginUrl = loginUrlFor(Astro, Astro.url.href);
+const justPlaced = Astro.url.searchParams.get("placed") === "1";
+
+let orders: Order[] = [];
+if (user && base44) {
+  try {
+    orders = (await base44.entities.Order.list("-created_date", 50)) as Order[];
+  } catch {
+    orders = [];
+  }
+}
+
+const STATUS_LABEL: Record<string, string> = {
+  pending: "Pending",
+  paid: "Paid",
+  shipped: "Shipped",
+  delivered: "Delivered",
+  cancelled: "Cancelled",
+};
+---
+
+<Layout title="Your orders — Meridian">
+  <section class="wrap section">
+    <h1 class="orders__title">Your orders</h1>
+
+    {justPlaced && (
+      <div class="orders__flash">
+        Order placed — thank you! You'll get an email as soon as it ships.
+      </div>
+    )}
+
+    {
+      !user ? (
+        <div class="signin-panel">
+          <h2>Sign in to view your orders</h2>
+          <p class="muted">Your order history is private to your account.</p>
+          {loginUrl ? (
+            <a class="btn" href={loginUrl}>Sign in</a>
+          ) : (
+            <p class="muted">Sign-in is available once this app is deployed on Base44.</p>
+          )}
+        </div>
+      ) : orders.length === 0 ? (
+        <div class="orders__empty">
+          <p class="orders__empty-title">No orders yet</p>
+          <p class="muted">When you place an order it'll show up here.</p>
+          <a class="btn" href="/">Start shopping</a>
+        </div>
+      ) : (
+        <ul class="orders__list">
+          {orders.map((o) => (
+            <li class="order-card">
+              <div class="order-card__head">
+                <div>
+                  <span class="order-card__id">Order #{String(o.id).slice(-8)}</span>
+                  {o.created_date && <span class="muted"> · {formatDate(o.created_date)}</span>}
+                </div>
+                <span class={`status status--${o.status}`}>{STATUS_LABEL[o.status] ?? o.status}</span>
+              </div>
+              <ul class="order-card__items">
+                {(o.items ?? []).map((it) => (
+                  <li>
+                    <span>{it.name} <span class="muted">× {it.qty}</span></span>
+                    <span>{formatPrice(it.unit_price * it.qty, o.currency)}</span>
+                  </li>
+                ))}
+              </ul>
+              <div class="order-card__foot">
+                <span class="muted">
+                  {o.shipping_address?.city
+                    ? `Shipping to ${o.shipping_address.city}`
+                    : o.customer_email}
+                </span>
+                <strong>{formatPrice(o.total, o.currency)}</strong>
+              </div>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+  </section>
+</Layout>
+
+<style>
+  .orders__title {
+    font-size: clamp(1.8rem, 4vw, 2.4rem);
+    margin: 0 0 24px;
+  }
+  .orders__flash {
+    background: rgba(63, 95, 82, 0.12);
+    border: 1px solid rgba(63, 95, 82, 0.35);
+    color: #2c463b;
+    border-radius: 12px;
+    padding: 14px 18px;
+    margin-bottom: 24px;
+    font-weight: 500;
+  }
+  .signin-panel,
+  .orders__empty {
+    max-width: 520px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 32px;
+  }
+  .orders__empty {
+    text-align: center;
+  }
+  .orders__empty-title {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    margin: 0 0 6px;
+  }
+  .signin-panel .btn,
+  .orders__empty .btn {
+    margin-top: 18px;
+  }
+  .orders__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 18px;
+  }
+  .order-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 20px 22px;
+  }
+  .order-card__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .order-card__id {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 1.05rem;
+  }
+  .order-card__items {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 14px;
+    display: grid;
+    gap: 6px;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    padding: 12px 0;
+  }
+  .order-card__items li {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.94rem;
+  }
+  .order-card__foot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .status {
+    font-size: 0.74rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: var(--surface-2);
+    color: var(--ink-soft);
+  }
+  .status--paid,
+  .status--shipped {
+    background: rgba(63, 95, 82, 0.15);
+    color: #2c463b;
+  }
+  .status--delivered {
+    background: rgba(63, 95, 82, 0.28);
+    color: #22382e;
+  }
+  .status--cancelled {
+    background: rgba(181, 71, 31, 0.14);
+    color: var(--accent-ink);
+  }
+</style>

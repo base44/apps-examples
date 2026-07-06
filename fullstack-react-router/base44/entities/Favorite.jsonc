@@ -1,0 +1,30 @@
+{
+  "name": "Favorite",
+  "type": "object",
+  "title": "Favorite",
+  "description": "A property a signed-in user has saved. Strictly private to that user.",
+  "properties": {
+    "property_id": {
+      "type": "string",
+      "description": "ID of the saved Property"
+    },
+    "user_email": {
+      "type": "string",
+      "format": "email",
+      "description": "Owner of the favorite. Must equal the current user's email under RLS."
+    }
+  },
+  "required": ["property_id", "user_email"],
+
+  // Row-level security.
+  // Docs: https://docs.base44.com/developers/backend/resources/entities/security
+  // Every operation is scoped to the owner: a user can only ever read or write
+  // favorites where user_email matches their own login email. There is no
+  // public or admin escape hatch — favorites are personal.
+  "rls": {
+    "create": { "data.user_email": "{{user.email}}" },
+    "read": { "data.user_email": "{{user.email}}" },
+    "update": { "data.user_email": "{{user.email}}" },
+    "delete": { "data.user_email": "{{user.email}}" }
+  }
+}

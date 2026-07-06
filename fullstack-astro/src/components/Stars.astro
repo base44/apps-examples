@@ -1,0 +1,58 @@
+---
+// Accessible star-rating display. `value` is 0-5 (supports halves visually by
+// rounding to the nearest half). `count` optionally renders "(N)" alongside.
+interface Props {
+  value: number;
+  count?: number | null;
+  size?: number;
+}
+const { value, count = null, size = 16 } = Astro.props;
+const rounded = Math.round(value * 2) / 2;
+const label =
+  value > 0
+    ? `Rated ${rounded} out of 5${count ? ` from ${count} reviews` : ""}`
+    : "No ratings yet";
+const stars = [1, 2, 3, 4, 5].map((i) => (rounded >= i ? "full" : rounded >= i - 0.5 ? "half" : "empty"));
+---
+
+<span class="stars" role="img" aria-label={label} style={`--star-size:${size}px`}>
+  {
+    stars.map((s) => (
+      <svg viewBox="0 0 20 20" aria-hidden="true" class={`star star--${s}`}>
+        <defs>
+          <linearGradient id={`half-${s}`}>
+            <stop offset="50%" stop-color="currentColor" />
+            <stop offset="50%" stop-color="transparent" />
+          </linearGradient>
+        </defs>
+        <path
+          d="M10 1.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L10 15.9l-5.2 2.7 1-5.8L1.5 7.7l5.9-.9L10 1.5Z"
+          fill={s === "full" ? "currentColor" : s === "half" ? `url(#half-${s})` : "none"}
+          stroke="currentColor"
+          stroke-width="1"
+        />
+      </svg>
+    ))
+  }
+  {count !== null && <span class="stars__count">({count})</span>}
+</span>
+
+<style>
+  .stars {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    color: #d9932f;
+    line-height: 0;
+  }
+  .star {
+    width: var(--star-size);
+    height: var(--star-size);
+  }
+  .stars__count {
+    margin-left: 6px;
+    font-size: 0.82rem;
+    color: var(--ink-soft, #7a6f67);
+    line-height: 1;
+  }
+</style>

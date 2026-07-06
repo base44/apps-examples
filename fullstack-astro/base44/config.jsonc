@@ -1,0 +1,16 @@
+// Base44 Project Configuration
+// JSONC enables inline documentation and discoverability directly in config files.
+
+{
+  "name": "Meridian",
+  "description": "Meridian - a small-batch coffee roaster storefront, server-rendered with Astro 6 and hosted on Base44 full-stack hosting.",
+
+  // Site/hosting configuration
+  // Docs: https://docs.base44.com/configuration/hosting
+  "site": {
+    "installCommand": "npm install",
+    "buildCommand": "npm run build",
+    "serveCommand": "npm run dev",
+    "outputDirectory": "./dist"
+  }
+}

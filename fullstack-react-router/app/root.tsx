@@ -1,0 +1,96 @@
+import type { Route } from "./+types/root";
+import {
+  Links,
+  Meta,
+  Outlet,
+  Scripts,
+  ScrollRestoration,
+  isRouteErrorResponse,
+} from "react-router";
+import "./lib/load-context";
+import appCss from "./app.css?url";
+import { Header } from "./components/Header";
+import { Footer } from "./components/Footer";
+import { FavoritesProvider } from "./lib/favorites-context";
+
+export const links: Route.LinksFunction = () => [
+  { rel: "preconnect", href: "https://images.unsplash.com" },
+  { rel: "stylesheet", href: appCss },
+];
+
+// Non–user-specific config only (safe to appear in edge-cached HTML). The
+// browser SDK reads the app ID from the injected <meta> tags.
+export function loader({ context }: Route.LoaderArgs) {
+  const env = context.cloudflare.env;
+  return { appId: env.BASE44_APP_ID ?? "", apiUrl: env.BASE44_API_URL ?? "" };
+}
+
+// The app ID / API URL are emitted as <meta> tags here (rendered into <head>
+// by <Meta/>) — CSP-safe, no inline script — so the browser SDK can read them.
+export const meta: Route.MetaFunction = ({ data }) => {
+  const tags: Array<Record<string, string>> = [
+    { title: "Base44 Estates — Homes for sale" },
+    {
+      name: "description",
+      content:
+        "Browse curated homes for sale across San Francisco, Los Angeles, New York, Miami, and Austin. Server-rendered on Base44.",
+    },
+  ];
+  if (data?.appId) tags.push({ name: "base44:app-id", content: data.appId });
+  if (data?.apiUrl) tags.push({ name: "base44:api-url", content: data.apiUrl });
+  return tags;
+};
+
+const FAVICON =
+  "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2314181f'/%3E%3Cpath d='M16 7l8 7h-2v10h-4v-6h-4v6H10V14H8z' fill='%23b3852f'/%3E%3C/svg%3E";
+
+export function Layout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en">
+      <head>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href={FAVICON} />
+        <Meta />
+        <Links />
+      </head>
+      <body>
+        {children}
+        <ScrollRestoration />
+        <Scripts />
+      </body>
+    </html>
+  );
+}
+
+export default function App() {
+  return (
+    <FavoritesProvider>
+      <Header />
+      <Outlet />
+      <Footer />
+    </FavoritesProvider>
+  );
+}
+
+export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
+  const is404 = isRouteErrorResponse(error) && error.status === 404;
+  return (
+    <main className="container" style={{ padding: "96px 0", maxWidth: 640 }}>
+      <p className="eyebrow">{is404 ? "404" : "Something went wrong"}</p>
+      <h1 style={{ fontSize: 40, marginTop: 8 }}>
+        {is404 ? "We couldn't find that page" : "An unexpected error occurred"}
+      </h1>
+      <p className="muted" style={{ marginTop: 12 }}>
+        {is404
+          ? "The listing may have sold or the link may be out of date."
+          : "Please try again in a moment."}
+      </p>
+      <p style={{ marginTop: 24 }}>
+        <a className="btn btn-primary" href="/">
+          Back to home
+        </a>
+      </p>
+    </main>
+  );
+}

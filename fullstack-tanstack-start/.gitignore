@@ -1,0 +1,26 @@
+# Dependencies
+node_modules
+
+# Build
+build
+dist
+.wrangler
+.tanstack
+.nitro
+.output
+src/routeTree.gen.ts
+
+# Environment
+.env
+.env.*
+*.local
+.dev.vars
+
+# Editor
+.vscode
+.idea
+.DS_Store
+*.swp
+
+# Base44 App Config
+base44/.app.*

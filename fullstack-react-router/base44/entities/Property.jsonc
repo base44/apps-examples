@@ -1,0 +1,106 @@
+{
+  "name": "Property",
+  "type": "object",
+  "title": "Property",
+  "description": "A real-estate listing. Publicly browsable; only the listing agent (or an admin) can create, edit, or remove it.",
+  "properties": {
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160,
+      "description": "Headline for the listing, e.g. 'Sunlit Craftsman with Bay Views'"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 4000,
+      "description": "Full marketing description shown on the detail page"
+      // "format": "richtext",  // enable the rich-text editor in the Base44 dashboard
+    },
+    "price": {
+      "type": "number",
+      "minimum": 0,
+      "description": "Asking price in USD"
+    },
+    "address": {
+      "type": "string",
+      "description": "Street address"
+    },
+    "city": {
+      "type": "string",
+      "description": "City (used by the /listings filters)"
+    },
+    "bedrooms": {
+      "type": "integer",
+      "minimum": 0,
+      "default": 0
+    },
+    "bathrooms": {
+      "type": "number",
+      "minimum": 0,
+      "default": 0
+    },
+    "sqft": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Interior area in square feet"
+    },
+    "property_type": {
+      "type": "string",
+      "enum": ["house", "apartment", "condo", "land"],
+      "default": "house"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["for_sale", "sold", "pending"],
+      "default": "for_sale"
+    },
+    "images": {
+      "type": "array",
+      "description": "Gallery images. First image is used as the card cover.",
+      "items": {
+        "type": "object",
+        "properties": {
+          "url": { "type": "string", "format": "uri" }
+        }
+      }
+    },
+    "featured": {
+      "type": "boolean",
+      "default": false,
+      "description": "Featured listings are surfaced on the home page"
+    },
+    "agent_email": {
+      "type": "string",
+      "format": "email",
+      "description": "The listing agent. Under RLS this must equal your login email (unless you are an admin)."
+    }
+  },
+  "required": ["title", "price", "address", "city", "agent_email"],
+
+  // Row-level security.
+  // Docs: https://docs.base44.com/developers/backend/resources/entities/security
+  // Public catalog: anyone (even anonymous visitors) can read listings.
+  // Writes are restricted to the listing agent OR an admin. `{{user.email}}`
+  // only resolves for a logged-in user, so anonymous writes fail these checks.
+  "rls": {
+    "create": {
+      "$or": [
+        { "data.agent_email": "{{user.email}}" },
+        { "user_condition": { "role": "admin" } }
+      ]
+    },
+    "read": true,
+    "update": {
+      "$or": [
+        { "data.agent_email": "{{user.email}}" },
+        { "user_condition": { "role": "admin" } }
+      ]
+    },
+    "delete": {
+      "$or": [
+        { "data.agent_email": "{{user.email}}" },
+        { "user_condition": { "role": "admin" } }
+      ]
+    }
+  }
+}

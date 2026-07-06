@@ -1,0 +1,184 @@
+---
+import type { Category } from "../lib/types";
+
+interface Props {
+  categories: Category[];
+  loginUrl: string | null;
+  currentPath: string;
+}
+
+const { categories, loginUrl, currentPath } = Astro.props;
+// The header is intentionally rendered the SAME for every visitor so catalog
+// pages stay edge-cacheable. The signed-in name / sign-out control below is
+// hidden by default and revealed on the client by ui.ts (via /api/me).
+const signInHref = loginUrl ?? "/account/orders";
+---
+
+<header class="site-header">
+  <div class="wrap site-header__inner">
+    <a class="brand" href="/">
+      <span class="brand__mark" aria-hidden="true">◐</span>
+      <span class="brand__name">Meridian</span>
+    </a>
+
+    <nav class="nav" aria-label="Categories">
+      {
+        categories.map((c) => (
+          <a
+            href={`/category/${c.slug}`}
+            class:list={["nav__link", { "is-active": currentPath.startsWith(`/category/${c.slug}`) }]}
+          >
+            {c.name}
+          </a>
+        ))
+      }
+    </nav>
+
+    <div class="site-header__actions">
+      <span class="account" data-account>
+        <a class="account__link" data-account-out href={signInHref}>Sign in</a>
+        <span class="account__in" data-account-in hidden>
+          <a class="account__link" href="/account/orders" data-account-name>Account</a>
+          <button class="account__logout" type="button" data-logout>Sign out</button>
+        </span>
+      </span>
+
+      <a class="cart-link" href="/cart" aria-label="View cart">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" aria-hidden="true">
+          <path d="M4 5h2l1.6 10.2a1.5 1.5 0 0 0 1.5 1.3h7.8a1.5 1.5 0 0 0 1.5-1.2L20.5 8H7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+          <circle cx="10" cy="20" r="1.3" fill="currentColor" />
+          <circle cx="18" cy="20" r="1.3" fill="currentColor" />
+        </svg>
+        <span class="cart-link__count" data-cart-count hidden>0</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(250, 247, 242, 0.86);
+    backdrop-filter: saturate(1.4) blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .site-header__inner {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    height: 64px;
+  }
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    color: var(--ink);
+  }
+  .brand__mark {
+    font-size: 1.4rem;
+    color: var(--accent);
+  }
+  .brand__name {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+  .nav {
+    display: flex;
+    gap: 20px;
+    margin-left: 8px;
+    flex: 1;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .nav::-webkit-scrollbar {
+    display: none;
+  }
+  .nav__link {
+    white-space: nowrap;
+    text-decoration: none;
+    color: var(--ink-soft);
+    font-size: 0.92rem;
+    font-weight: 500;
+    padding: 4px 0;
+    border-bottom: 2px solid transparent;
+  }
+  .nav__link:hover {
+    color: var(--ink);
+  }
+  .nav__link.is-active {
+    color: var(--ink);
+    border-bottom-color: var(--accent);
+  }
+  .site-header__actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-left: auto;
+  }
+  .account {
+    font-size: 0.9rem;
+  }
+  .account__link {
+    color: var(--ink);
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .account__link:hover {
+    color: var(--accent);
+  }
+  .account__in {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .account__logout {
+    border: 0;
+    background: none;
+    color: var(--ink-soft);
+    cursor: pointer;
+    font: inherit;
+    padding: 0;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .account__logout:hover {
+    color: var(--accent);
+  }
+  .cart-link {
+    position: relative;
+    display: inline-flex;
+    color: var(--ink);
+  }
+  .cart-link:hover {
+    color: var(--accent);
+  }
+  .cart-link__count {
+    position: absolute;
+    top: -8px;
+    right: -10px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 4px;
+    border-radius: 999px;
+    background: var(--accent);
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    display: grid;
+    place-items: center;
+    line-height: 1;
+  }
+  @media (max-width: 640px) {
+    .brand__name {
+      display: none;
+    }
+    .nav {
+      gap: 14px;
+    }
+  }
+</style>

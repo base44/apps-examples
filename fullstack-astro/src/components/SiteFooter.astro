@@ -1,0 +1,103 @@
+---
+import type { Category } from "../lib/types";
+interface Props {
+  categories: Category[];
+}
+const { categories } = Astro.props;
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="wrap site-footer__inner">
+    <div class="site-footer__brand">
+      <span class="brand__mark" aria-hidden="true">◐</span>
+      <p class="site-footer__name">Meridian</p>
+      <p class="site-footer__tag">Small-batch coffee, roasted to order and shipped within 24 hours.</p>
+    </div>
+    <nav class="site-footer__col" aria-label="Shop">
+      <h4>Shop</h4>
+      {categories.map((c) => <a href={`/category/${c.slug}`}>{c.name}</a>)}
+    </nav>
+    <nav class="site-footer__col" aria-label="Account">
+      <h4>Account</h4>
+      <a href="/cart">Cart</a>
+      <a href="/account/orders">Order history</a>
+    </nav>
+    <div class="site-footer__col">
+      <h4>Built on Base44</h4>
+      <p class="site-footer__note">
+        Server-rendered with Astro 6 on Cloudflare Workers. Catalog pages are
+        edge-cached; your cart and orders never are.
+      </p>
+    </div>
+  </div>
+  <div class="wrap site-footer__legal">
+    <span>&copy; {year} Meridian Coffee Roasters — a Base44 full-stack example.</span>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: 72px;
+    background: var(--ink);
+    color: #e9e1d7;
+  }
+  .site-footer__inner {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr 1fr 1.4fr;
+    gap: 32px;
+    padding-top: 48px;
+    padding-bottom: 32px;
+  }
+  .site-footer .brand__mark {
+    font-size: 1.5rem;
+    color: var(--accent);
+  }
+  .site-footer__name {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 8px 0 6px;
+    color: #fff;
+  }
+  .site-footer__tag,
+  .site-footer__note {
+    color: #b6ada1;
+    font-size: 0.9rem;
+    line-height: 1.55;
+    margin: 0;
+    max-width: 30ch;
+  }
+  .site-footer__col {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .site-footer__col h4 {
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #8f857a;
+    margin: 0 0 4px;
+  }
+  .site-footer__col a {
+    color: #e9e1d7;
+    text-decoration: none;
+    font-size: 0.92rem;
+  }
+  .site-footer__col a:hover {
+    color: var(--accent);
+  }
+  .site-footer__legal {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 20px;
+    padding-bottom: 28px;
+    font-size: 0.82rem;
+    color: #8f857a;
+  }
+  @media (max-width: 720px) {
+    .site-footer__inner {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,69 @@
+{
+  "name": "Inquiry",
+  "type": "object",
+  "title": "Inquiry",
+  "description": "A message a visitor sends about a property. Private to the property's listing agent.",
+  "properties": {
+    "property_id": {
+      "type": "string",
+      "description": "ID of the Property this inquiry is about"
+    },
+    "property_title": {
+      "type": "string",
+      "description": "Denormalized property title so the agent's inbox reads well without a second lookup"
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Visitor's name"
+    },
+    "email": {
+      "type": "string",
+      "format": "email",
+      "description": "Visitor's email for the reply"
+    },
+    "phone": {
+      "type": "string",
+      "description": "Optional phone number"
+    },
+    "message": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 2000
+    },
+    "status": {
+      "type": "string",
+      "enum": ["new", "contacted", "closed"],
+      "default": "new"
+    },
+    "agent_email": {
+      "type": "string",
+      "format": "email",
+      "description": "The listing agent, copied from the Property at creation time. Base44 RLS cannot follow cross-entity relations, so we denormalize it here to scope reads/updates to that agent."
+    }
+  },
+  "required": ["property_id", "name", "email", "message", "agent_email"],
+
+  // Row-level security.
+  // Docs: https://docs.base44.com/developers/backend/resources/entities/security
+  // `create: true` lets any visitor (anonymous included) send an inquiry.
+  // read/update are locked to the listing agent (matched via the denormalized
+  // agent_email) or an admin — so one visitor can NEVER read another visitor's
+  // inquiry. This is the entity that demonstrates RLS protecting private data.
+  "rls": {
+    "create": true,
+    "read": {
+      "$or": [
+        { "data.agent_email": "{{user.email}}" },
+        { "user_condition": { "role": "admin" } }
+      ]
+    },
+    "update": {
+      "$or": [
+        { "data.agent_email": "{{user.email}}" },
+        { "user_condition": { "role": "admin" } }
+      ]
+    },
+    "delete": { "user_condition": { "role": "admin" } }
+  }
+}

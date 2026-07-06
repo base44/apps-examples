@@ -1,0 +1,18 @@
+{
+  "name": "fullstack-astro",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "astro build",
+    "dev": "astro dev"
+  },
+  "dependencies": {
+    "@astrojs/cloudflare": "^13.0.0",
+    "@base44/sdk": "npm:@base44-preview/sdk@0.8.35-pr.221.5933e35",
+    "astro": "^6.0.0"
+  },
+  "devDependencies": {
+    "base44": "npm:@base44-preview/cli@0.1.1-pr.559.0316796",
+    "wrangler": "^4.0.0"
+  }
+}

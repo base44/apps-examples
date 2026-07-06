@@ -1,0 +1,192 @@
+---
+import Layout from "../components/Layout.astro";
+import { getServerClient, getUser, loginUrlFor } from "../lib/base44";
+import { setPrivateCache } from "../lib/cache";
+
+// PERSONALISED PAGE — never edge-cached.
+// Checkout depends on who is signed in (and writes an Order tied to them), so
+// we render per-user and send `private, no-store`.
+setPrivateCache(Astro);
+
+const base44 = getServerClient(Astro);
+const user = await getUser(base44);
+const loginUrl = loginUrlFor(Astro, Astro.url.href);
+---
+
+<Layout title="Checkout — Meridian">
+  <section class="wrap section">
+    <h1 class="checkout__title">Checkout</h1>
+
+    {
+      !user ? (
+        <div class="signin-panel">
+          <h2>Please sign in to check out</h2>
+          <p class="muted">
+            You'll need an account so we can send order updates and let you track
+            your delivery. Your cart is saved.
+          </p>
+          {loginUrl ? (
+            <a class="btn" href={loginUrl}>Sign in to continue</a>
+          ) : (
+            <p class="muted">Sign-in is available once this app is deployed on Base44.</p>
+          )}
+        </div>
+      ) : (
+        <div class="checkout__grid">
+          <form class="checkout__form" data-checkout-form>
+            <h2>Shipping details</h2>
+            <div class="field">
+              <label for="co-name">Full name</label>
+              <input id="co-name" name="name" value={user.full_name ?? ""} required />
+            </div>
+            <div class="field">
+              <label for="co-email">Email</label>
+              <input id="co-email" name="email" type="email" value={user.email ?? ""} required />
+            </div>
+            <div class="field">
+              <label for="co-line1">Address</label>
+              <input id="co-line1" name="line1" placeholder="Street address" required />
+            </div>
+            <div class="field">
+              <label for="co-line2">Apartment, suite (optional)</label>
+              <input id="co-line2" name="line2" />
+            </div>
+            <div class="checkout__row">
+              <div class="field">
+                <label for="co-city">City</label>
+                <input id="co-city" name="city" required />
+              </div>
+              <div class="field">
+                <label for="co-region">State / Region</label>
+                <input id="co-region" name="region" />
+              </div>
+            </div>
+            <div class="checkout__row">
+              <div class="field">
+                <label for="co-postal">Postal code</label>
+                <input id="co-postal" name="postal_code" required />
+              </div>
+              <div class="field">
+                <label for="co-country">Country</label>
+                <input id="co-country" name="country" value="United States" required />
+              </div>
+            </div>
+            <button class="btn btn--block" type="submit">Place order</button>
+            <p class="checkout__msg" data-checkout-msg hidden></p>
+            <p class="muted checkout__demo">
+              This is an example storefront — no payment is taken. Placing the
+              order writes a real <code>Order</code> record scoped to your account.
+            </p>
+          </form>
+
+          <aside class="checkout__summary">
+            <h2>Order summary</h2>
+            <div data-checkout-summary>
+              <p class="muted">Loading your cart…</p>
+            </div>
+          </aside>
+        </div>
+      )
+    }
+  </section>
+</Layout>
+
+<script>
+  import { placeOrder } from "../lib/actions";
+  import { mountCheckoutSummary } from "../lib/cart-view";
+  placeOrder();
+  mountCheckoutSummary();
+</script>
+
+<style>
+  .checkout__title {
+    font-size: clamp(1.8rem, 4vw, 2.4rem);
+    margin: 0 0 28px;
+  }
+  .signin-panel {
+    max-width: 520px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 32px;
+  }
+  .signin-panel h2 {
+    margin: 0 0 10px;
+  }
+  .signin-panel .btn {
+    margin-top: 18px;
+  }
+  .checkout__grid {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 36px;
+    align-items: start;
+  }
+  .checkout__form {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 28px;
+  }
+  .checkout__form h2 {
+    margin: 0 0 18px;
+    font-size: 1.2rem;
+  }
+  .checkout__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .checkout__form .btn {
+    margin-top: 8px;
+  }
+  .checkout__msg {
+    margin: 12px 0 0;
+    font-size: 0.9rem;
+  }
+  .checkout__msg.is-error {
+    color: var(--accent-ink);
+  }
+  .checkout__msg.is-ok {
+    color: var(--accent-teal);
+  }
+  .checkout__demo {
+    font-size: 0.82rem;
+    margin: 14px 0 0;
+  }
+  .checkout__summary {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 24px;
+    position: sticky;
+    top: 84px;
+  }
+  .checkout__summary h2 {
+    margin: 0 0 16px;
+    font-size: 1.2rem;
+  }
+  :global(.co-line) {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 0.95rem;
+  }
+  :global(.co-line--total) {
+    border-bottom: 0;
+    margin-top: 8px;
+    font-size: 1.05rem;
+  }
+  @media (max-width: 760px) {
+    .checkout__grid {
+      grid-template-columns: 1fr;
+    }
+    .checkout__summary {
+      position: static;
+    }
+    .checkout__row {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

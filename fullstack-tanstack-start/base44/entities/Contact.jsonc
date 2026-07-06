@@ -1,0 +1,79 @@
+// Contact — a person in the CRM (lead, prospect, or customer).
+//
+// Row-Level Security (RLS) is the whole point of this example: this is a TEAM
+// CRM, so a sales rep sees ONLY the contacts they own, while a manager/admin
+// sees the entire team's book of business.
+//
+// - `read`/`update`/`delete`: the record's owner (data.owner_email == the
+//   caller's email) OR a user whose role is `admin` or `manager`.
+// - `create`: any authenticated user (the client always stamps owner_email
+//   with the logged-in rep's address).
+//
+// `owner_email` is a custom data field, so it is referenced as
+// `data.owner_email`. `{{user.email}}` is substituted with the caller's email
+// at request time. Docs: https://docs.base44.com/developers/backend/resources/entities/security
+{
+  "name": "Contact",
+  "type": "object",
+  "title": "Contact",
+  "description": "A person in the sales CRM: a lead, prospect, or customer.",
+  "properties": {
+    "name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 120,
+      "description": "Full name of the contact"
+    },
+    "email": {
+      "type": "string",
+      "format": "email",
+      "description": "Contact's email address"
+    },
+    "company": {
+      "type": "string",
+      "maxLength": 160,
+      "description": "Company the contact works for"
+    },
+    "phone": {
+      "type": "string",
+      "maxLength": 40,
+      "description": "Phone number"
+    },
+    "title": {
+      "type": "string",
+      "maxLength": 120,
+      "description": "Job title / role at their company"
+    },
+    "owner_email": {
+      "type": "string",
+      "format": "email",
+      "description": "Sales rep who owns this contact. Drives row-level security."
+    }
+  },
+  "required": ["name", "owner_email"],
+
+  "rls": {
+    "create": true,
+    "read": {
+      "$or": [
+        { "data.owner_email": "{{user.email}}" },
+        { "user_condition": { "role": "admin" } },
+        { "user_condition": { "role": "manager" } }
+      ]
+    },
+    "update": {
+      "$or": [
+        { "data.owner_email": "{{user.email}}" },
+        { "user_condition": { "role": "admin" } },
+        { "user_condition": { "role": "manager" } }
+      ]
+    },
+    "delete": {
+      "$or": [
+        { "data.owner_email": "{{user.email}}" },
+        { "user_condition": { "role": "admin" } },
+        { "user_condition": { "role": "manager" } }
+      ]
+    }
+  }
+}
