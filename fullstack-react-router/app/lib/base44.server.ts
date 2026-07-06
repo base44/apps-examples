@@ -1,4 +1,4 @@
-import { createServerClient, getLoginUrl } from "@base44/sdk";
+import { createServerClient } from "@base44/sdk";
 import type { AppLoadContext } from "react-router";
 import type { SessionUser } from "./types";
 
@@ -30,11 +30,10 @@ export async function getCurrentUser(
     .catch(() => null);
 }
 
-// Absolute URL of the hosted Base44 login page, returning to `nextUrl` after
-// sign-in. Used by private loaders to redirect anonymous visitors.
-export function loginUrl(context: AppLoadContext, nextUrl: string): string {
-  const env = context.cloudflare.env;
-  const appId = env.BASE44_APP_ID ?? "";
-  const serverUrl = env.BASE44_API_URL ?? "https://base44.app";
-  return getLoginUrl(nextUrl, { serverUrl, appId });
+// The app-owned login page (app/routes/login.tsx), returning to `nextUrl`
+// after sign-in. Used by private loaders to redirect anonymous visitors.
+// Base44 reserves only /api/apps/* and /ws-user-apps/* on the app's domain —
+// /login (like every other path) belongs to this app.
+export function loginUrl(nextUrl: string): string {
+  return `/login?from_url=${encodeURIComponent(nextUrl)}`;
 }

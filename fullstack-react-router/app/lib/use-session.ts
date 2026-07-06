@@ -31,10 +31,15 @@ export function useSession(): SessionState {
   return state;
 }
 
+// Navigate to the app's OWN /login page (app/routes/login.tsx), remembering
+// where the visitor was so we can send them back after sign-in.
 export function login(nextUrl?: string) {
   const target =
-    nextUrl ?? (typeof window !== "undefined" ? window.location.href : "/");
-  getBrowserClient().auth.redirectToLogin(target);
+    nextUrl ??
+    (typeof window !== "undefined"
+      ? window.location.pathname + window.location.search
+      : "/");
+  window.location.assign(`/login?from_url=${encodeURIComponent(target)}`);
 }
 
 export function logout() {

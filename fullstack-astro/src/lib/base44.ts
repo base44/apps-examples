@@ -12,7 +12,7 @@
 // We read it defensively so the same code also runs under plain Node.
 
 import { env as workerEnv } from "cloudflare:workers";
-import { createServerClient, getLoginUrl } from "@base44/sdk";
+import { createServerClient } from "@base44/sdk";
 import type { Base44Client } from "@base44/sdk";
 
 type RuntimeEnv = Record<string, string | undefined>;
@@ -57,18 +57,18 @@ export function resolveAppId(astro: AstroLike): string | null {
 }
 
 /**
- * Build the hosted-login URL that returns the visitor to `nextUrl` after
- * sign-in. Returns `null` when there is no app id (local dev), in which case
- * the UI hides the sign-in affordance. The URL is identical for every visitor
- * of a given page, so it's safe to render on cached pages.
+ * Build the URL of the app's OWN login page (`src/pages/login.astro`),
+ * returning the visitor to `nextUrl` after sign-in. The app owns `/login`
+ * (and every path outside the platform-reserved `/api/apps/*` and
+ * `/ws-user-apps/*`), so this is a plain same-origin link. Returns `null`
+ * when there is no app id (plain local dev with no backend), in which case
+ * the UI hides the sign-in affordance. The URL is identical for every
+ * visitor of a given page, so it's safe to render on cached pages.
  */
 export function loginUrlFor(astro: AstroLike, nextUrl: string): string | null {
-  const appId = resolveAppId(astro);
-  if (!appId) return null;
-  return getLoginUrl(nextUrl, {
-    serverUrl: runtimeEnv()?.BASE44_API_URL ?? "https://base44.app",
-    appId,
-  });
+  if (!resolveAppId(astro)) return null;
+  const next = new URL(nextUrl, astro.url);
+  return `/login?from=${encodeURIComponent(next.pathname + next.search)}`;
 }
 
 /** Get the current user, or `null` if logged out / no backend. Never throws. */

@@ -42,7 +42,8 @@ shopper check out — scoped via `tool_configs`.
 | `/cart` | Cart (client-side, localStorage) | `private, no-store` |
 | `/checkout` | Auth-gated checkout; writes an Order | `private, no-store` |
 | `/account/orders` | The signed-in shopper's order history | `private, no-store` |
-| `/api/me`, `/api/reviews`, `/api/orders` | JSON endpoints (server SDK) | `private, no-store` |
+| `/login` | **App-owned auth page** — email/password sign-in and sign-up (OTP verification) + Google OAuth | `private, no-store` |
+| `/api/me`, `/api/reviews`, `/api/orders`, `/api/auth/*` | JSON endpoints (server SDK) | `private, no-store` |
 
 ## The caching model (the fast part)
 
@@ -80,8 +81,17 @@ cached HTML never contains per-user content. See `src/lib/cache.ts`.
 - **Writes** (create Review / Order) go through same-origin API routes
   (`src/pages/api/*`) that run a server-side client authenticated from the
   cookie, so RLS is enforced with the real user identity.
-- **Auth**: sign-in links to the Base44 hosted login; `AuthBootstrap.astro`
-  completes the redirect by mirroring the returned token into the cookie.
+- **Auth**: the app owns its `/login` page (`src/pages/login.astro`) — sign-in
+  **and** sign-up (with OTP email verification) post to same-origin
+  `/api/auth/*` routes that call the SDK server-side and set the session
+  cookie. On the deployed domain the platform reserves only `/api/apps/*` and
+  `/ws-user-apps/*`; every other path, including `/login`, belongs to the app.
+  Base44's hosted login page is used only by the edge gate in front of
+  fully-private apps. Google OAuth (a redirect through `/api/apps/auth/login`,
+  completed by `AuthBootstrap.astro` mirroring the returned token into the
+  cookie) may fail on a newly added custom base domain until the OAuth gateway
+  allowlists it — platform configuration, not app code; email/password works
+  regardless.
 
 ## Develop & deploy
 

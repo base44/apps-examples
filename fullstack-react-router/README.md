@@ -4,7 +4,7 @@ A real-estate agency website, server-rendered with [React Router 7](https://reac
 
 - **SSR + edge caching** — public pages fetch data server-side in loaders and set `Cache-Control` so the Base44 dispatcher edge-caches the rendered HTML. Repeat visits are instant.
 - **Entities with row-level security (RLS)** — `Property`, `Inquiry`, and `Favorite`, each with real access rules enforced by the backend.
-- **Auth** — login/logout via the Base44 SDK, private per-user pages, and a hosted-login redirect for anonymous visitors.
+- **Auth** — an app-owned `/login` page (email/password sign-in **and** sign-up, plus Google OAuth) built on the Base44 SDK, with private per-user pages that redirect anonymous visitors to it.
 - **Server-only data access** — the SDK talks to Base44 from inside the Worker (loaders/actions). No service token ever reaches the browser bundle.
 - **An AI agent** — an "Estate Assistant" concierge defined in config.
 
@@ -64,11 +64,14 @@ Every operation is scoped to the owner — no public or admin escape hatch.
 | `/` | SSR | `public, max-age=60, s-maxage=60` | Hero + featured/latest grids, read server-side in the loader. Edge-cacheable. |
 | `/listings` | SSR | `public, max-age=60, s-maxage=60` | Filter by city, type, bedrooms, price, status (GET form → shareable URLs). Each query is edge-cached. |
 | `/property/:id` | SSR | `public, max-age=60, s-maxage=60` | **Dynamic** detail page. Gallery, stats, "save to favorites", and an inquiry `<Form>` that POSTs to the route `action` (POST is never cached). |
-| `/favorites` | SSR | `no-store` | **Private.** Loader reads the user via the request cookie; redirects anonymous visitors to hosted login. Shows only the user's own saved homes (RLS). |
+| `/login` | SSR | `no-store` | **App-owned auth page.** Email/password sign-in and sign-up (with OTP email verification) plus Google OAuth, all via the Base44 SDK. Honors `?from_url=` to return visitors where they started. |
+| `/favorites` | SSR | `no-store` | **Private.** Loader reads the user via the request cookie; redirects anonymous visitors to `/login`. Shows only the user's own saved homes (RLS). |
 | `/agent` | SSR | `no-store` | **Private.** An agent's listings + inbound inquiries. RLS means an agent sees only their own leads. Inline status updates via a fetcher `action`. |
 | `/seed` | SSR | `no-store` | **Admin-only.** One click bulk-creates realistic sample listings so you can populate the app fast. |
 
 **Why the caching split matters:** the header renders auth state on the **client** only, so the SSR HTML that gets edge-cached is user-neutral — a cached public page never leaks one visitor's identity to another. Private pages opt out with `no-store`.
+
+**Auth is owned by the app.** On your deployed domain the platform reserves only `/api/apps/*` and `/ws-user-apps/*` — every other path, including `/login`, is served by this app. The `/login` route handles sign-in **and** sign-up itself through the Base44 SDK (`loginViaEmailPassword`, `register`, `verifyOtp`); Base44's hosted login page is used only by the edge gate in front of fully-private apps. Google OAuth on a newly added custom base domain may fail until the OAuth gateway allowlists it (platform configuration, not app code) — email/password works regardless.
 
 ---
 

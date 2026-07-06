@@ -16,7 +16,7 @@ export async function loader({ request, context }: Route.LoaderArgs) {
   const base44 = getServerClient(request, context);
   const user = await getCurrentUser(base44);
   if (!user) {
-    throw redirect(loginUrl(context, "/favorites"));
+    throw redirect(loginUrl("/favorites"));
   }
 
   const favorites = (await base44.entities.Favorite.list(

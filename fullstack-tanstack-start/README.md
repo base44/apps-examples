@@ -8,7 +8,8 @@ It's a real, opinionated showcase of the platform:
 
 - **Entities with per-owner Row-Level Security** — every rep sees only their own
   contacts, deals, and activities; a sales manager sees the whole team.
-- **Authentication** — email/password and Google OAuth via the Base44 SDK.
+- **Authentication** — an app-owned `/login` page with email/password sign-in
+  **and** sign-up (plus Google OAuth) via the Base44 SDK.
 - **Dynamic SSR dashboards** — pipeline KPIs are computed on the Worker with a
   server function, per logged-in user, on every request.
 - **A drag-and-drop kanban board** — moving a card writes the new stage straight
@@ -25,7 +26,7 @@ Everything requires login. Every server-fetched page is per-user and served
 | --- | --- |
 | **Server rendering / reads** | `createServerFn` handlers run only on the Worker. They build a request-scoped client with `createServerClient({ request, env })`, which reads the visitor's token from the `base44_access_token` cookie — so every read is executed *as that user* and RLS-scoped. See `src/lib/crm.ts` + `src/lib/server.ts`. |
 | **Client writes** | The kanban drag, the deal/contact forms, and the copilot use the **browser** SDK (`createClient({ appId })`, `src/lib/browser-client.ts`). The app id is resolved server-side and handed to the client through the root route context. |
-| **Auth** | `src/routes/login.tsx` (`loginViaEmailPassword` / `loginWithProvider`). The root route's `beforeLoad` resolves the session on the server; private routes redirect anonymous visitors to `/login`. |
+| **Auth** | `src/routes/login.tsx` (`loginViaEmailPassword` / `register` + `verifyOtp` / `loginWithProvider`). The root route's `beforeLoad` resolves the session on the server; private routes redirect anonymous visitors to `/login`. |
 | **No caching** | Each read server function calls `markPrivate()` → `setResponseHeader("Cache-Control", "no-store")`. |
 | **Worker safety** | `cloudflare:workers` is imported lazily *inside* server-fn handlers only, so it never leaks into the client bundle. |
 
@@ -80,7 +81,15 @@ All pages are **private** (login required) and served **`Cache-Control: no-store
 | `/deals` | `src/routes/deals.index.tsx` | **Kanban board** — columns per stage; drag a card to change its stage (client-side SDK write). Create deals from here. |
 | `/deals/$id` | `src/routes/deals.$id.tsx` | **Deal detail** — contact info, activity timeline, and an add-activity form. |
 | `/contacts` | `src/routes/contacts.tsx` | **Contacts** — list with create/edit. |
-| `/login` | `src/routes/login.tsx` | Email/password + Google OAuth. |
+| `/login` | `src/routes/login.tsx` | **App-owned auth page** — email/password sign-in and sign-up (with OTP email verification) + Google OAuth. |
+
+**Auth is owned by the app.** On your deployed domain the platform reserves only
+`/api/apps/*` and `/ws-user-apps/*` — every other path, including `/login`, is
+served by this app, which handles sign-in **and** sign-up itself through the
+Base44 SDK. Base44's hosted login page is used only by the edge gate in front of
+fully-private apps. Google OAuth on a newly added custom base domain may fail
+until the OAuth gateway allowlists it (platform configuration, not app code) —
+email/password works regardless.
 
 ## AI Sales Copilot
 

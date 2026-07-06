@@ -13,7 +13,7 @@ export async function loader({ request, context }: Route.LoaderArgs) {
   const base44 = getServerClient(request, context);
   const user = await getCurrentUser(base44);
   if (!user) {
-    throw redirect(loginUrl(context, "/agent"));
+    throw redirect(loginUrl("/agent"));
   }
 
   const [listings, inquiries] = await Promise.all([
@@ -50,7 +50,7 @@ export async function action({ request, context }: Route.ActionArgs) {
   const base44 = getServerClient(request, context);
   const user = await getCurrentUser(base44);
   if (!user) {
-    throw redirect(loginUrl(context, "/agent"));
+    throw redirect(loginUrl("/agent"));
   }
   const id = String(form.get("inquiry_id") ?? "");
   const status = String(form.get("status") ?? "new");

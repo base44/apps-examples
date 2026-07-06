@@ -229,6 +229,30 @@ table.data tr:last-child td { border-bottom: none; }
 .footer-note { color: #7f8894; font-size: 13px; }
 .footer-bottom { border-top: 1px solid #262c35; margin-top: 36px; padding-top: 20px; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; color: #7f8894; font-size: 13px; }
 
+/* ---------- Auth (app-owned /login) ---------- */
+.auth-wrap { display: grid; place-items: center; padding: 72px 24px 96px; }
+.auth-card {
+  width: 100%; max-width: 420px; background: var(--surface);
+  border: 1px solid var(--line); border-radius: var(--radius);
+  box-shadow: var(--shadow-md); padding: 36px 32px;
+}
+.auth-card h1 { font-size: 30px; margin-top: 8px; }
+.auth-sub { color: var(--muted); font-size: 14.5px; margin: 10px 0 22px; }
+.auth-card .field { margin-bottom: 16px; }
+.auth-card .notice { margin-bottom: 16px; }
+.auth-divider {
+  display: flex; align-items: center; gap: 12px; color: var(--muted);
+  font-size: 12px; text-transform: uppercase; letter-spacing: .08em; margin: 18px 0;
+}
+.auth-divider::before, .auth-divider::after { content: ""; height: 1px; background: var(--line); flex: 1; }
+.form-error { color: var(--red); font-size: 13.5px; margin: 0 0 14px; }
+.auth-switch { text-align: center; color: var(--muted); font-size: 14px; margin: 18px 0 0; }
+.link-btn {
+  background: none; border: 0; padding: 0; cursor: pointer; font: inherit;
+  color: var(--gold-strong); font-weight: 600;
+}
+.link-btn:hover { text-decoration: underline; }
+
 /* ---------- Utilities ---------- */
 .stack-lg > * + * { margin-top: 20px; }
 .muted { color: var(--muted); }

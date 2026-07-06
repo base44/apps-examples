@@ -1,9 +1,10 @@
 ---
-// Completes the hosted-login round trip. After a visitor signs in at
-// base44.app, they are redirected back here with `?access_token=...` in the
-// URL. This tiny, dependency-free script captures that token, mirrors it into
-// the `base44_access_token` cookie (so server-side `createServerClient` picks
-// up the session on the next request), stashes it in localStorage for the
+// Completes the OAuth round trip. After a visitor signs in with Google (via
+// the platform-reserved /api/apps/auth/* surface, linked from the app-owned
+// /login page), they are redirected back with `?access_token=...` in the URL.
+// This tiny, dependency-free script captures that token, mirrors it into the
+// `base44_access_token` cookie (so server-side `createServerClient` picks up
+// the session on the next request), stashes it in localStorage for the
 // browser, strips it from the URL, and reloads so the SSR view re-renders as
 // the signed-in user. Runs before anything else on every page.
 ---
