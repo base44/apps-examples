@@ -12,7 +12,7 @@
     "astro": "^6.0.0"
   },
   "devDependencies": {
-    "base44": "npm:@base44-preview/cli@0.1.1-pr.559.0316796",
+    "base44": "npm:@base44-preview/cli@0.1.1-pr.559.1712ae1",
     "wrangler": "^4.0.0"
   }
 }
