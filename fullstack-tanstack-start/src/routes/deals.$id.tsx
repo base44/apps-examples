@@ -18,7 +18,7 @@ export const Route = createFileRoute("/deals/$id")({
 function DealDetail() {
   const { deal, contact, activities: initial } = Route.useLoaderData();
   const { session } = Route.useRouteContext();
-  const appId = session.appId as string;
+  const base44 = session.base44!; // guaranteed: requireUser only passes with a live session
 
   const [activities, setActivities] = useState<Activity[]>(initial);
   const addActivity = (a: Activity) => setActivities((list) => [a, ...list]);
@@ -138,7 +138,7 @@ function DealDetail() {
           <div className="card card-pad">
             <div className="section-title">Log an activity</div>
             <AddActivityForm
-              appId={appId}
+              base44={base44}
               dealId={deal.id}
               contactId={deal.contact_id}
               onAdded={addActivity}

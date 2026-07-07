@@ -21,10 +21,8 @@ export async function loader({ request, context }: Route.LoaderArgs) {
       { agent_email: user.email },
       "-created_date",
       100,
-    ).catch(() => [] as Property[]),
-    base44.entities.Inquiry.list("-created_date", 200).catch(
-      () => [] as Inquiry[],
     ),
+    base44.entities.Inquiry.list("-created_date", 200),
   ]);
 
   return {

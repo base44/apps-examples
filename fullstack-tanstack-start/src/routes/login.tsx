@@ -33,7 +33,7 @@ type Mode = "signin" | "signup" | "verify";
 function LoginPage() {
   const { from } = Route.useSearch();
   const { session } = Route.useRouteContext();
-  const appId = session.appId;
+  const base44 = session.base44;
   const dest = safePath(from);
 
   const [mode, setMode] = useState<Mode>("signin");
@@ -52,8 +52,8 @@ function LoginPage() {
     if (token) window.location.assign(dest);
   }, [dest]);
 
-  function requireAppId(): boolean {
-    if (!appId) {
+  function requireConfig(): boolean {
+    if (!base44) {
       setError("This app isn't linked to Base44 yet. Deploy it first (see the README).");
       return false;
     }
@@ -67,16 +67,16 @@ function LoginPage() {
 
   async function signIn(e: React.FormEvent) {
     e.preventDefault();
-    if (!requireAppId()) return;
+    if (!requireConfig()) return;
     setBusy(true);
     setError(null);
     try {
-      await getBrowserClient(appId!).auth.loginViaEmailPassword(email, password);
+      await getBrowserClient(base44!).auth.loginViaEmailPassword(email, password);
       window.location.assign(dest); // fresh SSR load now carries the session cookie
     } catch (err) {
       // Account exists but the email was never verified — resume verification.
       if (err instanceof Base44Error && err.message.includes("verify your email")) {
-        await getBrowserClient(appId!).auth.resendOtp(email).catch(() => {});
+        await getBrowserClient(base44!).auth.resendOtp(email).catch(() => {});
         setNotice(`We emailed a new verification code to ${email}.`);
         setMode("verify");
         setBusy(false);
@@ -88,11 +88,11 @@ function LoginPage() {
 
   async function signUp(e: React.FormEvent) {
     e.preventDefault();
-    if (!requireAppId()) return;
+    if (!requireConfig()) return;
     setBusy(true);
     setError(null);
     try {
-      const res = await getBrowserClient(appId!).auth.register({ email, password });
+      const res = await getBrowserClient(base44!).auth.register({ email, password });
       if (res?.access_request_created) {
         // Private app: registration becomes an access request for the admin.
         setNotice(res.message ?? "Access requested — watch your inbox.");
@@ -109,11 +109,11 @@ function LoginPage() {
 
   async function verify(e: React.FormEvent) {
     e.preventDefault();
-    if (!requireAppId()) return;
+    if (!requireConfig()) return;
     setBusy(true);
     setError(null);
     try {
-      const auth = getBrowserClient(appId!).auth;
+      const auth = getBrowserClient(base44!).auth;
       await auth.verifyOtp({ email, otpCode: code });
       // SDK-documented flow: log in after verification so the token lands in
       // localStorage and the SSR cookie mirror.
@@ -125,10 +125,10 @@ function LoginPage() {
   }
 
   async function resend() {
-    if (!requireAppId()) return;
+    if (!requireConfig()) return;
     setError(null);
     try {
-      await getBrowserClient(appId!).auth.resendOtp(email);
+      await getBrowserClient(base44!).auth.resendOtp(email);
       setNotice(`A new code is on its way to ${email}.`);
     } catch (err) {
       fail(err, "Couldn't resend the code. Please try again.");
@@ -136,12 +136,12 @@ function LoginPage() {
   }
 
   function google() {
-    if (!requireAppId()) return;
+    if (!requireConfig()) return;
     // Return to /login so the effect above can capture the token, then forward.
     // NOTE: on newly added base domains the staging OAuth gateway may reject
     // Google sign-in until the domain is allowlisted — that's platform
     // configuration, not app code. Email/password works regardless.
-    getBrowserClient(appId!).auth.loginWithProvider(
+    getBrowserClient(base44!).auth.loginWithProvider(
       "google",
       `/login?from=${encodeURIComponent(dest)}`,
     );

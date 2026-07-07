@@ -1,16 +1,16 @@
 import { useState } from "react";
 import { getBrowserClient } from "../lib/browser-client.js";
-import type { Contact } from "../lib/types.js";
+import type { Base44Config, Contact } from "../lib/types.js";
 
 interface Props {
-  appId: string;
+  base44: Base44Config;
   ownerEmail: string;
   existing: Contact | null;
   onClose: () => void;
   onSaved: (contact: Contact) => void;
 }
 
-export function ContactFormModal({ appId, ownerEmail, existing, onClose, onSaved }: Props) {
+export function ContactFormModal({ base44, ownerEmail, existing, onClose, onSaved }: Props) {
   const [name, setName] = useState(existing?.name ?? "");
   const [email, setEmail] = useState(existing?.email ?? "");
   const [company, setCompany] = useState(existing?.company ?? "");
@@ -31,7 +31,7 @@ export function ContactFormModal({ appId, ownerEmail, existing, onClose, onSaved
       phone: phone.trim(),
     };
     try {
-      const client = getBrowserClient(appId);
+      const client = getBrowserClient(base44);
       const saved = (
         existing
           ? await client.entities.Contact.update(existing.id, payload)

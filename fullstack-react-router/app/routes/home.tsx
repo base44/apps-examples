@@ -1,8 +1,7 @@
 import type { Route } from "./+types/home";
 import { Link } from "react-router";
 import { getCatalogReader } from "../lib/base44.server";
-import { SEED_PROPERTIES, seedCities } from "../lib/seed-data";
-import type { Property } from "../lib/types";
+import { CITIES, type Property } from "../lib/types";
 import { PropertyGrid } from "../components/PropertyGrid";
 import { SearchIcon } from "../components/icons";
 
@@ -12,6 +11,8 @@ const HERO_IMAGE =
 // All catalog reads happen HERE, on the server, before any HTML is sent. The
 // `headers()` export below marks the rendered HTML publicly cacheable, so the
 // Base44 dispatcher serves repeat visitors from the edge in milliseconds.
+// Real entity data only: an unseeded app renders honest empty states, and a
+// failed read surfaces through the error boundary instead of being masked.
 export async function loader({ request, context }: Route.LoaderArgs) {
   const reader = getCatalogReader(request, context);
 
@@ -20,31 +21,16 @@ export async function loader({ request, context }: Route.LoaderArgs) {
       { featured: true, status: "for_sale" },
       "-created_date",
       6,
-    ).catch(() => [] as Property[]),
-    reader.entities.Property.filter(
-      { status: "for_sale" },
-      "-created_date",
-      6,
-    ).catch(() => [] as Property[]),
+    ),
+    reader.entities.Property.filter({ status: "for_sale" }, "-created_date", 6),
   ]);
 
-  let featured = featuredRaw as Property[];
-  let latest = latestRaw as Property[];
-  let demo = false;
+  const latest = latestRaw as Property[];
+  const featured = (featuredRaw as Property[]).length
+    ? (featuredRaw as Property[])
+    : latest.filter((p) => p.featured).slice(0, 6);
 
-  // Before the app is seeded, show curated demo listings so the site never
-  // looks empty. Once real Properties exist, this branch is skipped entirely.
-  if (latest.length === 0) {
-    demo = true;
-    latest = SEED_PROPERTIES.filter((p) => p.status === "for_sale").slice(0, 6);
-    featured = SEED_PROPERTIES.filter(
-      (p) => p.featured && p.status !== "sold",
-    ).slice(0, 6);
-  } else if (featured.length === 0) {
-    featured = latest.filter((p) => p.featured).slice(0, 6);
-  }
-
-  return { featured, latest, demo, cities: seedCities() };
+  return { featured, latest, cities: CITIES };
 }
 
 // Public, edge-cacheable HTML. React Router does NOT copy loader Response
@@ -54,7 +40,7 @@ export function headers() {
 }
 
 export default function Home({ loaderData }: Route.ComponentProps) {
-  const { featured, latest, demo, cities } = loaderData;
+  const { featured, latest, cities } = loaderData;
 
   return (
     <main>
@@ -114,18 +100,6 @@ export default function Home({ loaderData }: Route.ComponentProps) {
         </div>
       </section>
 
-      <div className="container">
-        {demo && (
-          <div className="notice notice-demo" style={{ marginTop: 28 }}>
-            Showing sample listings. Sign in as an admin and visit{" "}
-            <Link to="/seed" className="tag-inline">
-              /seed
-            </Link>{" "}
-            to populate your own inventory.
-          </div>
-        )}
-      </div>
-
       <section className="section">
         <div className="container">
           <div className="section-head">
@@ -138,7 +112,20 @@ export default function Home({ loaderData }: Route.ComponentProps) {
               View all listings →
             </Link>
           </div>
-          <PropertyGrid properties={featured} />
+          {featured.length > 0 ? (
+            <PropertyGrid properties={featured} />
+          ) : (
+            <div className="empty">
+              <h3>No listings yet</h3>
+              <p>
+                An admin can populate sample inventory at{" "}
+                <Link to="/seed" className="tag-inline">
+                  /seed
+                </Link>
+                .
+              </p>
+            </div>
+          )}
         </div>
       </section>
 
@@ -177,7 +164,14 @@ export default function Home({ loaderData }: Route.ComponentProps) {
               Browse all →
             </Link>
           </div>
-          <PropertyGrid properties={latest} />
+          {latest.length > 0 ? (
+            <PropertyGrid properties={latest} />
+          ) : (
+            <div className="empty">
+              <h3>Nothing on the market yet</h3>
+              <p>New listings will appear here as soon as agents add them.</p>
+            </div>
+          )}
         </div>
       </section>
     </main>

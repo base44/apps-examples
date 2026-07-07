@@ -1,8 +1,12 @@
 import type { Route } from "./+types/listings";
 import { Form, Link, useSearchParams } from "react-router";
 import { getCatalogReader } from "../lib/base44.server";
-import { SEED_PROPERTIES, seedCities } from "../lib/seed-data";
-import type { Property, PropertyStatus, PropertyType } from "../lib/types";
+import {
+  CITIES,
+  type Property,
+  type PropertyStatus,
+  type PropertyType,
+} from "../lib/types";
 import { PropertyGrid } from "../components/PropertyGrid";
 import { SearchIcon } from "../components/icons";
 
@@ -26,15 +30,9 @@ function readFilters(url: URL): Filters {
   };
 }
 
-function matchesSeed(p: Property, f: Filters): boolean {
-  if (f.city && p.city !== f.city) return false;
-  if (f.type && p.property_type !== f.type) return false;
-  if (f.status !== "any" && p.status !== f.status) return false;
-  if (f.maxPrice != null && p.price > f.maxPrice) return false;
-  if (f.minBeds != null && p.bedrooms < f.minBeds) return false;
-  return true;
-}
-
+// Real entity data only: zero matches render the honest empty state below,
+// and a failed read surfaces through the error boundary instead of being
+// masked by demo content.
 export async function loader({ request, context }: Route.LoaderArgs) {
   const url = new URL(request.url);
   const filters = readFilters(url);
@@ -47,26 +45,13 @@ export async function loader({ request, context }: Route.LoaderArgs) {
   if (filters.maxPrice != null) query.price = { $lte: filters.maxPrice };
   if (filters.minBeds != null) query.bedrooms = { $gte: filters.minBeds };
 
-  let results = (await reader.entities.Property.filter(
+  const results = (await reader.entities.Property.filter(
     query,
     "-created_date",
     60,
-  ).catch(() => [] as Property[])) as Property[];
+  )) as Property[];
 
-  let demo = false;
-  if (results.length === 0) {
-    // Distinguish "no data yet" from "no matches": if the catalog is empty,
-    // fall back to demo listings filtered in memory.
-    const any = (await reader.entities.Property.list("-created_date", 1).catch(
-      () => [] as Property[],
-    )) as Property[];
-    if (any.length === 0) {
-      demo = true;
-      results = SEED_PROPERTIES.filter((p) => matchesSeed(p, filters));
-    }
-  }
-
-  return { results, demo, filters, cities: seedCities() };
+  return { results, filters, cities: CITIES };
 }
 
 export function headers() {
@@ -78,7 +63,7 @@ export const meta: Route.MetaFunction = () => [
 ];
 
 export default function Listings({ loaderData }: Route.ComponentProps) {
-  const { results, demo, filters, cities } = loaderData;
+  const { results, filters, cities } = loaderData;
   const [params] = useSearchParams();
   const cityOptions = filters.city && !cities.includes(filters.city)
     ? [...cities, filters.city]
@@ -170,10 +155,8 @@ export default function Listings({ loaderData }: Route.ComponentProps) {
         </Form>
 
         <p className="result-count">
-          {demo
-            ? "Showing sample listings — seed the app to see your own."
-            : `${results.length} home${results.length === 1 ? "" : "s"} found`}
-          {params.toString() && !demo ? (
+          {`${results.length} home${results.length === 1 ? "" : "s"} found`}
+          {params.toString() ? (
             <>
               {" · "}
               <Link to="/listings" className="tag-inline">

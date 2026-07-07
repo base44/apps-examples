@@ -8,10 +8,21 @@ export interface SessionUser {
   role: string;
 }
 
+/**
+ * Base44 SDK config resolved AT RUNTIME on the server (from the Worker env the
+ * deploy injects) and threaded to the browser through the root route context.
+ * Never baked at build time — `--prebuilt` deploys would miss build-time env.
+ */
+export interface Base44Config {
+  appId: string;
+  /** Platform API origin (BASE44_API_URL). null → the SDK's default. */
+  apiUrl: string | null;
+}
+
 /** Session resolved on the server for every request. */
 export interface Session {
-  /** Resolved Base44 app id, forwarded to the browser SDK for client writes. */
-  appId: string | null;
+  /** SDK config for browser-side writes; null when no app id is resolvable. */
+  base44: Base44Config | null;
   user: SessionUser | null;
 }
 

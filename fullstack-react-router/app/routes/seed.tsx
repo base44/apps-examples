@@ -18,7 +18,7 @@ export async function loader({ request, context }: Route.LoaderArgs) {
     { agent_email: user.email },
     "-created_date",
     500,
-  ).catch(() => [] as Property[])) as Property[];
+  )) as Property[];
   return { authorized: true as const, email: user.email, existing: mine.length };
 }
 
@@ -45,9 +45,9 @@ export async function action({ request, context }: Route.ActionArgs) {
     ...input,
     agent_email: user.email,
   }));
-  const created = await base44.entities.Property.bulkCreate(payload).catch(
-    () => [] as Property[],
-  );
+  const created = (await base44.entities.Property.bulkCreate(
+    payload,
+  )) as Property[];
   return { created: created.length };
 }
 

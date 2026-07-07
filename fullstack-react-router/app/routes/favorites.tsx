@@ -1,12 +1,12 @@
 import type { Route } from "./+types/favorites";
 import { Link, redirect } from "react-router";
+import { Base44Error } from "@base44/sdk";
 import {
   getCatalogReader,
   getCurrentUser,
   getServerClient,
   loginUrl,
 } from "../lib/base44.server";
-import { seedById } from "../lib/seed-data";
 import type { Favorite, Property } from "../lib/types";
 import { PropertyGrid } from "../components/PropertyGrid";
 
@@ -22,16 +22,22 @@ export async function loader({ request, context }: Route.LoaderArgs) {
   const favorites = (await base44.entities.Favorite.list(
     "-created_date",
     200,
-  ).catch(() => [] as Favorite[])) as Favorite[];
+  )) as Favorite[];
 
   const reader = getCatalogReader(request, context);
   const properties = (
     await Promise.all(
       favorites.map(async (fav) => {
-        const live = await reader.entities.Property.get(fav.property_id).catch(
-          () => null,
-        );
-        return (live as Property | null) ?? seedById(fav.property_id) ?? null;
+        try {
+          return (await reader.entities.Property.get(
+            fav.property_id,
+          )) as Property;
+        } catch (err) {
+          // The listing was deleted since it was saved — skip it. Any other
+          // read failure surfaces through the error boundary.
+          if (err instanceof Base44Error && err.status === 404) return null;
+          throw err;
+        }
       }),
     )
   ).filter((p): p is Property => p !== null);

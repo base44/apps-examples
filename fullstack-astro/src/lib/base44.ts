@@ -4,8 +4,8 @@
 // (the `base44_access_token` cookie mirrored by the browser, or an
 // `Authorization: Bearer` header) and the Base44 config from the Worker env.
 // It throws when no app id is resolvable — e.g. during plain `astro dev`, which
-// has no Base44 config — so every caller guards for that and degrades to demo
-// data / a logged-out view.
+// has no Base44 config. Auth-flavored callers treat that as a logged-out view;
+// catalog reads (see store.ts) fail loudly instead — there is no mock fallback.
 //
 // In Astro 6 the Cloudflare adapter exposes the Worker env via the
 // `cloudflare:workers` module (the old `Astro.locals.runtime.env` was removed).
@@ -40,8 +40,8 @@ export function runtimeEnv(): RuntimeEnv | undefined {
 
 /**
  * Create a request-scoped Base44 client, or `null` when the app id can't be
- * resolved (running outside Base44). Callers treat `null` as "no live backend"
- * and fall back to demo data.
+ * resolved (running outside Base44). Auth callers treat `null` as logged-out;
+ * catalog reads in store.ts reject it loudly.
  */
 export function getServerClient(astro: AstroLike): Base44Client | null {
   try {

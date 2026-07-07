@@ -1,42 +1,37 @@
 // Catalog data access.
 //
-// Every function takes a (possibly null) server client and prefers LIVE data
-// from Base44. When the backend is unavailable (local dev) or hasn't been
-// seeded yet (fresh deploy), it falls back to the curated demo catalog so the
-// storefront always renders like a real store. All catalog reads are public
-// (see the Product/Category RLS), which is what lets the catalog pages be
-// served from a shared edge cache.
+// Every function reads LIVE entity data through the request-scoped server
+// client — there are no demo/mock fallbacks. An empty catalog renders honest
+// empty states in the pages, and a failed read (or a missing Base44 runtime)
+// throws so the problem surfaces instead of being silently masked by fake
+// content. All catalog reads are public (see the Product/Category RLS), which
+// is what lets the catalog pages be served from a shared edge cache.
 
 import type { Base44Client } from "@base44/sdk";
-import { DEMO_CATEGORIES, DEMO_PRODUCTS, DEMO_REVIEWS } from "./demo-data";
 import type { Category, Product, Review } from "./types";
 
 const MAX = 200;
 
-async function safe<T>(fn: () => Promise<T>): Promise<T | null> {
-  try {
-    return await fn();
-  } catch {
-    return null;
+/** Reject a null client loudly: rendering without a backend would be a lie. */
+function required(base44: Base44Client | null): Base44Client {
+  if (!base44) {
+    throw new Error(
+      "No Base44 backend available (app id not resolvable). Deploy the app with `base44 deploy`, or configure the Worker env for local development.",
+    );
   }
+  return base44;
 }
 
 export async function listCategories(base44: Base44Client | null): Promise<Category[]> {
-  if (base44) {
-    const live = await safe(() => base44.entities.Category.list("name", MAX));
-    if (live && live.length) return live as Category[];
-  }
-  return DEMO_CATEGORIES;
+  return (await required(base44).entities.Category.list("name", MAX)) as Category[];
 }
 
 export async function listProducts(base44: Base44Client | null): Promise<Product[]> {
-  if (base44) {
-    const live = await safe(() =>
-      base44.entities.Product.filter({ status: "active" }, "-created_date", MAX),
-    );
-    if (live && live.length) return live as Product[];
-  }
-  return DEMO_PRODUCTS.filter((p) => p.status !== "draft");
+  return (await required(base44).entities.Product.filter(
+    { status: "active" },
+    "-created_date",
+    MAX,
+  )) as Product[];
 }
 
 export async function listFeatured(base44: Base44Client | null): Promise<Product[]> {
@@ -49,11 +44,12 @@ export async function getProductBySlug(
   base44: Base44Client | null,
   slug: string,
 ): Promise<Product | null> {
-  if (base44) {
-    const live = await safe(() => base44.entities.Product.filter({ slug }, null, 1));
-    if (live && live.length) return live[0] as Product;
-  }
-  return DEMO_PRODUCTS.find((p) => p.slug === slug) ?? null;
+  const matches = (await required(base44).entities.Product.filter(
+    { slug },
+    null,
+    1,
+  )) as Product[];
+  return matches[0] ?? null;
 }
 
 export async function getCategoryBySlug(
@@ -68,32 +64,22 @@ export async function listProductsByCategory(
   base44: Base44Client | null,
   categoryId: string,
 ): Promise<Product[]> {
-  if (base44) {
-    const live = await safe(() =>
-      base44.entities.Product.filter(
-        { category_id: categoryId, status: "active" },
-        "-created_date",
-        MAX,
-      ),
-    );
-    if (live && live.length) return live as Product[];
-  }
-  return DEMO_PRODUCTS.filter(
-    (p) => p.category_id === categoryId && p.status !== "draft",
-  );
+  return (await required(base44).entities.Product.filter(
+    { category_id: categoryId, status: "active" },
+    "-created_date",
+    MAX,
+  )) as Product[];
 }
 
 export async function listReviews(
   base44: Base44Client | null,
   productId: string,
 ): Promise<Review[]> {
-  if (base44) {
-    const live = await safe(() =>
-      base44.entities.Review.filter({ product_id: productId }, "-created_date", 50),
-    );
-    if (live) return live as Review[];
-  }
-  return DEMO_REVIEWS.filter((r) => r.product_id === productId);
+  return (await required(base44).entities.Review.filter(
+    { product_id: productId },
+    "-created_date",
+    50,
+  )) as Review[];
 }
 
 export function averageRating(reviews: Review[]): number | null {

@@ -1,17 +1,17 @@
 import { Link } from "@tanstack/react-router";
-import type { SessionUser } from "../lib/types.js";
+import type { Base44Config, SessionUser } from "../lib/types.js";
 import { getBrowserClient } from "../lib/browser-client.js";
 import { initials } from "../lib/format.js";
 
 interface Props {
   user: SessionUser;
-  appId: string | null;
+  base44: Base44Config | null;
 }
 
-export function AppHeader({ user, appId }: Props) {
+export function AppHeader({ user, base44 }: Props) {
   function logout() {
-    if (appId) {
-      getBrowserClient(appId).auth.logout("/login");
+    if (base44) {
+      getBrowserClient(base44).auth.logout("/login");
     } else {
       window.location.href = "/login";
     }

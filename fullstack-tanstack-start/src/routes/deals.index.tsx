@@ -17,10 +17,10 @@ export const Route = createFileRoute("/deals/")({
 function DealsBoard() {
   const { deals, contacts } = Route.useLoaderData();
   const { session } = Route.useRouteContext();
-  const appId = session.appId as string; // guaranteed: root only mounts routes with a session
+  const base44 = session.base44!; // guaranteed: requireUser only passes with a live session
   const ownerEmail = session.user?.email ?? "";
 
-  const board = useKanban(appId, deals);
+  const board = useKanban(base44, deals);
   const [showForm, setShowForm] = useState(false);
 
   const contactName = (id?: string) =>
@@ -90,7 +90,7 @@ function DealsBoard() {
 
       {showForm ? (
         <DealFormModal
-          appId={appId}
+          base44={base44}
           ownerEmail={ownerEmail}
           contacts={contacts}
           onClose={() => setShowForm(false)}

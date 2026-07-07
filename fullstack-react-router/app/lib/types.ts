@@ -12,6 +12,16 @@ export interface EntityFields {
 export type PropertyType = "house" | "apartment" | "condo" | "land";
 export type PropertyStatus = "for_sale" | "sold" | "pending";
 
+// The five cities this demo agency operates in. Static UI config for the
+// search filter dropdowns (it matches the marketing copy) — not entity data.
+export const CITIES = [
+  "Austin",
+  "Los Angeles",
+  "Miami",
+  "New York",
+  "San Francisco",
+];
+
 export interface PropertyImage {
   url: string;
 }

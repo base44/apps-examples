@@ -5,6 +5,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { getBrowserClient } from "../../lib/browser-client.js";
+import type { Base44Config } from "../../lib/types.js";
 import type { AgentConversation, AgentMessage } from "@base44/sdk";
 
 const AGENT_NAME = "sales_copilot";
@@ -42,7 +43,7 @@ function toChatItems(messages: AgentMessage[]): ChatItem[] {
   return items;
 }
 
-export function useCopilot(appId: string) {
+export function useCopilot(base44: Base44Config) {
   const [open, setOpen] = useState(false);
   const [items, setItems] = useState<ChatItem[]>([]);
   const [sending, setSending] = useState(false);
@@ -53,14 +54,14 @@ export function useCopilot(appId: string) {
 
   const ensureConversation = useCallback(async () => {
     if (conversationRef.current) return conversationRef.current;
-    const client = getBrowserClient(appId);
+    const client = getBrowserClient(base44);
     const conversation = await client.agents.createConversation({ agent_name: AGENT_NAME });
     conversationRef.current = conversation;
     unsubscribeRef.current = client.agents.subscribeToConversation(conversation.id, (updated) => {
       setItems(toChatItems(updated.messages ?? []));
     });
     return conversation;
-  }, [appId]);
+  }, [base44]);
 
   const openPanel = useCallback(async () => {
     setOpen(true);
@@ -86,7 +87,7 @@ export function useCopilot(appId: string) {
       setItems((prev) => [...prev, { key: `local-${Date.now()}`, role: "user", text: content }]);
       try {
         const conversation = await ensureConversation();
-        await getBrowserClient(appId).agents.addMessage(conversation, {
+        await getBrowserClient(base44).agents.addMessage(conversation, {
           role: "user",
           content,
         });
@@ -96,7 +97,7 @@ export function useCopilot(appId: string) {
         setSending(false);
       }
     },
-    [appId, ensureConversation, sending],
+    [base44, ensureConversation, sending],
   );
 
   useEffect(() => {

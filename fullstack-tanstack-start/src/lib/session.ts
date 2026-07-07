@@ -1,6 +1,8 @@
 // Session server function — runs on the Worker for every request (invoked from
-// the root route's beforeLoad). Resolves the app id (forwarded to the browser
-// SDK for client-side writes) and the logged-in user, entirely server-side.
+// the root route's beforeLoad). Resolves the Base44 SDK config (app id + API
+// origin, forwarded to the browser SDK for client-side writes) and the
+// logged-in user, entirely server-side and entirely at RUNTIME — nothing here
+// depends on build-time env, which `--prebuilt` deploys don't have.
 
 import { createServerFn } from "@tanstack/react-start";
 import { getServerClient, markPrivate } from "./server.js";
@@ -12,15 +14,18 @@ export const getSession = createServerFn({ method: "GET" }).handler(
 
     try {
       const base44 = await getServerClient();
-      const appId = base44.getConfig().appId ?? null;
+      const { appId, serverUrl } = base44.getConfig();
       const me = await base44.auth.me().catch(() => null);
       const user = me
         ? { email: me.email, full_name: me.full_name ?? null, role: me.role ?? "user" }
         : null;
-      return { appId, user };
+      return {
+        base44: appId ? { appId, apiUrl: serverUrl ?? null } : null,
+        user,
+      };
     } catch {
       // No app id resolvable (running outside Base44) — treat as anonymous.
-      return { appId: null, user: null };
+      return { base44: null, user: null };
     }
   },
 );

@@ -1,15 +1,20 @@
 import { useState } from "react";
 import { getBrowserClient } from "../../lib/browser-client.js";
-import { ACTIVITY_TYPES, type Activity, type ActivityType } from "../../lib/types.js";
+import {
+  ACTIVITY_TYPES,
+  type Activity,
+  type ActivityType,
+  type Base44Config,
+} from "../../lib/types.js";
 
 interface Props {
-  appId: string;
+  base44: Base44Config;
   dealId: string;
   contactId?: string;
   onAdded: (activity: Activity) => void;
 }
 
-export function AddActivityForm({ appId, dealId, contactId, onAdded }: Props) {
+export function AddActivityForm({ base44, dealId, contactId, onAdded }: Props) {
   const [type, setType] = useState<ActivityType>("note");
   const [summary, setSummary] = useState("");
   const [busy, setBusy] = useState(false);
@@ -23,7 +28,7 @@ export function AddActivityForm({ appId, dealId, contactId, onAdded }: Props) {
     try {
       // Client-side create. created_by is stamped by Base44 from the caller's
       // token, and RLS keys off it so reps only ever see their own activities.
-      const created = (await getBrowserClient(appId).entities.Activity.create({
+      const created = (await getBrowserClient(base44).entities.Activity.create({
         type,
         summary: summary.trim(),
         deal_id: dealId,

@@ -1,7 +1,7 @@
 import type { Route } from "./+types/property";
 import { Link } from "react-router";
+import { Base44Error } from "@base44/sdk";
 import { getCatalogReader, getServerClient } from "../lib/base44.server";
-import { SEED_PROPERTIES, seedById } from "../lib/seed-data";
 import type { Property } from "../lib/types";
 import {
   coverImage,
@@ -15,13 +15,18 @@ import { InquiryForm } from "../components/InquiryForm";
 import { SaveFavoriteButton } from "../components/SaveFavoriteButton";
 import { AreaIcon, BathIcon, BedIcon, PinIcon } from "../components/icons";
 
+// A missing record is a 404 page; any OTHER read failure propagates to the
+// error boundary instead of being masked.
 async function loadProperty(
   reader: ReturnType<typeof getCatalogReader>,
   id: string,
 ): Promise<Property | null> {
-  const live = await reader.entities.Property.get(id).catch(() => null);
-  if (live) return live as Property;
-  return seedById(id) ?? null;
+  try {
+    return (await reader.entities.Property.get(id)) as Property;
+  } catch (err) {
+    if (err instanceof Base44Error && err.status === 404) return null;
+    throw err;
+  }
 }
 
 export async function loader({ request, params, context }: Route.LoaderArgs) {
@@ -32,17 +37,12 @@ export async function loader({ request, params, context }: Route.LoaderArgs) {
     throw new Response("Not found", { status: 404 });
   }
 
-  let similar = (await reader.entities.Property.filter(
+  const nearby = (await reader.entities.Property.filter(
     { city: property.city, status: "for_sale" },
     "-created_date",
     4,
-  ).catch(() => [] as Property[])) as Property[];
-  if (similar.length === 0) {
-    similar = SEED_PROPERTIES.filter(
-      (p) => p.city === property.city && p.status === "for_sale",
-    );
-  }
-  similar = similar.filter((p) => p.id !== property.id).slice(0, 3);
+  )) as Property[];
+  const similar = nearby.filter((p) => p.id !== property.id).slice(0, 3);
 
   return { property, similar };
 }

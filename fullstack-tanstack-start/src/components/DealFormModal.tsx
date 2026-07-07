@@ -1,16 +1,22 @@
 import { useState } from "react";
 import { getBrowserClient } from "../lib/browser-client.js";
-import { STAGES, type Contact, type Deal, type DealStage } from "../lib/types.js";
+import {
+  STAGES,
+  type Base44Config,
+  type Contact,
+  type Deal,
+  type DealStage,
+} from "../lib/types.js";
 
 interface Props {
-  appId: string;
+  base44: Base44Config;
   ownerEmail: string;
   contacts: Contact[];
   onClose: () => void;
   onCreated: (deal: Deal) => void;
 }
 
-export function DealFormModal({ appId, ownerEmail, contacts, onClose, onCreated }: Props) {
+export function DealFormModal({ base44, ownerEmail, contacts, onClose, onCreated }: Props) {
   const [title, setTitle] = useState("");
   const [contactId, setContactId] = useState("");
   const [amount, setAmount] = useState("");
@@ -26,7 +32,7 @@ export function DealFormModal({ appId, ownerEmail, contacts, onClose, onCreated 
     try {
       // Client-side create with the browser SDK. owner_email is stamped with
       // the logged-in rep so the new row is scoped to them by RLS.
-      const created = (await getBrowserClient(appId).entities.Deal.create({
+      const created = (await getBrowserClient(base44).entities.Deal.create({
         title: title.trim(),
         stage,
         amount: amount ? Number(amount) : 0,

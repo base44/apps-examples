@@ -16,7 +16,7 @@ export const Route = createFileRoute("/contacts")({
 function Contacts() {
   const { contacts: initial, dealsByContact } = Route.useLoaderData();
   const { session } = Route.useRouteContext();
-  const appId = session.appId as string;
+  const base44 = session.base44!; // guaranteed: requireUser only passes with a live session
   const ownerEmail = session.user?.email ?? "";
 
   const [contacts, setContacts] = useState<Contact[]>(initial);
@@ -108,7 +108,7 @@ function Contacts() {
 
       {showForm ? (
         <ContactFormModal
-          appId={appId}
+          base44={base44}
           ownerEmail={ownerEmail}
           existing={editing}
           onClose={() => setShowForm(false)}

@@ -67,9 +67,17 @@ const [categories, featured, products] = await Promise.all([
       </div>
       <a href="#catalog">View all</a>
     </div>
-    <div class="product-grid">
-      {featured.map((p, i) => <ProductCard product={p} eager={i < 2} />)}
-    </div>
+    {
+      featured.length === 0 ? (
+        <p class="muted">Nothing on the shelf yet — check back soon.</p>
+      ) : (
+        <div class="product-grid">
+          {featured.map((p, i) => (
+            <ProductCard product={p} eager={i < 2} />
+          ))}
+        </div>
+      )
+    }
   </section>
 
   <section class="concierge-band">
@@ -95,9 +103,17 @@ const [categories, featured, products] = await Promise.all([
       </div>
       <span class="muted">{products.length} products</span>
     </div>
-    <div class="product-grid">
-      {products.map((p) => <ProductCard product={p} />)}
-    </div>
+    {
+      products.length === 0 ? (
+        <p class="muted">The catalog is empty — no products have been added yet.</p>
+      ) : (
+        <div class="product-grid">
+          {products.map((p) => (
+            <ProductCard product={p} />
+          ))}
+        </div>
+      )
+    }
   </section>
 </Layout>
 

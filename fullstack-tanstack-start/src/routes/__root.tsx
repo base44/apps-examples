@@ -40,9 +40,9 @@ function RootComponent() {
     <RootDocument>
       {session.user ? (
         <div className="app-shell">
-          <AppHeader user={session.user} appId={session.appId} />
+          <AppHeader user={session.user} base44={session.base44} />
           <Outlet />
-          {session.appId ? <Copilot appId={session.appId} /> : null}
+          {session.base44 ? <Copilot base44={session.base44} /> : null}
         </div>
       ) : (
         <Outlet />

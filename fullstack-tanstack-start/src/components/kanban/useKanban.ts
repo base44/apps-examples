@@ -6,7 +6,12 @@
 
 import { useCallback, useState } from "react";
 import { getBrowserClient } from "../../lib/browser-client.js";
-import { STAGES, type Deal, type DealStage } from "../../lib/types.js";
+import {
+  STAGES,
+  type Base44Config,
+  type Deal,
+  type DealStage,
+} from "../../lib/types.js";
 
 interface Column {
   id: DealStage;
@@ -15,7 +20,7 @@ interface Column {
   total: number;
 }
 
-export function useKanban(appId: string, initialDeals: Deal[]) {
+export function useKanban(base44: Base44Config, initialDeals: Deal[]) {
   const [deals, setDeals] = useState<Deal[]>(initialDeals);
   const [draggingId, setDraggingId] = useState<string | null>(null);
   const [dropTarget, setDropTarget] = useState<DealStage | null>(null);
@@ -43,7 +48,7 @@ export function useKanban(appId: string, initialDeals: Deal[]) {
       setError(null);
 
       try {
-        await getBrowserClient(appId).entities.Deal.update(dealId, { stage });
+        await getBrowserClient(base44).entities.Deal.update(dealId, { stage });
       } catch {
         // Roll back the optimistic move on failure.
         setDeals((list) => list.map((d) => (d.id === dealId ? { ...d, stage: previous } : d)));
@@ -52,7 +57,7 @@ export function useKanban(appId: string, initialDeals: Deal[]) {
         setSavingId(null);
       }
     },
-    [appId, deals],
+    [base44, deals],
   );
 
   const addDeal = useCallback((deal: Deal) => {

@@ -1,10 +1,9 @@
-import type { Property, PropertyInput } from "./types";
+import type { PropertyInput } from "./types";
 
-// Realistic listing content used two ways:
-//  1. As demo content on the public pages BEFORE the app has data, so the site
-//     never looks empty (loaders fall back to this when a query returns nothing).
-//  2. As the payload the admin-only /seed route bulk-creates into the real
-//     database (agent_email is swapped for the admin's email at seed time).
+// Sample listing content for the admin-only /seed route, which bulk-creates it
+// into the REAL database (agent_email is swapped for the admin's email at seed
+// time). This module is never imported by a render path: pages only ever show
+// live entity data.
 //
 // Photos are hosted on Unsplash's CDN. Swap them for your own uploads in prod.
 
@@ -189,24 +188,3 @@ export const SEED_INPUTS: Omit<PropertyInput, "agent_email">[] = [
     images: [{ url: img("photo-1600596542815-ffad4c1539a9") }],
   },
 ];
-
-const DEMO_AGENT = "agent@base44estates.com";
-const NOW = "2026-01-01T00:00:00.000Z";
-
-// Full Property records (with ids) for demo fallback rendering.
-export const SEED_PROPERTIES: Property[] = SEED_INPUTS.map((input, i) => ({
-  ...input,
-  id: `demo-${i + 1}`,
-  agent_email: DEMO_AGENT,
-  created_date: NOW,
-  updated_date: NOW,
-  created_by: DEMO_AGENT,
-}));
-
-export function seedById(id: string): Property | undefined {
-  return SEED_PROPERTIES.find((p) => p.id === id);
-}
-
-export function seedCities(): string[] {
-  return Array.from(new Set(SEED_PROPERTIES.map((p) => p.city))).sort();
-}

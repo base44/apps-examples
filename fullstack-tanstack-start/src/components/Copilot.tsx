@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useCopilot } from "./copilot/useCopilot.js";
+import type { Base44Config } from "../lib/types.js";
 
 const SUGGESTIONS = [
   "Summarize my pipeline",
@@ -7,8 +8,8 @@ const SUGGESTIONS = [
   "Draft a follow-up for my top deal",
 ];
 
-export function Copilot({ appId }: { appId: string }) {
-  const { open, setOpen, openPanel, items, send, sending, starting, error } = useCopilot(appId);
+export function Copilot({ base44 }: { base44: Base44Config }) {
+  const { open, setOpen, openPanel, items, send, sending, starting, error } = useCopilot(base44);
   const [input, setInput] = useState("");
   const bodyRef = useRef<HTMLDivElement>(null);
 
