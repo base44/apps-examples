@@ -18,6 +18,11 @@ const year = new Date().getFullYear();
       <h4>Shop</h4>
       {categories.map((c) => <a href={`/category/${c.slug}`}>{c.name}</a>)}
     </nav>
+    <nav class="site-footer__col" aria-label="Learn">
+      <h4>Learn</h4>
+      <a href="/about">Our story</a>
+      <a href="/brewing">Brew guides</a>
+    </nav>
     <nav class="site-footer__col" aria-label="Account">
       <h4>Account</h4>
       <a href="/cart">Cart</a>
@@ -26,8 +31,9 @@ const year = new Date().getFullYear();
     <div class="site-footer__col">
       <h4>Built on Base44</h4>
       <p class="site-footer__note">
-        Server-rendered with Astro 6 on Cloudflare Workers. Catalog pages are
-        edge-cached; your cart and orders never are.
+        Astro 7 on Cloudflare Workers. The catalog is server-rendered and
+        edge-cached, the story and brew guides are prerendered at build time,
+        and your cart and orders are never cached.
       </p>
     </div>
   </div>
@@ -44,7 +50,7 @@ const year = new Date().getFullYear();
   }
   .site-footer__inner {
     display: grid;
-    grid-template-columns: 1.6fr 1fr 1fr 1.4fr;
+    grid-template-columns: 1.6fr 1fr 0.9fr 0.9fr 1.4fr;
     gap: 32px;
     padding-top: 48px;
     padding-bottom: 32px;

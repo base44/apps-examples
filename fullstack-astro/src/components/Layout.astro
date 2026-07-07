@@ -5,20 +5,40 @@ import SiteFooter from "./SiteFooter.astro";
 import { getServerClient, loginUrlFor } from "../lib/base44";
 import { listCategories } from "../lib/store";
 
+import type { Category } from "../lib/types";
+
 interface Props {
   title: string;
   description?: string;
+  /**
+   * Set by PRERENDERED pages (see src/lib/static-nav.ts): at build time there
+   * is no Base44 backend to fetch the live Category list from, so static
+   * pages pass a checked-in copy for the header/footer nav instead.
+   */
+  staticCategories?: Category[];
 }
 
-const { title, description = "Small-batch coffee, roasted to order." } = Astro.props;
+const {
+  title,
+  description = "Small-batch coffee, roasted to order.",
+  staticCategories,
+} = Astro.props;
 
 // Categories and the login URL are the SAME for every visitor, so computing
 // them here keeps the shared header cache-safe. (Per-user state — the signed-in
 // name and cart count — is hydrated on the client instead.)
-const base44 = getServerClient(Astro);
-const categories = await listCategories(base44);
-const loginUrl = loginUrlFor(Astro, Astro.url.href);
-const currentPath = Astro.url.pathname;
+// At build time (`build.format: "file"`) a prerendered page's pathname is
+// "/about.html"; strip the suffix so baked-in links use the public "/about".
+const currentPath = staticCategories
+  ? Astro.url.pathname.replace(/\.html$/, "")
+  : Astro.url.pathname;
+const categories = staticCategories ?? (await listCategories(getServerClient(Astro)));
+// On prerendered pages `loginUrlFor` can't resolve an app id (there is no
+// Base44 runtime at build time), but the login URL is same-origin and
+// identical for every visitor, so static pages bake in the canonical shape.
+const loginUrl = staticCategories
+  ? `/login?from=${encodeURIComponent(currentPath)}`
+  : loginUrlFor(Astro, Astro.url.href);
 
 const favicon =
   "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ctext y='26' font-size='26'%3E%E2%98%95%3C/text%3E%3C/svg%3E";

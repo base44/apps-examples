@@ -39,7 +39,7 @@ if (category) setPublicCache(Astro);
           <h1 class="cat-hero__title">{category.name}</h1>
           {category.description && <p class="cat-hero__desc">{category.description}</p>}
           <div class="cat-hero__badge">
-            <CacheBadge cached={true} />
+            <CacheBadge mode="edge" />
           </div>
         </div>
       </section>

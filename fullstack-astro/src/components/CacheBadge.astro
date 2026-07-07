@@ -1,24 +1,39 @@
 ---
-// Small "rendered on the server at HH:MM:SS" stamp used on the publicly cached
-// pages. Because those pages are served from Base44's shared edge cache, a
-// cache HIT shows an OLDER timestamp than the current time — reload a couple of
-// times and watch it freeze, then jump once the cache revalidates. That's the
-// whole caching story, made visible. `data-testid="rendered-at"` is here so the
-// behaviour is easy to assert in tests.
+// Small stamp that makes the rendering mode of every page visible:
+//
+//   - "edge"    (SSR, edge-cached):  "server-rendered at HH:MM:SS" — on a
+//     cache HIT the timestamp is OLDER than the wall clock; reload a couple of
+//     times and watch it freeze, then jump once the cache revalidates.
+//   - "private" (SSR, never cached): "server-rendered at" always shows the
+//     current time — every request hits the Worker.
+//   - "static"  (prerendered / SSG): "built at" is frozen at BUILD time — the
+//     page is a static asset served before any Worker code runs, so the stamp
+//     only ever changes when the site is rebuilt and redeployed.
+//
+// `data-testid="rendered-at"` / `data-testid="built-at"` make the behaviour
+// easy to assert in tests. The explicit {" "} before <strong> keeps the space
+// under any compressHTML mode (Astro 7's "jsx" default strips the newline
+// between text and an element).
 import { formatTime } from "../lib/format";
 
+type Mode = "edge" | "private" | "static";
+
 interface Props {
-  cached?: boolean;
+  mode?: Mode;
 }
-const { cached = true } = Astro.props;
+const { mode = "edge" } = Astro.props;
 const now = new Date();
+const label =
+  mode === "static" ? "Prerendered" : mode === "edge" ? "Edge-cached" : "Personalised";
+const verb = mode === "static" ? "built at" : "server-rendered at";
+const testid = mode === "static" ? "built-at" : "rendered-at";
 ---
 
 <div class="cache-badge">
-  <span class={`cache-badge__dot ${cached ? "is-cached" : "is-live"}`} aria-hidden="true"></span>
+  <span class={`cache-badge__dot is-${mode}`} aria-hidden="true"></span>
   <span>
-    {cached ? "Edge-cached" : "Personalised"} · server-rendered at
-    <strong data-testid="rendered-at" title={now.toISOString()}>{formatTime(now.toISOString())}</strong>
+    {label} · {verb}{" "}
+    <strong data-testid={testid} title={now.toISOString()}>{formatTime(now.toISOString())}</strong>
   </span>
 </div>
 
@@ -43,10 +58,13 @@ const now = new Date();
     height: 8px;
     border-radius: 50%;
   }
-  .cache-badge__dot.is-cached {
+  .cache-badge__dot.is-edge {
     background: var(--accent-teal);
   }
-  .cache-badge__dot.is-live {
+  .cache-badge__dot.is-private {
     background: var(--accent);
+  }
+  .cache-badge__dot.is-static {
+    background: #8d81c4;
   }
 </style>

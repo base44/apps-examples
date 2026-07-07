@@ -32,6 +32,13 @@ const signInHref = loginUrl ?? "/account/orders";
           </a>
         ))
       }
+      <span class="nav__divider" aria-hidden="true"></span>
+      <a href="/brewing" class:list={["nav__link", { "is-active": currentPath.startsWith("/brewing") }]}>
+        Brew Guides
+      </a>
+      <a href="/about" class:list={["nav__link", { "is-active": currentPath.startsWith("/about") }]}>
+        About
+      </a>
     </nav>
 
     <div class="site-header__actions">
@@ -113,6 +120,13 @@ const signInHref = loginUrl ?? "/account/orders";
   .nav__link.is-active {
     color: var(--ink);
     border-bottom-color: var(--accent);
+  }
+  .nav__divider {
+    flex: none;
+    width: 1px;
+    height: 18px;
+    align-self: center;
+    background: var(--line);
   }
   .site-header__actions {
     display: flex;

@@ -1,0 +1,430 @@
+---
+import Layout from "../components/Layout.astro";
+import CacheBadge from "../components/CacheBadge.astro";
+import { STATIC_CATEGORIES } from "../lib/static-nav";
+
+// PRERENDERED (SSG) PAGE.
+// Brew recipes are editorial content: they change when we re-test them, not
+// per request. Astro bakes this page to static HTML at build time and Base44's
+// asset layer serves it before any Worker runs — the "built at" badge below is
+// frozen until the next deploy. Contrast with the catalog pages, whose
+// "server-rendered at" stamp moves because prices and stock must stay fresh.
+export const prerender = true;
+
+interface Guide {
+  slug: string;
+  name: string;
+  tagline: string;
+  dose: string;
+  water: string;
+  ratio: string;
+  grind: string;
+  temp: string;
+  time: string;
+  steps: string[];
+  tip: string;
+}
+
+const guides: Guide[] = [
+  {
+    slug: "pour-over",
+    name: "Pour-over (V60)",
+    tagline: "The clearest window into a single-origin — bright, articulate, tea-like.",
+    dose: "15 g",
+    water: "250 g",
+    ratio: "1:16.7",
+    grind: "Medium-fine (table salt)",
+    temp: "94 °C",
+    time: "2:30–3:00",
+    steps: [
+      "Rinse the paper filter with hot water and discard the rinse water.",
+      "Add 15 g of coffee, level the bed, and start your timer as you pour 45 g of water to bloom.",
+      "At 0:45, pour slowly in circles to 150 g; at 1:30, top up to 250 g.",
+      "Give the brewer a gentle swirl and let it draw down — aim to finish by 3:00.",
+    ],
+    tip: "Drawdown finishing early and tasting sour? Grind finer. Past 3:30 and bitter? Coarser.",
+  },
+  {
+    slug: "french-press",
+    name: "French press",
+    tagline: "Heavy body, zero technique anxiety. The most forgiving brewer we sell.",
+    dose: "30 g",
+    water: "500 g",
+    ratio: "1:16.7",
+    grind: "Coarse (breadcrumbs)",
+    temp: "96 °C",
+    time: "8:00",
+    steps: [
+      "Add 30 g of coarsely ground coffee and pour all 500 g of water at once.",
+      "Rest 4 minutes, then stir the crust and skim the foam with two spoons.",
+      "Wait another 4 minutes — patience is the whole recipe.",
+      "Press the plunger just to the surface (don't crush the bed) and pour gently.",
+    ],
+    tip: "The long steep plus a shallow press keeps silt out of the cup better than pressing hard.",
+  },
+  {
+    slug: "aeropress",
+    name: "AeroPress",
+    tagline: "Small, fast, and travels anywhere. Espresso-adjacent concentration on demand.",
+    dose: "17 g",
+    water: "220 g",
+    ratio: "1:13",
+    grind: "Medium (caster sugar)",
+    temp: "90 °C",
+    time: "1:45",
+    steps: [
+      "Set up inverted (plunger in, chamber upside-down) and add 17 g of coffee.",
+      "Pour 220 g of water, stir three times, and cap with a rinsed filter.",
+      "At 1:15, flip onto your mug with confidence.",
+      "Press steadily for about 30 seconds, stopping at the hiss.",
+    ],
+    tip: "Lower water temperature flatters darker roasts here — try 85 °C for the blends.",
+  },
+  {
+    slug: "espresso",
+    name: "Espresso",
+    tagline: "Where the signature blends live. Sweetness under pressure.",
+    dose: "18 g in",
+    water: "38 g out",
+    ratio: "1:2.1",
+    grind: "Fine (adjust to time)",
+    temp: "93 °C",
+    time: "26–30 s",
+    steps: [
+      "Dose 18 g into the basket; distribute and tamp level.",
+      "Aim for 38 g of espresso in 26–30 seconds from first drip.",
+      "Under 22 seconds: grind finer. Over 34: coarser. Change one thing at a time.",
+      "Taste before adding milk — a dialled shot is sweet on its own.",
+    ],
+    tip: "Give any coffee 7–10 days past roast before judging it as espresso; fresh-roast CO₂ reads as sour.",
+  },
+  {
+    slug: "cold-brew",
+    name: "Cold brew",
+    tagline: "Set it up before bed; wake up to concentrate that keeps for two weeks.",
+    dose: "100 g",
+    water: "1000 g",
+    ratio: "1:10",
+    grind: "Extra coarse",
+    temp: "Room temp / fridge",
+    time: "14–16 h",
+    steps: [
+      "Combine 100 g of extra-coarse coffee with 1 L of filtered water in a jar.",
+      "Stir until every ground is wet, cover, and refrigerate 14–16 hours.",
+      "Strain through a paper filter (twice if you like it crystal clear).",
+      "Dilute 1:1 with water or milk over ice — it's a concentrate, not a beverage yet.",
+    ],
+    tip: "Chocolatey washed coffees hold up best; delicate florals get lost in the cold.",
+  },
+];
+---
+
+<Layout
+  title="Brew guides — Meridian"
+  description="Meridian's tested recipes for pour-over, French press, AeroPress, espresso and cold brew — doses, ratios, grinds, temperatures and timings."
+  staticCategories={STATIC_CATEGORIES}
+>
+  <section class="brew-hero">
+    <div class="wrap brew-hero__inner">
+      <p class="eyebrow">Brew guides</p>
+      <h1>Recipes we actually use on the cupping bench.</h1>
+      <p class="brew-hero__lede">
+        Five brewers, five recipes, no folklore. Each one is the starting point
+        we hand new staff — brew it as written once, then adjust one variable
+        at a time.
+      </p>
+      <nav class="brew-hero__toc" aria-label="Jump to a guide">
+        {guides.map((g) => <a href={`#${g.slug}`}>{g.name}</a>)}
+      </nav>
+      <div class="brew-hero__badge">
+        <CacheBadge mode="static" />
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap section brew-cheatsheet">
+    <div class="section__head">
+      <div>
+        <p class="eyebrow">At a glance</p>
+        <h2>The cheat sheet</h2>
+      </div>
+    </div>
+    <div class="brew-table-wrap">
+      <table class="brew-table">
+        <thead>
+          <tr>
+            <th scope="col">Method</th>
+            <th scope="col">Dose</th>
+            <th scope="col">Water</th>
+            <th scope="col">Ratio</th>
+            <th scope="col">Grind</th>
+            <th scope="col">Temp</th>
+            <th scope="col">Time</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            guides.map((g) => (
+              <tr>
+                <th scope="row">
+                  <a href={`#${g.slug}`}>{g.name}</a>
+                </th>
+                <td>{g.dose}</td>
+                <td>{g.water}</td>
+                <td>{g.ratio}</td>
+                <td>{g.grind}</td>
+                <td>{g.temp}</td>
+                <td>{g.time}</td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="wrap section brew-guides">
+    {
+      guides.map((g, i) => (
+        <article class="guide" id={g.slug}>
+          <header class="guide__head">
+            <span class="guide__index" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
+            <div>
+              <h2>{g.name}</h2>
+              <p class="guide__tagline">{g.tagline}</p>
+            </div>
+          </header>
+          <div class="guide__body">
+            <dl class="guide__specs">
+              <div><dt>Dose</dt><dd>{g.dose}</dd></div>
+              <div><dt>Water</dt><dd>{g.water}</dd></div>
+              <div><dt>Ratio</dt><dd>{g.ratio}</dd></div>
+              <div><dt>Grind</dt><dd>{g.grind}</dd></div>
+              <div><dt>Temp</dt><dd>{g.temp}</dd></div>
+              <div><dt>Time</dt><dd>{g.time}</dd></div>
+            </dl>
+            <ol class="guide__steps">
+              {g.steps.map((step) => <li>{step}</li>)}
+            </ol>
+            <p class="guide__tip"><strong>Dial it in:</strong> {g.tip}</p>
+          </div>
+        </article>
+      ))
+    }
+  </section>
+
+  <section class="wrap section brew-cta">
+    <div class="brew-cta__card">
+      <div>
+        <h2>Need beans (or a better grinder)?</h2>
+        <p class="muted">
+          Every recipe above was written for coffee within three weeks of
+          roast. Ours ships the day after roasting.
+        </p>
+      </div>
+      <div class="brew-cta__actions">
+        <a class="btn" href="/">Shop fresh coffee</a>
+        <a class="btn btn--ghost" href="/category/gear">Browse brewing gear</a>
+      </div>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .brew-hero {
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--line);
+  }
+  .brew-hero__inner {
+    padding: 84px 24px 56px;
+    max-width: 820px;
+  }
+  .brew-hero h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    margin: 0 0 18px;
+  }
+  .brew-hero__lede {
+    font-size: 1.08rem;
+    color: var(--ink-soft);
+    max-width: 58ch;
+    margin: 0 0 22px;
+  }
+  .brew-hero__toc {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  .brew-hero__toc a {
+    text-decoration: none;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--ink);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 7px 14px;
+  }
+  .brew-hero__toc a:hover {
+    border-color: var(--accent);
+    color: var(--accent-ink);
+  }
+  .brew-hero__badge {
+    margin-top: 22px;
+  }
+
+  .brew-table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: var(--surface);
+  }
+  .brew-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.92rem;
+    min-width: 640px;
+  }
+  .brew-table th,
+  .brew-table td {
+    text-align: left;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--line);
+    white-space: nowrap;
+  }
+  .brew-table thead th {
+    font-size: 0.76rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-soft);
+    background: var(--surface-2);
+  }
+  .brew-table tbody tr:last-child th,
+  .brew-table tbody tr:last-child td {
+    border-bottom: 0;
+  }
+  .brew-table tbody th a {
+    font-family: var(--font-display);
+    font-size: 1rem;
+    text-decoration: none;
+  }
+  .brew-table tbody th a:hover {
+    text-decoration: underline;
+  }
+
+  .brew-guides {
+    display: grid;
+    gap: 26px;
+    padding-top: 0;
+  }
+  .guide {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 28px;
+    scroll-margin-top: 84px;
+  }
+  .guide__head {
+    display: flex;
+    gap: 18px;
+    align-items: baseline;
+    margin-bottom: 18px;
+  }
+  .guide__index {
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    color: var(--accent);
+  }
+  .guide__head h2 {
+    margin: 0 0 4px;
+    font-size: 1.45rem;
+  }
+  .guide__tagline {
+    margin: 0;
+    color: var(--ink-soft);
+    font-size: 0.95rem;
+  }
+  .guide__body {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 12px 32px;
+  }
+  .guide__specs {
+    display: grid;
+    gap: 10px;
+    align-content: start;
+    margin: 0;
+    background: var(--surface-2);
+    border-radius: 12px;
+    padding: 16px;
+  }
+  .guide__specs div {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 0.88rem;
+  }
+  .guide__specs dt {
+    color: var(--ink-soft);
+  }
+  .guide__specs dd {
+    margin: 0;
+    font-weight: 600;
+    text-align: right;
+  }
+  .guide__steps {
+    margin: 0;
+    padding-left: 20px;
+    display: grid;
+    gap: 8px;
+    font-size: 0.95rem;
+  }
+  .guide__steps li::marker {
+    color: var(--accent);
+    font-weight: 700;
+  }
+  .guide__tip {
+    grid-column: 2;
+    margin: 4px 0 0;
+    font-size: 0.9rem;
+    color: var(--accent-teal);
+    background: rgba(63, 95, 82, 0.08);
+    border-radius: 10px;
+    padding: 10px 14px;
+  }
+  @media (max-width: 720px) {
+    .guide__body {
+      grid-template-columns: 1fr;
+    }
+    .guide__tip {
+      grid-column: 1;
+    }
+  }
+
+  .brew-cta {
+    padding-top: 0;
+  }
+  .brew-cta__card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 30px;
+  }
+  .brew-cta__card h2 {
+    margin: 0 0 6px;
+    font-size: 1.4rem;
+  }
+  .brew-cta__card p {
+    margin: 0;
+    max-width: 46ch;
+  }
+  .brew-cta__actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+</style>
