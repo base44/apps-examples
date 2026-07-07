@@ -1,0 +1,94 @@
+---
+import Layout from "../../components/Layout.astro";
+import ProductCard from "../../components/ProductCard.astro";
+import CacheBadge from "../../components/CacheBadge.astro";
+import { getServerClient } from "../../lib/base44";
+import { getCategoryBySlug, listProductsByCategory } from "../../lib/store";
+import { setPrivateCache, setPublicCache } from "../../lib/cache";
+
+const { slug } = Astro.params;
+const base44 = getServerClient(Astro);
+const category = slug ? await getCategoryBySlug(base44, slug) : null;
+
+if (!category) {
+  setPrivateCache(Astro);
+  Astro.response.status = 404;
+}
+
+const products = category ? await listProductsByCategory(base44, category.id) : [];
+
+// PUBLIC, EDGE-CACHED PAGE: a category listing is public catalog data, the
+// same for every visitor.
+if (category) setPublicCache(Astro);
+---
+
+{
+  !category ? (
+    <Layout title="Category not found — Meridian">
+      <section class="wrap section notfound">
+        <p class="eyebrow">404</p>
+        <h1>No such category.</h1>
+        <a class="btn" href="/">Back to the shop</a>
+      </section>
+    </Layout>
+  ) : (
+    <Layout title={`${category.name} — Meridian`} description={category.description}>
+      <section class="cat-hero">
+        <div class="wrap">
+          <p class="eyebrow">Collection</p>
+          <h1 class="cat-hero__title">{category.name}</h1>
+          {category.description && <p class="cat-hero__desc">{category.description}</p>}
+          <div class="cat-hero__badge">
+            <CacheBadge mode="edge" />
+          </div>
+        </div>
+      </section>
+
+      <section class="wrap section">
+        <div class="section__head">
+          <span class="muted">{products.length} {products.length === 1 ? "product" : "products"}</span>
+        </div>
+        {products.length === 0 ? (
+          <p class="muted">Nothing here yet — check back soon.</p>
+        ) : (
+          <div class="product-grid">
+            {products.map((p, i) => (
+              <ProductCard product={p} eager={i < 3} />
+            ))}
+          </div>
+        )}
+      </section>
+    </Layout>
+  )
+}
+
+<style>
+  .notfound {
+    text-align: center;
+    padding: 96px 24px;
+  }
+  .notfound h1 {
+    font-size: 2rem;
+    margin: 6px 0 8px;
+  }
+  .notfound .btn {
+    margin-top: 20px;
+  }
+  .cat-hero {
+    background:
+      radial-gradient(900px 300px at 85% -20%, rgba(63, 95, 82, 0.1), transparent 60%),
+      var(--bg);
+    border-bottom: 1px solid var(--line);
+    padding: 56px 0 44px;
+  }
+  .cat-hero__title {
+    font-size: clamp(2rem, 5vw, 3rem);
+    margin: 0 0 12px;
+  }
+  .cat-hero__desc {
+    color: var(--ink-soft);
+    font-size: 1.1rem;
+    max-width: 60ch;
+    margin: 0 0 20px;
+  }
+</style>

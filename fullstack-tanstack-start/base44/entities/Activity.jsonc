@@ -1,0 +1,64 @@
+// Activity — a logged interaction on a deal or contact (call, email, meeting,
+// or note). Powers the activity timeline on the deal detail page.
+//
+// RLS here keys off the built-in `created_by` field (the email of whoever
+// created the record), which Base44 populates automatically — so we do NOT
+// declare it as a property, and we reference it WITHOUT the `data.` prefix
+// (built-in fields are top-level; only custom fields use `data.*`). A rep sees
+// only the activities they logged; a manager/admin sees the whole team's.
+//
+// Docs: https://docs.base44.com/developers/backend/resources/entities/security
+{
+  "name": "Activity",
+  "type": "object",
+  "title": "Activity",
+  "description": "A logged interaction (call, email, meeting, or note) on a deal or contact.",
+  "properties": {
+    "deal_id": {
+      "type": "string",
+      "description": "ID of the Deal this activity relates to"
+    },
+    "contact_id": {
+      "type": "string",
+      "description": "ID of the Contact this activity relates to"
+    },
+    "type": {
+      "type": "string",
+      "enum": ["call", "email", "meeting", "note"],
+      "default": "note",
+      "description": "Kind of interaction"
+    },
+    "summary": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 2000,
+      "description": "What happened / what was discussed"
+    }
+  },
+  "required": ["type", "summary"],
+
+  "rls": {
+    "create": true,
+    "read": {
+      "$or": [
+        { "created_by": "{{user.email}}" },
+        { "user_condition": { "role": "admin" } },
+        { "user_condition": { "role": "manager" } }
+      ]
+    },
+    "update": {
+      "$or": [
+        { "created_by": "{{user.email}}" },
+        { "user_condition": { "role": "admin" } },
+        { "user_condition": { "role": "manager" } }
+      ]
+    },
+    "delete": {
+      "$or": [
+        { "created_by": "{{user.email}}" },
+        { "user_condition": { "role": "admin" } },
+        { "user_condition": { "role": "manager" } }
+      ]
+    }
+  }
+}

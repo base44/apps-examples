@@ -1,0 +1,186 @@
+---
+import Layout from "../components/Layout.astro";
+import CacheBadge from "../components/CacheBadge.astro";
+import { setPrivateCache } from "../lib/cache";
+
+// PERSONALISED PAGE — never edge-cached.
+// The cart is the visitor's own, so we send `private, no-store`. (The contents
+// actually live in the browser's localStorage and are rendered on the client,
+// but the intent is the same: this view is per-person.)
+setPrivateCache(Astro);
+---
+
+<Layout title="Your cart — Meridian">
+  <section class="wrap section">
+    <div class="cart-head">
+      <h1>Your cart</h1>
+      <CacheBadge mode="private" />
+    </div>
+    <div data-cart-root>
+      <noscript>Enable JavaScript to view and edit your cart.</noscript>
+    </div>
+  </section>
+</Layout>
+
+<script>
+  import { mountCart } from "../lib/cart-view";
+  mountCart();
+</script>
+
+<style>
+  .cart-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .cart-head h1 {
+    font-size: clamp(1.8rem, 4vw, 2.4rem);
+    margin: 0;
+  }
+  :global(.cart-layout) {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 32px;
+    align-items: start;
+  }
+  :global(.cart-list) {
+    display: grid;
+    gap: 14px;
+  }
+  :global(.cart-row) {
+    display: grid;
+    grid-template-columns: 52px 1fr auto auto;
+    grid-template-areas: "swatch info qty total" "swatch info remove remove";
+    align-items: center;
+    gap: 6px 16px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 16px;
+  }
+  :global(.cart-row__swatch) {
+    grid-area: swatch;
+    width: 52px;
+    height: 52px;
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+    font-size: 1.3rem;
+  }
+  :global(.cart-row__info) {
+    grid-area: info;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  :global(.cart-row__name) {
+    font-weight: 600;
+    color: var(--ink);
+    text-decoration: none;
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+  }
+  :global(.cart-row__name:hover) {
+    color: var(--accent);
+  }
+  :global(.cart-row__unit) {
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+  }
+  :global(.cart-row__qty) {
+    grid-area: qty;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 4px 10px;
+  }
+  :global(.cart-row__qty button) {
+    border: 0;
+    background: none;
+    font-size: 1.1rem;
+    line-height: 1;
+    cursor: pointer;
+    color: var(--ink);
+    width: 20px;
+  }
+  :global(.cart-row__qty [data-qty]) {
+    min-width: 18px;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+  }
+  :global(.cart-row__total) {
+    grid-area: total;
+    font-weight: 600;
+  }
+  :global(.cart-row__remove) {
+    grid-area: remove;
+    justify-self: end;
+    border: 0;
+    background: none;
+    color: var(--ink-soft);
+    cursor: pointer;
+    font-size: 0.82rem;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    padding: 0;
+  }
+  :global(.cart-row__remove:hover) {
+    color: var(--accent);
+  }
+  :global(.cart-summary) {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 22px;
+    position: sticky;
+    top: 84px;
+  }
+  :global(.cart-summary h2) {
+    margin: 0 0 16px;
+    font-size: 1.2rem;
+  }
+  :global(.cart-summary__row) {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 4px;
+  }
+  :global(.cart-summary .btn) {
+    margin-top: 16px;
+  }
+  :global(.cart-summary__continue) {
+    display: block;
+    text-align: center;
+    margin-top: 12px;
+    font-size: 0.9rem;
+    color: var(--ink-soft);
+    text-decoration: none;
+  }
+  :global(.cart-empty) {
+    text-align: center;
+    padding: 64px 24px;
+    border: 1px dashed var(--line);
+    border-radius: 16px;
+  }
+  :global(.cart-empty__title) {
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    margin: 0 0 6px;
+  }
+  :global(.cart-empty .btn) {
+    margin-top: 18px;
+  }
+  @media (max-width: 760px) {
+    :global(.cart-layout) {
+      grid-template-columns: 1fr;
+    }
+    :global(.cart-summary) {
+      position: static;
+    }
+  }
+</style>

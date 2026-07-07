@@ -1,0 +1,80 @@
+// Deal — an opportunity moving through the sales pipeline.
+//
+// Same owner-scoped RLS as Contact: a rep sees only the deals they own; a
+// manager/admin sees the whole team's pipeline. Because access keys off the
+// `owner_email` data field (not the immutable built-in `created_by`), a
+// manager can reassign a deal to another rep and the row-level access follows
+// the new owner automatically.
+//
+// Docs: https://docs.base44.com/developers/backend/resources/entities/security
+{
+  "name": "Deal",
+  "type": "object",
+  "title": "Deal",
+  "description": "A sales opportunity tracked through pipeline stages.",
+  "properties": {
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 160,
+      "description": "Short name for the opportunity"
+    },
+    "contact_id": {
+      "type": "string",
+      "description": "ID of the primary Contact this deal is with"
+    },
+    "amount": {
+      "type": "number",
+      "minimum": 0,
+      "default": 0,
+      "description": "Deal value in your account currency"
+    },
+    "stage": {
+      "type": "string",
+      "enum": ["lead", "qualified", "proposal", "negotiation", "won", "lost"],
+      "default": "lead",
+      "description": "Current pipeline stage"
+    },
+    "close_date": {
+      "type": "string",
+      "format": "date",
+      "description": "Expected (or actual) close date"
+    },
+    "owner_email": {
+      "type": "string",
+      "format": "email",
+      "description": "Sales rep who owns this deal. Drives row-level security."
+    },
+    "notes": {
+      "type": "string",
+      "maxLength": 4000,
+      "description": "Free-form notes about the opportunity"
+    }
+  },
+  "required": ["title", "owner_email"],
+
+  "rls": {
+    "create": true,
+    "read": {
+      "$or": [
+        { "data.owner_email": "{{user.email}}" },
+        { "user_condition": { "role": "admin" } },
+        { "user_condition": { "role": "manager" } }
+      ]
+    },
+    "update": {
+      "$or": [
+        { "data.owner_email": "{{user.email}}" },
+        { "user_condition": { "role": "admin" } },
+        { "user_condition": { "role": "manager" } }
+      ]
+    },
+    "delete": {
+      "$or": [
+        { "data.owner_email": "{{user.email}}" },
+        { "user_condition": { "role": "admin" } },
+        { "user_condition": { "role": "manager" } }
+      ]
+    }
+  }
+}

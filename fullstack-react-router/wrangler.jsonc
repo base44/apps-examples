@@ -1,0 +1,8 @@
+{
+  "name": "fullstack-react-router",
+  "main": "./workers/app.ts",
+  "compatibility_date": "2026-06-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {},
+  "vars": {}
+}

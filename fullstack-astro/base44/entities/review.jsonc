@@ -1,0 +1,44 @@
+{
+  "name": "Review",
+  "type": "object",
+  "properties": {
+    "product_id": {
+      "type": "string",
+      "description": "Product this review is about"
+    },
+    "rating": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 5,
+      "description": "Star rating, 1-5"
+    },
+    "title": {
+      "type": "string",
+      "description": "Short review headline"
+    },
+    "body": {
+      "type": "string",
+      "description": "Full review text"
+    },
+    "author_name": {
+      "type": "string",
+      "description": "Display name shown next to the review"
+    }
+  },
+  "required": ["product_id", "rating"],
+
+  // Reviews are public to read (they appear on product pages). Signed-in
+  // shoppers create them (their identity is recorded in `created_by`), and a
+  // shopper can only edit or remove their own review — admins can moderate any.
+  "rls": {
+    "create": true,
+    "read": true,
+    "update": { "created_by": "{{user.email}}" },
+    "delete": {
+      "$or": [
+        { "created_by": "{{user.email}}" },
+        { "user_condition": { "role": "admin" } }
+      ]
+    }
+  }
+}

@@ -1,0 +1,14 @@
+// Base44 Project Configuration
+// JSONC enables inline documentation and discoverability directly in config files.
+
+{
+  "name": "Base44 Estates",
+  "description": "A server-side rendered real-estate agency site on Base44 full-stack hosting: SSR + edge caching, entities with row-level security, auth, and an AI concierge agent.",
+
+  // Site/hosting configuration
+  // Docs: https://docs.base44.com/configuration/hosting
+  "site": {
+    "installCommand": "npm install",
+    "buildCommand": "npm run build"
+  }
+}

@@ -1,0 +1,182 @@
+---
+import Layout from "../components/Layout.astro";
+import { getServerClient, getUser, resolveAppId } from "../lib/base44";
+import { setPrivateCache } from "../lib/cache";
+
+// The app OWNS this page. On the deployed domain Base44 reserves only
+// /api/apps/* and /ws-user-apps/* — every other path, including /login, is
+// served by this app. Sign-in and sign-up run through the same-origin
+// /api/auth/* routes (src/pages/api/auth/[action].ts), which call the Base44
+// SDK server-side and set the session cookie — the browser never needs the
+// SDK or the app id, same as every other write in this app.
+
+// PERSONALISED PAGE — never edge-cached.
+setPrivateCache(Astro);
+
+// Where to send the visitor after sign-in. Only same-origin paths are valid
+// ("//evil.com" is not).
+const from = Astro.url.searchParams.get("from") ?? Astro.url.searchParams.get("from_url");
+const dest = from && from.startsWith("/") && !from.startsWith("//") ? from : "/";
+
+// Already signed in? Skip the form. (After the Google OAuth round trip,
+// AuthBootstrap has already mirrored the token into the cookie and reloaded,
+// so this redirect completes that flow too.)
+const base44 = getServerClient(Astro);
+const user = await getUser(base44);
+if (user) return Astro.redirect(dest);
+
+// Google OAuth start URL — same-origin /api/apps/* is the platform-reserved
+// surface, so this works without the browser SDK. The flow returns to /login
+// with ?access_token=… for AuthBootstrap to capture.
+// NOTE: on newly added base domains the staging OAuth gateway may reject
+// Google sign-in until the domain is allowlisted — that's platform
+// configuration, not app code. Email/password works regardless.
+const appId = resolveAppId(Astro);
+const oauthReturn = new URL(`/login?from=${encodeURIComponent(dest)}`, Astro.url.origin);
+const googleHref = appId
+  ? `/api/apps/auth/login?app_id=${appId}&from_url=${encodeURIComponent(oauthReturn.href)}`
+  : null;
+---
+
+<Layout title="Sign in — Meridian" description="Sign in to your Meridian account.">
+  <section class="wrap section">
+    <div class="auth-panel" data-auth data-dest={dest}>
+      <p class="eyebrow" data-auth-eyebrow>Welcome</p>
+      <h1 data-auth-title>Sign in to Meridian</h1>
+      <p class="muted" data-auth-sub>Track orders, check out faster, and review your favorite roasts.</p>
+
+      {
+        !appId ? (
+          <p class="muted">Sign-in is available once this app is deployed on Base44.</p>
+        ) : (
+          <>
+            <p class="auth-notice" data-auth-notice hidden></p>
+            <p class="auth-error" data-auth-error hidden></p>
+
+            <div data-auth-oauth>
+              <a class="btn btn--ghost btn--block" href={googleHref}>Continue with Google</a>
+              <div class="auth-divider">or with email</div>
+            </div>
+
+            <form data-signin-form>
+              <div class="field">
+                <label for="si-email">Email</label>
+                <input id="si-email" name="email" type="email" autocomplete="email" required />
+              </div>
+              <div class="field">
+                <label for="si-password">Password</label>
+                <input id="si-password" name="password" type="password" autocomplete="current-password" required />
+              </div>
+              <button class="btn btn--block" type="submit">Sign in</button>
+              <p class="auth-switch">
+                New to Meridian? <button class="link-btn" type="button" data-show-signup>Create an account</button>
+              </p>
+            </form>
+
+            <form data-signup-form hidden>
+              <div class="field">
+                <label for="su-email">Email</label>
+                <input id="su-email" name="email" type="email" autocomplete="email" required />
+              </div>
+              <div class="field">
+                <label for="su-password">Password</label>
+                <input id="su-password" name="password" type="password" autocomplete="new-password" minlength="8" placeholder="At least 8 characters" required />
+              </div>
+              <button class="btn btn--block" type="submit">Create account</button>
+              <p class="auth-switch">
+                Already have an account? <button class="link-btn" type="button" data-show-signin>Sign in</button>
+              </p>
+            </form>
+
+            <form data-verify-form hidden>
+              <div class="field">
+                <label for="vf-code">Verification code</label>
+                <input id="vf-code" name="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" placeholder="123456" required />
+              </div>
+              <button class="btn btn--block" type="submit">Verify and sign in</button>
+              <p class="auth-switch">
+                Didn't get it? <button class="link-btn" type="button" data-resend>Resend code</button>
+              </p>
+            </form>
+          </>
+        )
+      }
+    </div>
+  </section>
+</Layout>
+
+<script>
+  import { mountLoginForms } from "../lib/auth-forms";
+  mountLoginForms();
+</script>
+
+<style>
+  .auth-panel {
+    max-width: 440px;
+    margin: 24px auto;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 32px;
+  }
+  .auth-panel h1 {
+    font-size: clamp(1.6rem, 4vw, 2rem);
+    margin: 0 0 8px;
+  }
+  .auth-panel .muted {
+    margin: 0 0 20px;
+    font-size: 0.95rem;
+  }
+  .auth-divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--ink-soft);
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin: 18px 0;
+  }
+  .auth-divider::before,
+  .auth-divider::after {
+    content: "";
+    height: 1px;
+    background: var(--line);
+    flex: 1;
+  }
+  .auth-notice,
+  .auth-error {
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 0.9rem;
+    margin: 0 0 16px;
+  }
+  .auth-notice {
+    background: #eef5f1;
+    border: 1px solid #d4e5dc;
+    color: var(--accent-teal);
+  }
+  .auth-error {
+    background: #fbeee9;
+    border: 1px solid #f0d5c9;
+    color: var(--accent-ink);
+  }
+  .auth-switch {
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: 0.9rem;
+    margin: 16px 0 0;
+  }
+  .link-btn {
+    background: none;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+    font: inherit;
+    color: var(--accent-ink);
+    font-weight: 600;
+  }
+  .link-btn:hover {
+    text-decoration: underline;
+  }
+</style>

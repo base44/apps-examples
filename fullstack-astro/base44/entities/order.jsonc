@@ -1,0 +1,63 @@
+{
+  "name": "Order",
+  "type": "object",
+  "properties": {
+    "items": {
+      "type": "array",
+      "description": "Line items captured at checkout time",
+      "items": {
+        "type": "object",
+        "properties": {
+          "product_id": { "type": "string" },
+          "name": { "type": "string" },
+          "qty": { "type": "number" },
+          "unit_price": { "type": "number" }
+        }
+      }
+    },
+    "total": {
+      "type": "number",
+      "description": "Order total in the currency below"
+    },
+    "currency": {
+      "type": "string",
+      "default": "USD",
+      "description": "ISO 4217 currency code"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["pending", "paid", "shipped", "delivered", "cancelled"],
+      "default": "pending",
+      "description": "Fulfilment status"
+    },
+    "customer_email": {
+      "type": "string",
+      "description": "Contact email for this order"
+    },
+    "shipping_address": {
+      "type": "object",
+      "description": "Where the order ships to",
+      "properties": {
+        "name": { "type": "string" },
+        "line1": { "type": "string" },
+        "line2": { "type": "string" },
+        "city": { "type": "string" },
+        "region": { "type": "string" },
+        "postal_code": { "type": "string" },
+        "country": { "type": "string" }
+      }
+    }
+  },
+  "required": ["items", "total"],
+
+  // Owner-scoped: a signed-in shopper can only read and update their own orders.
+  // `created_by` is set automatically to the authenticated user on create, so
+  // reads are transparently filtered to the current user by Base44. This is
+  // per-user data, which is why the order pages are served `private, no-store`.
+  "rls": {
+    "create": true,
+    "read": { "created_by": "{{user.email}}" },
+    "update": { "created_by": "{{user.email}}" },
+    "delete": { "user_condition": { "role": "admin" } }
+  }
+}

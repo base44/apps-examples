@@ -1,0 +1,8 @@
+// Hand-authored Worker config: Astro's adapter generates its build config from
+// this file. Without it, the generated config has an empty compatibility_flags
+// list — and Base44 full-stack SSR requires nodejs_compat.
+{
+  "name": "fullstack-astro",
+  "compatibility_date": "2026-06-01",
+  "compatibility_flags": ["nodejs_compat"]
+}

@@ -1,0 +1,44 @@
+---
+import Layout from "../components/Layout.astro";
+import CacheBadge from "../components/CacheBadge.astro";
+import { STATIC_CATEGORIES } from "../lib/static-nav";
+
+// PRERENDERED 404.
+// The not-found page is identical for everyone, so it's baked to static
+// `404.html` at build time instead of being rendered per miss. Astro's Worker
+// still owns the routing: an unmatched URL makes it serve this prebuilt HTML
+// from the asset layer with a real 404 status — no page render, no database,
+// and nothing personalised for a shared cache to leak.
+export const prerender = true;
+---
+
+<Layout title="Page not found — Meridian" staticCategories={STATIC_CATEGORIES}>
+  <section class="wrap section notfound">
+    <p class="eyebrow">404</p>
+    <h1>This page has gone cold.</h1>
+    <p class="muted">The link may be broken or the page may have moved.</p>
+    <a class="btn" href="/">Back to the shop</a>
+    <div class="notfound__badge">
+      <CacheBadge mode="static" />
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .notfound {
+    text-align: center;
+    padding: 104px 24px;
+  }
+  .notfound h1 {
+    font-size: clamp(1.8rem, 4vw, 2.4rem);
+    margin: 6px 0 8px;
+  }
+  .notfound .btn {
+    margin-top: 22px;
+  }
+  .notfound__badge {
+    margin-top: 26px;
+    display: flex;
+    justify-content: center;
+  }
+</style>

@@ -1,0 +1,132 @@
+---
+import ProductImage from "./ProductImage.astro";
+import Stars from "./Stars.astro";
+import { accentFor, formatPrice, roastLabel } from "../lib/format";
+import type { Product } from "../lib/types";
+
+interface Props {
+  product: Product;
+  rating?: number | null;
+  reviewCount?: number | null;
+  eager?: boolean;
+}
+
+const { product, rating = null, reviewCount = null, eager = false } = Astro.props;
+const href = `/products/${product.slug}`;
+const accent = product.accent ?? accentFor(product.slug || product.name);
+const roast = roastLabel(product.roast_level);
+const soldOut = typeof product.stock === "number" && product.stock <= 0;
+---
+
+<article class="card">
+  <a class="card__media" href={href} aria-label={product.name}>
+    <ProductImage product={product} eager={eager} />
+    {soldOut && <span class="card__badge card__badge--out">Sold out</span>}
+    {!soldOut && product.featured && <span class="card__badge">Featured</span>}
+  </a>
+  <div class="card__body">
+    <div class="card__meta">
+      {product.origin && <span>{product.origin}</span>}
+      {roast && <span>{roast}</span>}
+    </div>
+    <h3 class="card__title">
+      <a href={href}>{product.name}</a>
+    </h3>
+    {rating ? <Stars value={rating} count={reviewCount} size={15} /> : null}
+    <div class="card__foot">
+      <span class="card__price">{formatPrice(product.price, product.currency)}</span>
+      <button
+        class="btn btn--sm"
+        type="button"
+        data-add-to-cart
+        data-id={product.id}
+        data-slug={product.slug}
+        data-name={product.name}
+        data-price={product.price}
+        data-currency={product.currency}
+        data-accent={accent}
+        disabled={soldOut}
+      >
+        {soldOut ? "Sold out" : "Add to cart"}
+      </button>
+    </div>
+  </div>
+</article>
+
+<style>
+  .card {
+    display: flex;
+    flex-direction: column;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+  }
+  .card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 16px 34px -22px rgba(43, 35, 32, 0.55);
+    border-color: #e0d6ca;
+  }
+  .card__media {
+    position: relative;
+    display: block;
+  }
+  .card__badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #fff;
+    background: rgba(43, 35, 32, 0.72);
+    padding: 4px 9px;
+    border-radius: 999px;
+    backdrop-filter: blur(4px);
+  }
+  .card__badge--out {
+    background: rgba(43, 35, 32, 0.85);
+  }
+  .card__body {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px 16px 18px;
+  }
+  .card__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 10px;
+    font-size: 0.74rem;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+  .card__title {
+    font-family: var(--font-display);
+    font-size: 1.12rem;
+    font-weight: 600;
+    margin: 0;
+    line-height: 1.25;
+  }
+  .card__title a {
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .card__title a:hover {
+    color: var(--accent);
+  }
+  .card__foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 6px;
+  }
+  .card__price {
+    font-size: 1.02rem;
+    font-weight: 600;
+    color: var(--ink);
+  }
+</style>

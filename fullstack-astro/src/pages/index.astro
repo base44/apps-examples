@@ -1,0 +1,247 @@
+---
+import Layout from "../components/Layout.astro";
+import ProductCard from "../components/ProductCard.astro";
+import CacheBadge from "../components/CacheBadge.astro";
+import { getServerClient } from "../lib/base44";
+import { listCategories, listFeatured, listProducts } from "../lib/store";
+
+// PUBLIC, EDGE-CACHED PAGE.
+// The catalog is the same for every visitor (Product/Category are publicly
+// readable via RLS), so we tell Base44's shared cache it may store and serve
+// this response. On a cache HIT the CacheBadge timestamp will be older than the
+// wall clock — that's the edge doing its job.
+import { setPublicCache } from "../lib/cache";
+setPublicCache(Astro);
+
+const base44 = getServerClient(Astro);
+const [categories, featured, products] = await Promise.all([
+  listCategories(base44),
+  listFeatured(base44),
+  listProducts(base44),
+]);
+---
+
+<Layout title="Meridian — Small-batch coffee, roasted to order">
+  <section class="hero">
+    <div class="wrap hero__grid">
+      <div class="hero__copy">
+        <p class="eyebrow">Roasted to order · shipped in 24h</p>
+        <h1 class="hero__title">Coffee worth<br />waking up for.</h1>
+        <p class="hero__lede">
+          Meridian is a small-batch roaster sourcing traceable, seasonal lots and
+          roasting them the day they ship. Find your next favourite cup.
+        </p>
+        <div class="hero__cta">
+          <a class="btn" href="#catalog">Shop the catalog</a>
+          <a class="btn btn--ghost" href={`/category/${featured[0] ? "single-origin" : "blends"}`}>
+            Explore single-origins
+          </a>
+        </div>
+        <div class="hero__badge">
+          <CacheBadge mode="edge" />
+        </div>
+      </div>
+      <div class="hero__art" aria-hidden="true">
+        <span class="hero__mark">◐</span>
+        <span class="hero__art-word">Meridian</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap section categories">
+    {
+      categories.map((c) => (
+        <a class="cat-pill" href={`/category/${c.slug}`}>
+          <span class="cat-pill__name">{c.name}</span>
+          <span class="cat-pill__arrow" aria-hidden="true">→</span>
+        </a>
+      ))
+    }
+  </section>
+
+  <section class="wrap section">
+    <div class="section__head">
+      <div>
+        <p class="eyebrow">Staff picks</p>
+        <h2>Featured this week</h2>
+      </div>
+      <a href="#catalog">View all</a>
+    </div>
+    {
+      featured.length === 0 ? (
+        <p class="muted">Nothing on the shelf yet — check back soon.</p>
+      ) : (
+        <div class="product-grid">
+          {featured.map((p, i) => (
+            <ProductCard product={p} eager={i < 2} />
+          ))}
+        </div>
+      )
+    }
+  </section>
+
+  <section class="concierge-band">
+    <div class="wrap concierge-band__inner">
+      <div>
+        <p class="eyebrow eyebrow--light">Need a hand?</p>
+        <h2 class="concierge-band__title">Ask Bean, our shopping concierge.</h2>
+        <p class="concierge-band__text">
+          Tell our AI concierge how you brew and what you like — fruity or
+          chocolatey, filter or espresso — and it will recommend a coffee from
+          the shelf, backed by real customer reviews.
+        </p>
+      </div>
+      <div class="concierge-band__chip">Powered by a Base44 agent</div>
+    </div>
+  </section>
+
+  <section id="catalog" class="wrap section">
+    <div class="section__head">
+      <div>
+        <p class="eyebrow">The full shelf</p>
+        <h2>Every coffee &amp; kit</h2>
+      </div>
+      <span class="muted">{products.length} products</span>
+    </div>
+    {
+      products.length === 0 ? (
+        <p class="muted">The catalog is empty — no products have been added yet.</p>
+      ) : (
+        <div class="product-grid">
+          {products.map((p) => (
+            <ProductCard product={p} />
+          ))}
+        </div>
+      )
+    }
+  </section>
+</Layout>
+
+<style>
+  .hero {
+    background:
+      radial-gradient(1200px 400px at 15% -10%, rgba(181, 71, 31, 0.08), transparent 60%),
+      var(--bg);
+    border-bottom: 1px solid var(--line);
+  }
+  .hero__grid {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 40px;
+    align-items: center;
+    padding: 72px 24px;
+  }
+  .hero__title {
+    font-size: clamp(2.6rem, 6vw, 4rem);
+    margin: 0 0 18px;
+    letter-spacing: -0.02em;
+  }
+  .hero__lede {
+    font-size: 1.12rem;
+    color: var(--ink-soft);
+    max-width: 44ch;
+    margin: 0 0 26px;
+  }
+  .hero__cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 26px;
+  }
+  .hero__art {
+    position: relative;
+    aspect-ratio: 5 / 4;
+    border-radius: 20px;
+    background: linear-gradient(150deg, #c26b3f 0%, #5b4632 100%);
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    box-shadow: 0 40px 80px -50px rgba(43, 35, 32, 0.8);
+  }
+  .hero__mark {
+    position: absolute;
+    font-size: 22rem;
+    color: rgba(255, 255, 255, 0.08);
+    line-height: 1;
+  }
+  .hero__art-word {
+    font-family: var(--font-display);
+    font-size: clamp(2rem, 4vw, 3rem);
+    color: rgba(255, 255, 255, 0.92);
+    letter-spacing: 0.02em;
+  }
+  .categories {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 14px;
+    padding-top: 40px;
+    padding-bottom: 8px;
+  }
+  .cat-pill {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 20px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    text-decoration: none;
+    color: var(--ink);
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    transition: border-color 0.15s ease, transform 0.15s ease;
+  }
+  .cat-pill:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+  .cat-pill__arrow {
+    color: var(--accent);
+  }
+  .concierge-band {
+    background: var(--accent-teal);
+    color: #eef3f0;
+  }
+  .concierge-band__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 28px;
+    padding: 44px 24px;
+  }
+  .concierge-band__title {
+    color: #fff;
+    font-size: clamp(1.5rem, 3vw, 2.1rem);
+    margin: 0 0 10px;
+  }
+  .concierge-band__text {
+    margin: 0;
+    max-width: 56ch;
+    color: #d6e0db;
+  }
+  .eyebrow--light {
+    color: #bcd3c9;
+  }
+  .concierge-band__chip {
+    flex-shrink: 0;
+    padding: 10px 16px;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 999px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  @media (max-width: 820px) {
+    .hero__grid {
+      grid-template-columns: 1fr;
+      padding: 48px 24px;
+    }
+    .hero__art {
+      display: none;
+    }
+    .concierge-band__inner {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+</style>

@@ -1,0 +1,78 @@
+{
+  "name": "Product",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Product display name, e.g. \"Ethiopia Yirgacheffe\""
+    },
+    "slug": {
+      "type": "string",
+      "description": "URL-safe identifier used in /products/[slug]"
+    },
+    "description": {
+      "type": "string",
+      "description": "Long-form product description"
+    },
+    "price": {
+      "type": "number",
+      "description": "Unit price in the currency below (major units, e.g. 22.00)"
+    },
+    "currency": {
+      "type": "string",
+      "default": "USD",
+      "description": "ISO 4217 currency code"
+    },
+    "images": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Ordered list of image URLs; the first is the primary image"
+    },
+    "category_id": {
+      "type": "string",
+      "description": "Category this product belongs to"
+    },
+    "stock": {
+      "type": "number",
+      "default": 0,
+      "description": "Units available for purchase"
+    },
+    "featured": {
+      "type": "boolean",
+      "default": false,
+      "description": "Surface on the homepage featured rail"
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Free-form tags used for filtering and search"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["active", "draft"],
+      "default": "active",
+      "description": "Only active products are shown in the storefront"
+    },
+    "origin": {
+      "type": "string",
+      "description": "Country / region of origin (coffee-specific)"
+    },
+    "roast_level": {
+      "type": "string",
+      "enum": ["light", "medium", "medium-dark", "dark"],
+      "description": "Roast profile (coffee-specific)"
+    }
+  },
+  "required": ["name", "slug", "price"],
+
+  // Row-Level Security: the catalog is public (anyone can read active products),
+  // and only admins can mutate it. Public read is what makes the catalog pages
+  // safe to serve from a shared edge cache.
+  // Docs: https://docs.base44.com/entities/policies
+  "rls": {
+    "create": { "user_condition": { "role": "admin" } },
+    "read": true,
+    "update": { "user_condition": { "role": "admin" } },
+    "delete": { "user_condition": { "role": "admin" } }
+  }
+}

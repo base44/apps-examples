@@ -1,0 +1,70 @@
+---
+// Small stamp that makes the rendering mode of every page visible:
+//
+//   - "edge"    (SSR, edge-cached):  "server-rendered at HH:MM:SS" — on a
+//     cache HIT the timestamp is OLDER than the wall clock; reload a couple of
+//     times and watch it freeze, then jump once the cache revalidates.
+//   - "private" (SSR, never cached): "server-rendered at" always shows the
+//     current time — every request hits the Worker.
+//   - "static"  (prerendered / SSG): "built at" is frozen at BUILD time — the
+//     page is a static asset served before any Worker code runs, so the stamp
+//     only ever changes when the site is rebuilt and redeployed.
+//
+// `data-testid="rendered-at"` / `data-testid="built-at"` make the behaviour
+// easy to assert in tests. The explicit {" "} before <strong> keeps the space
+// under any compressHTML mode (Astro 7's "jsx" default strips the newline
+// between text and an element).
+import { formatTime } from "../lib/format";
+
+type Mode = "edge" | "private" | "static";
+
+interface Props {
+  mode?: Mode;
+}
+const { mode = "edge" } = Astro.props;
+const now = new Date();
+const label =
+  mode === "static" ? "Prerendered" : mode === "edge" ? "Edge-cached" : "Personalised";
+const verb = mode === "static" ? "built at" : "server-rendered at";
+const testid = mode === "static" ? "built-at" : "rendered-at";
+---
+
+<div class="cache-badge">
+  <span class={`cache-badge__dot is-${mode}`} aria-hidden="true"></span>
+  <span>
+    {label} · {verb}{" "}
+    <strong data-testid={testid} title={now.toISOString()}>{formatTime(now.toISOString())}</strong>
+  </span>
+</div>
+
+<style>
+  .cache-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 6px 12px;
+  }
+  .cache-badge strong {
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+  }
+  .cache-badge__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+  .cache-badge__dot.is-edge {
+    background: var(--accent-teal);
+  }
+  .cache-badge__dot.is-private {
+    background: var(--accent);
+  }
+  .cache-badge__dot.is-static {
+    background: #8d81c4;
+  }
+</style>

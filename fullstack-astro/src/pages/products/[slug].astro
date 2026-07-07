@@ -1,0 +1,348 @@
+---
+import Layout from "../../components/Layout.astro";
+import ProductImage from "../../components/ProductImage.astro";
+import Stars from "../../components/Stars.astro";
+import CacheBadge from "../../components/CacheBadge.astro";
+import { getServerClient, loginUrlFor } from "../../lib/base44";
+import {
+  averageRating,
+  categoryName,
+  getProductBySlug,
+  listCategories,
+  listReviews,
+} from "../../lib/store";
+import { formatPrice, roastLabel } from "../../lib/format";
+import { formatDate } from "../../lib/format";
+import { setPrivateCache, setPublicCache } from "../../lib/cache";
+
+const { slug } = Astro.params;
+const base44 = getServerClient(Astro);
+const product = slug ? await getProductBySlug(base44, slug) : null;
+
+if (!product) {
+  // Don't let a shared cache store a 404 as if it were a real product page.
+  setPrivateCache(Astro);
+  Astro.response.status = 404;
+}
+
+const [categories, reviews] = product
+  ? await Promise.all([listCategories(base44), listReviews(base44, product.id)])
+  : [[], []];
+
+const avg = averageRating(reviews);
+const catName = product ? categoryName(categories, product.category_id) : null;
+const roast = product ? roastLabel(product.roast_level) : null;
+const soldOut = product ? typeof product.stock === "number" && product.stock <= 0 : false;
+const loginUrl = loginUrlFor(Astro, Astro.url.href);
+
+// PUBLIC, EDGE-CACHED PAGE (for real products): the product detail is identical
+// for every visitor. Reviews are public too. Personalisation (can this visitor
+// post a review?) is resolved on the client, so the HTML stays shareable.
+if (product) setPublicCache(Astro);
+---
+
+{
+  !product ? (
+    <Layout title="Product not found — Meridian">
+      <section class="wrap section notfound">
+        <p class="eyebrow">404</p>
+        <h1>We couldn't find that coffee.</h1>
+        <p class="muted">It may have sold out or been renamed.</p>
+        <a class="btn" href="/">Back to the shop</a>
+      </section>
+    </Layout>
+  ) : (
+    <Layout title={`${product.name} — Meridian`} description={product.description}>
+      <div class="wrap pdp">
+        <nav class="crumbs" aria-label="Breadcrumb">
+          <a href="/">Shop</a>
+          <span aria-hidden="true">/</span>
+          {catName && product.category_id && (
+            <>
+              <a href={`/category/${categories.find((c) => c.id === product.category_id)?.slug ?? ""}`}>
+                {catName}
+              </a>
+              <span aria-hidden="true">/</span>
+            </>
+          )}
+          <span aria-current="page">{product.name}</span>
+        </nav>
+
+        <div class="pdp__grid">
+          <div class="pdp__media">
+            <div class="pdp__frame">
+              <ProductImage product={product} eager={true} />
+            </div>
+          </div>
+
+          <div class="pdp__info">
+            <div class="pdp__meta">
+              {product.origin && <span>{product.origin}</span>}
+              {roast && <span>{roast}</span>}
+            </div>
+            <h1 class="pdp__title">{product.name}</h1>
+            {avg ? <Stars value={avg} count={reviews.length} size={18} /> : <span class="muted">No reviews yet</span>}
+            <p class="pdp__price">{formatPrice(product.price, product.currency)}</p>
+            <p class="pdp__desc">{product.description}</p>
+
+            {product.tags && product.tags.length > 0 && (
+              <ul class="pdp__tags">
+                {product.tags.map((t) => (
+                  <li>{t}</li>
+                ))}
+              </ul>
+            )}
+
+            <div class="pdp__buy">
+              <button
+                class="btn btn--block"
+                type="button"
+                data-add-to-cart
+                data-id={product.id}
+                data-slug={product.slug}
+                data-name={product.name}
+                data-price={product.price}
+                data-currency={product.currency}
+                data-accent={product.accent}
+                disabled={soldOut}
+              >
+                {soldOut ? "Sold out" : "Add to cart"}
+              </button>
+              <a class="btn btn--ghost btn--block" href="/cart">Go to cart</a>
+            </div>
+            <p class="pdp__stock">
+              {soldOut
+                ? "Currently out of stock — check back soon."
+                : typeof product.stock === "number"
+                  ? `${product.stock} in stock · roasted to order`
+                  : "Roasted to order"}
+            </p>
+            <div class="pdp__cachenote">
+              <CacheBadge mode="edge" />
+            </div>
+          </div>
+        </div>
+
+        <section class="reviews">
+          <div class="section__head">
+            <h2>Reviews {reviews.length > 0 && <span class="muted">({reviews.length})</span>}</h2>
+          </div>
+
+          {reviews.length === 0 ? (
+            <p class="muted">Be the first to review {product.name}.</p>
+          ) : (
+            <ul class="review-list">
+              {reviews.map((r) => (
+                <li class="review">
+                  <Stars value={Number(r.rating) || 0} size={15} />
+                  {r.title && <h3 class="review__title">{r.title}</h3>}
+                  {r.body && <p class="review__body">{r.body}</p>}
+                  <p class="review__by">
+                    {r.author_name || "Anonymous"}
+                    {r.created_date && <span> · {formatDate(r.created_date)}</span>}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          )}
+
+          <form class="review-form" data-review-form data-login-url={loginUrl ?? ""}>
+            <h3>Write a review</h3>
+            <input type="hidden" name="product_id" value={product.id} />
+            <div class="review-form__row">
+              <div class="field">
+                <label for="rv-rating">Rating</label>
+                <select id="rv-rating" name="rating" required>
+                  <option value="5">5 — Excellent</option>
+                  <option value="4">4 — Very good</option>
+                  <option value="3">3 — Good</option>
+                  <option value="2">2 — Fair</option>
+                  <option value="1">1 — Poor</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="rv-name">Your name</label>
+                <input id="rv-name" name="author_name" placeholder="e.g. Alex P." />
+              </div>
+            </div>
+            <div class="field">
+              <label for="rv-title">Headline</label>
+              <input id="rv-title" name="title" placeholder="Sum it up" />
+            </div>
+            <div class="field">
+              <label for="rv-body">Your review</label>
+              <textarea id="rv-body" name="body" rows="3" placeholder="What did you think?"></textarea>
+            </div>
+            <button class="btn" type="submit">Post review</button>
+            <p class="review-form__msg" data-review-msg hidden></p>
+          </form>
+        </section>
+      </div>
+    </Layout>
+  )
+}
+
+<script>
+  import { postReview } from "../../lib/actions";
+  postReview();
+</script>
+
+<style>
+  .notfound {
+    text-align: center;
+    padding: 96px 24px;
+  }
+  .notfound h1 {
+    font-size: 2rem;
+    margin: 6px 0 8px;
+  }
+  .notfound .btn {
+    margin-top: 20px;
+  }
+  .pdp {
+    padding-top: 28px;
+  }
+  .crumbs {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+    margin-bottom: 24px;
+  }
+  .crumbs a {
+    color: var(--ink-soft);
+    text-decoration: none;
+  }
+  .crumbs a:hover {
+    color: var(--accent);
+  }
+  .pdp__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 44px;
+    align-items: start;
+  }
+  .pdp__frame {
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    box-shadow: 0 30px 60px -44px rgba(43, 35, 32, 0.6);
+  }
+  .pdp__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 12px;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--ink-soft);
+    margin-bottom: 8px;
+  }
+  .pdp__title {
+    font-size: clamp(1.8rem, 4vw, 2.6rem);
+    margin: 0 0 10px;
+  }
+  .pdp__price {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 14px 0 4px;
+  }
+  .pdp__desc {
+    color: var(--ink-soft);
+    font-size: 1.02rem;
+    margin: 8px 0 18px;
+  }
+  .pdp__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 0;
+    margin: 0 0 22px;
+    list-style: none;
+  }
+  .pdp__tags li {
+    font-size: 0.78rem;
+    background: var(--surface-2);
+    color: var(--ink-soft);
+    padding: 5px 10px;
+    border-radius: 999px;
+  }
+  .pdp__buy {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .pdp__stock {
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+    margin: 0 0 18px;
+  }
+  .reviews {
+    margin-top: 64px;
+    border-top: 1px solid var(--line);
+    padding-top: 8px;
+  }
+  .review-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 36px;
+    display: grid;
+    gap: 22px;
+  }
+  .review {
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 18px 20px;
+    background: var(--surface);
+  }
+  .review__title {
+    font-size: 1.05rem;
+    margin: 8px 0 4px;
+  }
+  .review__body {
+    margin: 0 0 8px;
+    color: var(--ink-soft);
+  }
+  .review__by {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+  }
+  .review-form {
+    max-width: 620px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 24px;
+  }
+  .review-form h3 {
+    margin: 0 0 16px;
+    font-size: 1.2rem;
+  }
+  .review-form__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .review-form__msg {
+    margin: 12px 0 0;
+    font-size: 0.9rem;
+  }
+  .review-form__msg.is-error {
+    color: var(--accent-ink);
+  }
+  .review-form__msg.is-ok {
+    color: var(--accent-teal);
+  }
+  @media (max-width: 820px) {
+    .pdp__grid {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+    .review-form__row {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

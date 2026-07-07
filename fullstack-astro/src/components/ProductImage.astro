@@ -1,0 +1,72 @@
+---
+// Renders a product's primary image. If the product carries a real image URL we
+// show it (`imageService: "passthrough"` in the adapter serves remote images
+// as-is). Otherwise we render an on-brand generated tile — a warm gradient with
+// a coffee motif — so the storefront looks cohesive and self-contained even
+// before any product photography is uploaded.
+import { accentFor } from "../lib/format";
+import type { Product } from "../lib/types";
+
+interface Props {
+  product: Product;
+  eager?: boolean;
+}
+
+const { product, eager = false } = Astro.props;
+const src = product.images?.find((u) => /^(https?:)?\/\//.test(u) || u.startsWith("/"));
+const accent = product.accent ?? accentFor(product.slug || product.name);
+
+// Derive a darker companion colour for the gradient.
+function darken(hex: string, amount = 0.4): string {
+  const m = /^#?([0-9a-f]{6})$/i.exec(hex);
+  if (!m) return hex;
+  const n = parseInt(m[1], 16);
+  const r = Math.round(((n >> 16) & 255) * (1 - amount));
+  const g = Math.round(((n >> 8) & 255) * (1 - amount));
+  const b = Math.round((n & 255) * (1 - amount));
+  return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
+}
+
+const gradient = `linear-gradient(150deg, ${accent} 0%, ${darken(accent)} 100%)`;
+---
+
+{
+  src ? (
+    <img
+      class="product-image"
+      src={src}
+      alt={product.name}
+      loading={eager ? "eager" : "lazy"}
+      decoding="async"
+    />
+  ) : (
+    <div class="product-image product-image--tile" style={`background:${gradient}`} role="img" aria-label={product.name}>
+      <svg viewBox="0 0 64 64" fill="none" aria-hidden="true" class="product-image__motif">
+        <path d="M14 26h30v12a12 12 0 0 1-12 12h-6a12 12 0 0 1-12-12V26Z" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" />
+        <path d="M44 30h4a6 6 0 0 1 0 12h-4" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round" />
+        <path d="M22 12c-2 3 0 5 0 8M31 10c-2 3 0 5 0 8M40 12c-2 3 0 5 0 8" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
+      </svg>
+    </div>
+  )
+}
+
+<style>
+  .product-image {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border: 0;
+  }
+  .product-image--tile {
+    display: grid;
+    place-items: center;
+    color: rgba(255, 255, 255, 0.82);
+  }
+  .product-image__motif {
+    width: 40%;
+    max-width: 120px;
+    opacity: 0.9;
+    filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.18));
+  }
+</style>

@@ -1,0 +1,22 @@
+# Dependencies
+node_modules
+
+# Build
+dist
+.wrangler
+.astro
+
+# Environment
+.env
+.env.*
+*.local
+.dev.vars
+
+# Editor
+.vscode
+.idea
+.DS_Store
+*.swp
+
+# Base44 App Config
+base44/.app.json*

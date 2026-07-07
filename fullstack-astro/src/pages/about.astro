@@ -1,0 +1,259 @@
+---
+import Layout from "../components/Layout.astro";
+import CacheBadge from "../components/CacheBadge.astro";
+import { STATIC_CATEGORIES } from "../lib/static-nav";
+
+// PRERENDERED (SSG) PAGE.
+// The brand story never changes between deploys, so there is no reason to run
+// a Worker — or hit the database — to serve it. `prerender = true` makes Astro
+// emit this page as plain HTML into dist/client at BUILD time; Base44's asset
+// layer then serves it before any Worker code runs. The CacheBadge below shows
+// the build timestamp, frozen until the next deploy — compare it with the
+// homepage's "server-rendered at" stamp, which moves.
+export const prerender = true;
+
+const values = [
+  {
+    title: "Sourced with names attached",
+    body: "Every lot we buy is traceable to a farm, a washing station and a harvest window. We pay above-market prices for cup quality — and we publish who grew what, right on the bag.",
+    mark: "◈",
+  },
+  {
+    title: "Roasted to order",
+    body: "Nothing sits on a shelf. Orders are batched each morning, roasted that day on our 12-kilo Probat, rested overnight and shipped within 24 hours of the roast.",
+    mark: "◐",
+  },
+  {
+    title: "Seasonal by design",
+    body: "Coffee is a crop, not a SKU. When a lot fades past its peak we retire it — which is why the catalog changes with the harvests instead of staying frozen year-round.",
+    mark: "❋",
+  },
+];
+
+const numbers = [
+  { n: "14", label: "partner farms across 6 origins" },
+  { n: "24h", label: "from roaster to courier" },
+  { n: "9", label: "roast profiles in rotation" },
+  { n: "0", label: "beans older than 21 days past roast" },
+];
+---
+
+<Layout
+  title="Our story — Meridian"
+  description="Meridian is a small-batch coffee roaster: traceable lots, roasted to order, shipped within 24 hours."
+  staticCategories={STATIC_CATEGORIES}
+>
+  <section class="about-hero">
+    <div class="wrap about-hero__inner">
+      <p class="eyebrow">Our story</p>
+      <h1>Good coffee is a chain of people doing careful work.</h1>
+      <p class="about-hero__lede">
+        Meridian started in a garage with a drum roaster, a spreadsheet of
+        farms, and a rule we still keep: never ship a coffee we wouldn't brew
+        for ourselves the same morning. Today we roast for a few thousand
+        households — one small batch at a time.
+      </p>
+      <div class="about-hero__badge">
+        <CacheBadge mode="static" />
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap section">
+    <div class="section__head">
+      <div>
+        <p class="eyebrow">What we believe</p>
+        <h2>Three rules we don't bend</h2>
+      </div>
+    </div>
+    <div class="value-grid">
+      {
+        values.map((v) => (
+          <article class="value-card">
+            <span class="value-card__mark" aria-hidden="true">{v.mark}</span>
+            <h3>{v.title}</h3>
+            <p>{v.body}</p>
+          </article>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="numbers">
+    <div class="wrap numbers__grid">
+      {
+        numbers.map((item) => (
+          <div class="numbers__cell">
+            <span class="numbers__n">{item.n}</span>
+            <span class="numbers__label">{item.label}</span>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="wrap section about-roast">
+    <div class="about-roast__copy">
+      <p class="eyebrow">How we roast</p>
+      <h2>Light enough to taste the farm, developed enough to taste like breakfast</h2>
+      <p>
+        Every coffee gets its own profile. Bright washed lots are kept short
+        and light so the florals survive; naturals and blends get a longer
+        development for body and sweetness. We cup every batch against a
+        control the next morning — anything that drifts gets re-profiled, and
+        anything that fails gets composted, not shipped.
+      </p>
+      <p>
+        Curious what that tastes like? Start with the
+        <a href="/category/single-origin">single-origins</a> if you brew
+        filter, or the <a href="/category/blends">signature blends</a> if you
+        pull shots — and if you're new to hand-brewing, the
+        <a href="/brewing">brew guides</a> will get you to a sweet cup on the
+        first try.
+      </p>
+      <div class="about-roast__cta">
+        <a class="btn" href="/">Shop the catalog</a>
+        <a class="btn btn--ghost" href="/brewing">Read the brew guides</a>
+      </div>
+    </div>
+    <aside class="about-roast__panel" aria-label="This page is prerendered">
+      <h3>Why this page loads instantly</h3>
+      <p>
+        This page is <strong>prerendered</strong>: Astro built it into static
+        HTML at deploy time, and Base44 serves it straight from the asset
+        layer — no Worker, no database, no cache to warm. The catalog pages
+        stay server-rendered so prices and stock are always fresh; this one
+        doesn't need to be.
+      </p>
+    </aside>
+  </section>
+</Layout>
+
+<style>
+  .about-hero {
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--line);
+  }
+  .about-hero__inner {
+    padding: 84px 24px 64px;
+    max-width: 780px;
+  }
+  .about-hero h1 {
+    font-size: clamp(2rem, 5vw, 3.1rem);
+    margin: 0 0 18px;
+  }
+  .about-hero__lede {
+    font-size: 1.08rem;
+    color: var(--ink-soft);
+    max-width: 58ch;
+    margin: 0;
+  }
+  .about-hero__badge {
+    margin-top: 22px;
+  }
+
+  .value-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 22px;
+  }
+  .value-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 26px 24px;
+  }
+  .value-card__mark {
+    display: inline-grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    background: var(--surface-2);
+    color: var(--accent);
+    font-size: 1.2rem;
+    margin-bottom: 14px;
+  }
+  .value-card h3 {
+    font-size: 1.15rem;
+    margin: 0 0 8px;
+  }
+  .value-card p {
+    color: var(--ink-soft);
+    font-size: 0.95rem;
+    margin: 0;
+  }
+
+  .numbers {
+    background: var(--ink);
+    color: #e9e1d7;
+    padding: 44px 0;
+  }
+  .numbers__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 28px;
+  }
+  .numbers__cell {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .numbers__n {
+    font-family: var(--font-display);
+    font-size: 2.2rem;
+    color: #fff;
+    line-height: 1;
+  }
+  .numbers__label {
+    font-size: 0.88rem;
+    color: #b6ada1;
+    max-width: 22ch;
+  }
+
+  .about-roast {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr;
+    gap: 40px;
+    align-items: start;
+  }
+  .about-roast__copy h2 {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    margin: 0 0 16px;
+  }
+  .about-roast__copy p {
+    color: var(--ink-soft);
+    max-width: 62ch;
+  }
+  .about-roast__cta {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 22px;
+  }
+  .about-roast__panel {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 24px;
+    position: sticky;
+    top: 88px;
+  }
+  .about-roast__panel h3 {
+    font-size: 1.02rem;
+    margin: 0 0 10px;
+  }
+  .about-roast__panel p {
+    font-size: 0.9rem;
+    color: var(--ink-soft);
+    margin: 0;
+  }
+  @media (max-width: 820px) {
+    .about-roast {
+      grid-template-columns: 1fr;
+    }
+    .about-roast__panel {
+      position: static;
+    }
+  }
+</style>
