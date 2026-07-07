@@ -12,11 +12,11 @@ export interface SessionUser {
  * Base44 SDK config resolved AT RUNTIME on the server (from the Worker env the
  * deploy injects) and threaded to the browser through the root route context.
  * Never baked at build time — `--prebuilt` deploys would miss build-time env.
+ * Only the app id is needed: the browser SDK runs same-origin (serverUrl: ""),
+ * with the dispatcher reverse-proxying /api/apps/* to the platform.
  */
 export interface Base44Config {
   appId: string;
-  /** Platform API origin (BASE44_API_URL). null → the SDK's default. */
-  apiUrl: string | null;
 }
 
 /** Session resolved on the server for every request. */

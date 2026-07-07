@@ -1,6 +1,6 @@
 // Session server function — runs on the Worker for every request (invoked from
-// the root route's beforeLoad). Resolves the Base44 SDK config (app id + API
-// origin, forwarded to the browser SDK for client-side writes) and the
+// the root route's beforeLoad). Resolves the Base44 SDK config (the app id,
+// forwarded to the same-origin browser SDK for client-side writes) and the
 // logged-in user, entirely server-side and entirely at RUNTIME — nothing here
 // depends on build-time env, which `--prebuilt` deploys don't have.
 
@@ -14,13 +14,13 @@ export const getSession = createServerFn({ method: "GET" }).handler(
 
     try {
       const base44 = await getServerClient();
-      const { appId, serverUrl } = base44.getConfig();
+      const { appId } = base44.getConfig();
       const me = await base44.auth.me().catch(() => null);
       const user = me
         ? { email: me.email, full_name: me.full_name ?? null, role: me.role ?? "user" }
         : null;
       return {
-        base44: appId ? { appId, apiUrl: serverUrl ?? null } : null,
+        base44: appId ? { appId } : null,
         user,
       };
     } catch {

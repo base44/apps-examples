@@ -3,8 +3,11 @@ import { createClient, type Base44Client } from "@base44/sdk";
 // Browser-only Base44 client, created lazily on first use (login, save-favorite,
 // the concierge widget). It is configured purely from the app ID that the server
 // injects into the document as a <meta> tag (CSP-safe — no inline script) with a
-// Vite env fallback for pure client-side dev. It carries NO service token: the
-// client can only ever act as the anonymous or logged-in user.
+// Vite env fallback for pure client-side dev. serverUrl: "" makes every SDK call
+// SAME-ORIGIN — the apps dispatcher reverse-proxies /api/apps/* (and the
+// /ws-user-apps/* websocket) to the platform, so no CORS and no platform origin
+// in browser code. It carries NO service token: the client can only ever act as
+// the anonymous or logged-in user.
 
 let client: Base44Client | null = null;
 
@@ -27,7 +30,6 @@ export function getBrowserClient(): Base44Client {
     );
   }
 
-  const serverUrl = readMeta("base44:api-url");
-  client = createClient(serverUrl ? { appId, serverUrl } : { appId });
+  client = createClient({ appId, serverUrl: "" });
   return client;
 }

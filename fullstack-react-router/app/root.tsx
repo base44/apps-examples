@@ -20,11 +20,11 @@ export const links: Route.LinksFunction = () => [
 ];
 
 // Non–user-specific config only (safe to appear in edge-cached HTML). The
-// browser SDK reads the app ID / API URL from the <meta> tags that Layout
-// renders on EVERY route (see below).
+// browser SDK reads the app ID from the <meta> tag that Layout renders on
+// EVERY route (see below); all its calls are same-origin (serverUrl: "").
 export function loader({ context }: Route.LoaderArgs) {
   const env = context.cloudflare.env;
-  return { appId: env.BASE44_APP_ID ?? "", apiUrl: env.BASE44_API_URL ?? "" };
+  return { appId: env.BASE44_APP_ID ?? "" };
 }
 
 export const meta: Route.MetaFunction = () => [
@@ -56,9 +56,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <link rel="icon" href={FAVICON} />
         {config?.appId ? (
           <meta name="base44:app-id" content={config.appId} />
-        ) : null}
-        {config?.apiUrl ? (
-          <meta name="base44:api-url" content={config.apiUrl} />
         ) : null}
         <Meta />
         <Links />
