@@ -12,7 +12,8 @@ export function safeReturnTo() {
     const url = new URL(raw, window.location.origin);
     if (url.origin !== window.location.origin) return "/";
     for (const p of ["access_token", "clear_access_token", "from_url"]) url.searchParams.delete(p);
-    const path = url.pathname + url.search + url.hash;
+    // No fragment: the OAuth callback appends ?access_token= to the whole URL.
+    const path = url.pathname + url.search;
     if (!path.startsWith("/") || path.startsWith("//") || path.includes("\\")) return "/";
     return path.startsWith("/login") ? "/" : path;
   } catch {
