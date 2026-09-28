@@ -1,0 +1,95 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 24 14% 5%;
+    --foreground: 36 30% 94%;
+    --card: 24 12% 8%;
+    --card-foreground: 36 30% 94%;
+    --popover: 24 12% 9%;
+    --popover-foreground: 36 30% 94%;
+    --primary: 32 95% 55%;
+    --primary-foreground: 24 30% 8%;
+    --secondary: 24 10% 13%;
+    --secondary-foreground: 36 30% 92%;
+    --muted: 24 9% 12%;
+    --muted-foreground: 30 8% 62%;
+    --accent: 28 20% 15%;
+    --accent-foreground: 36 40% 94%;
+    --destructive: 0 72% 55%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 26 10% 17%;
+    --input: 26 10% 19%;
+    --ring: 32 95% 55%;
+    --chart-1: 32 95% 55%;
+    --chart-2: 190 80% 55%;
+    --chart-3: 150 60% 50%;
+    --chart-4: 270 70% 65%;
+    --chart-5: 340 75% 60%;
+    --radius: 0.75rem;
+    --font-heading: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+    --font-body: "Inter", ui-sans-serif, system-ui, sans-serif;
+    --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    --sidebar-background: 24 12% 7%;
+    --sidebar-foreground: 36 20% 85%;
+    --sidebar-primary: 32 95% 55%;
+    --sidebar-primary-foreground: 24 30% 8%;
+    --sidebar-accent: 24 10% 13%;
+    --sidebar-accent-foreground: 36 30% 94%;
+    --sidebar-border: 26 10% 17%;
+    --sidebar-ring: 32 95% 55%;
+  }
+}
+
+
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground font-body;
+  }
+}
+
+@layer base {
+  body {
+    font-family: var(--font-body);
+    background-image:
+      radial-gradient(60rem 30rem at 85% -10%, hsl(32 95% 55% / 0.10), transparent 60%),
+      radial-gradient(40rem 24rem at -10% 110%, hsl(12 90% 50% / 0.07), transparent 60%);
+    background-attachment: fixed;
+  }
+  h1, h2, h3, .font-display { font-family: var(--font-display); letter-spacing: -0.02em; }
+  code, pre, .font-mono { font-family: var(--font-mono); }
+}
+
+@layer utilities {
+  .glow-ring { box-shadow: 0 0 0 1px hsl(32 95% 55% / 0.65), 0 0 28px hsl(32 95% 55% / 0.35); }
+  .scrollbar-thin { scrollbar-width: thin; scrollbar-color: hsl(26 10% 22%) transparent; }
+  .text-ember { background: linear-gradient(90deg, #fb923c, #fbbf24 55%, #fde68a); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .caret::after { content: "▍"; margin-left: 1px; animation: caret-blink 1s steps(1) infinite; color: hsl(32 95% 60%); }
+}
+
+@keyframes caret-blink { 50% { opacity: 0; } }
+@keyframes shimmer { from { background-position: -200% 0; } to { background-position: 200% 0; } }
+.shimmer {
+  background: linear-gradient(90deg, hsl(24 10% 13%) 0%, hsl(28 18% 20%) 50%, hsl(24 10% 13%) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.6s linear infinite;
+}
+
+.prose-foundry p { margin: 0.35rem 0; }
+.prose-foundry ul, .prose-foundry ol { margin: 0.35rem 0; padding-left: 1.1rem; }
+.prose-foundry ul { list-style: disc; }
+.prose-foundry ol { list-style: decimal; }
+.prose-foundry li { margin: 0.15rem 0; }
+.prose-foundry li::marker { color: hsl(32 95% 60%); }
+.prose-foundry strong { color: hsl(36 40% 96%); font-weight: 600; }
+.prose-foundry code { font-family: var(--font-mono); font-size: 0.85em; background: hsl(24 10% 13%); padding: 0.05rem 0.3rem; border-radius: 0.25rem; }
+.prose-foundry.caret > :last-child::after { content: "▍"; margin-left: 1px; animation: caret-blink 1s steps(1) infinite; color: hsl(32 95% 60%); }
+.prose-foundry.caret::after { content: none; }

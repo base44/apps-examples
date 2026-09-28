@@ -1,0 +1,21 @@
+{
+  "name": "Project",
+  "type": "object",
+  "properties": {
+    "name": { "type": "string", "description": "Product name" },
+    "pitch": { "type": "string", "description": "One-paragraph pitch: what it is and who it is for" },
+    "accent": {
+      "type": "string",
+      "enum": ["ember", "ocean", "moss", "violet", "rose"],
+      "default": "ember",
+      "description": "Accent colour for the project"
+    }
+  },
+  "required": ["name"],
+  "rls": {
+    "create": true,
+    "read": { "created_by": "{{user.email}}" },
+    "update": { "created_by": "{{user.email}}" },
+    "delete": { "created_by": "{{user.email}}" }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "name": "Thread",
+  "type": "object",
+  "properties": {
+    "project_id": { "type": "string", "description": "Project the conversation is about" },
+    "messages": {
+      "type": "array",
+      "description": "TanStack AI UI messages, persisted by the chat's storage adapter",
+      "items": { "type": "object" }
+    },
+    "resume": {
+      "type": "object",
+      "description": "Resume snapshot while a run is paused on an interrupt (a pending approval or browser tool)"
+    }
+  },
+  "required": ["project_id"],
+  "rls": {
+    "create": true,
+    "read": { "created_by": "{{user.email}}" },
+    "update": { "created_by": "{{user.email}}" },
+    "delete": { "created_by": "{{user.email}}" }
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "name": "Foundry",
+  "description": "An AI product studio built with TanStack Start, TanStack AI and the Base44 AI gateway.",
+  "site": {
+    "installCommand": "npm ci",
+    "buildCommand": "npm run build",
+    "serveCommand": "npm run dev"
+  }
+}

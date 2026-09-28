@@ -1,0 +1,31 @@
+{
+  "name": "Feature",
+  "type": "object",
+  "properties": {
+    "project_id": { "type": "string", "description": "Project this feature belongs to" },
+    "title": { "type": "string", "description": "Short feature title" },
+    "description": { "type": "string", "description": "What the feature does and why it matters" },
+    "status": {
+      "type": "string",
+      "enum": ["idea", "planned", "building", "shipped"],
+      "default": "idea",
+      "description": "Roadmap column"
+    },
+    "impact": { "type": "number", "description": "Expected user impact, 1 (low) to 5 (high)" },
+    "effort": {
+      "type": "string",
+      "enum": ["S", "M", "L"],
+      "default": "M",
+      "description": "Rough effort estimate"
+    },
+    "tags": { "type": "array", "items": { "type": "string" }, "description": "Theme tags" },
+    "rationale": { "type": "string", "description": "Why the copilot scored or placed it this way" }
+  },
+  "required": ["project_id", "title"],
+  "rls": {
+    "create": true,
+    "read": { "created_by": "{{user.email}}" },
+    "update": { "created_by": "{{user.email}}" },
+    "delete": { "created_by": "{{user.email}}" }
+  }
+}
