@@ -10,6 +10,7 @@ You need [Node.js](https://nodejs.org/) v20.19.0 or higher and a [Base44 account
 | --- | --- | --- | --- |
 | [Trellix](./trellix/) | Trello-style task and project management. | React, Vite | [Trellix live demo](https://trellix-example-64ad1623.base44.app/). |
 | [Buzz](./buzz/) | AI browser sidekick extension for Chrome and Firefox. | WXT, React | N/A |
+| [Wix SEO Store](./wix-seo-store/) | SEO-first, server-rendered storefront for a Wix Stores site. Uses Wix Headless, not the Base44 backend. | TanStack Start, React, Wix Headless | N/A |
 
 ## See also
 
