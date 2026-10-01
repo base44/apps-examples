@@ -17,6 +17,11 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as CategorySlugRouteImport } from './routes/category.$slug'
 import { Route as MockMediaFileRouteImport } from './routes/mock-media.$file'
 import { Route as ProductsSlugRouteImport } from './routes/products.$slug'
+import { Route as ApiAuthCallbackRouteImport } from './routes/api.auth.callback'
+import { Route as ApiAuthLoginRouteImport } from './routes/api.auth.login'
+import { Route as ApiAuthLogoutRouteImport } from './routes/api.auth.logout'
+import { Route as ApiAuthLogoutCallbackRouteImport } from './routes/api.auth.logout-callback'
+import { Route as ApiAuthMeRouteImport } from './routes/api.auth.me'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -58,6 +63,31 @@ const ProductsSlugRoute = ProductsSlugRouteImport.update({
   path: '/products/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiAuthCallbackRoute = ApiAuthCallbackRouteImport.update({
+  id: '/api/auth/callback',
+  path: '/api/auth/callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAuthLoginRoute = ApiAuthLoginRouteImport.update({
+  id: '/api/auth/login',
+  path: '/api/auth/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAuthLogoutRoute = ApiAuthLogoutRouteImport.update({
+  id: '/api/auth/logout',
+  path: '/api/auth/logout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAuthLogoutCallbackRoute = ApiAuthLogoutCallbackRouteImport.update({
+  id: '/api/auth/logout-callback',
+  path: '/api/auth/logout-callback',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiAuthMeRoute = ApiAuthMeRouteImport.update({
+  id: '/api/auth/me',
+  path: '/api/auth/me',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -68,6 +98,11 @@ export interface FileRoutesByFullPath {
   '/category/$slug': typeof CategorySlugRoute
   '/mock-media/$file': typeof MockMediaFileRoute
   '/products/$slug': typeof ProductsSlugRoute
+  '/api/auth/callback': typeof ApiAuthCallbackRoute
+  '/api/auth/login': typeof ApiAuthLoginRoute
+  '/api/auth/logout': typeof ApiAuthLogoutRoute
+  '/api/auth/logout-callback': typeof ApiAuthLogoutCallbackRoute
+  '/api/auth/me': typeof ApiAuthMeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -78,6 +113,11 @@ export interface FileRoutesByTo {
   '/category/$slug': typeof CategorySlugRoute
   '/mock-media/$file': typeof MockMediaFileRoute
   '/products/$slug': typeof ProductsSlugRoute
+  '/api/auth/callback': typeof ApiAuthCallbackRoute
+  '/api/auth/login': typeof ApiAuthLoginRoute
+  '/api/auth/logout': typeof ApiAuthLogoutRoute
+  '/api/auth/logout-callback': typeof ApiAuthLogoutCallbackRoute
+  '/api/auth/me': typeof ApiAuthMeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -89,6 +129,11 @@ export interface FileRoutesById {
   '/category/$slug': typeof CategorySlugRoute
   '/mock-media/$file': typeof MockMediaFileRoute
   '/products/$slug': typeof ProductsSlugRoute
+  '/api/auth/callback': typeof ApiAuthCallbackRoute
+  '/api/auth/login': typeof ApiAuthLoginRoute
+  '/api/auth/logout': typeof ApiAuthLogoutRoute
+  '/api/auth/logout-callback': typeof ApiAuthLogoutCallbackRoute
+  '/api/auth/me': typeof ApiAuthMeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -101,6 +146,11 @@ export interface FileRouteTypes {
     | '/category/$slug'
     | '/mock-media/$file'
     | '/products/$slug'
+    | '/api/auth/callback'
+    | '/api/auth/login'
+    | '/api/auth/logout'
+    | '/api/auth/logout-callback'
+    | '/api/auth/me'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -111,6 +161,11 @@ export interface FileRouteTypes {
     | '/category/$slug'
     | '/mock-media/$file'
     | '/products/$slug'
+    | '/api/auth/callback'
+    | '/api/auth/login'
+    | '/api/auth/logout'
+    | '/api/auth/logout-callback'
+    | '/api/auth/me'
   id:
     | '__root__'
     | '/'
@@ -121,6 +176,11 @@ export interface FileRouteTypes {
     | '/category/$slug'
     | '/mock-media/$file'
     | '/products/$slug'
+    | '/api/auth/callback'
+    | '/api/auth/login'
+    | '/api/auth/logout'
+    | '/api/auth/logout-callback'
+    | '/api/auth/me'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -132,6 +192,11 @@ export interface RootRouteChildren {
   CategorySlugRoute: typeof CategorySlugRoute
   MockMediaFileRoute: typeof MockMediaFileRoute
   ProductsSlugRoute: typeof ProductsSlugRoute
+  ApiAuthCallbackRoute: typeof ApiAuthCallbackRoute
+  ApiAuthLoginRoute: typeof ApiAuthLoginRoute
+  ApiAuthLogoutRoute: typeof ApiAuthLogoutRoute
+  ApiAuthLogoutCallbackRoute: typeof ApiAuthLogoutCallbackRoute
+  ApiAuthMeRoute: typeof ApiAuthMeRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -192,6 +257,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProductsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/auth/callback': {
+      id: '/api/auth/callback'
+      path: '/api/auth/callback'
+      fullPath: '/api/auth/callback'
+      preLoaderRoute: typeof ApiAuthCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/auth/login': {
+      id: '/api/auth/login'
+      path: '/api/auth/login'
+      fullPath: '/api/auth/login'
+      preLoaderRoute: typeof ApiAuthLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/auth/logout': {
+      id: '/api/auth/logout'
+      path: '/api/auth/logout'
+      fullPath: '/api/auth/logout'
+      preLoaderRoute: typeof ApiAuthLogoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/auth/logout-callback': {
+      id: '/api/auth/logout-callback'
+      path: '/api/auth/logout-callback'
+      fullPath: '/api/auth/logout-callback'
+      preLoaderRoute: typeof ApiAuthLogoutCallbackRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/auth/me': {
+      id: '/api/auth/me'
+      path: '/api/auth/me'
+      fullPath: '/api/auth/me'
+      preLoaderRoute: typeof ApiAuthMeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -204,6 +304,11 @@ const rootRouteChildren: RootRouteChildren = {
   CategorySlugRoute: CategorySlugRoute,
   MockMediaFileRoute: MockMediaFileRoute,
   ProductsSlugRoute: ProductsSlugRoute,
+  ApiAuthCallbackRoute: ApiAuthCallbackRoute,
+  ApiAuthLoginRoute: ApiAuthLoginRoute,
+  ApiAuthLogoutRoute: ApiAuthLogoutRoute,
+  ApiAuthLogoutCallbackRoute: ApiAuthLogoutCallbackRoute,
+  ApiAuthMeRoute: ApiAuthMeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

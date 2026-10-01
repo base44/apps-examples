@@ -7,8 +7,12 @@ import { nitro } from 'nitro/vite'
 const config = defineConfig({
   resolve: { tsconfigPaths: true },
   plugins: [
-    // Pre-compress static assets (gzip + brotli) and serve by Accept-Encoding.
-    nitro({ compressPublicAssets: { gzip: true, brotli: true } }),
+    // Cloudflare Workers module output: what Base44 publish deploys.
+    nitro({
+      preset: 'cloudflare_module',
+      compatibilityDate: '2026-09-01',
+      cloudflare: { nodeCompat: true },
+    }),
     tailwindcss(),
     tanstackStart({
       // Inline the (small) Tailwind CSS into the SSR HTML: removes the only

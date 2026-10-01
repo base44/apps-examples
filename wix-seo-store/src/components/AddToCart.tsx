@@ -2,16 +2,18 @@ import { useState } from 'react'
 import { useRouter } from '@tanstack/react-router'
 import { useServerFn } from '@tanstack/react-start'
 import { addToCartFn } from '#/lib/api'
+import { productParams, trackEvent } from '#/lib/analytics'
+import type { TrackedProduct } from '#/lib/analytics'
 import type { ProductVariant } from '#/lib/types'
 
 /** Minimal add-to-cart (Wix eCom current cart). Not part of indexable content. */
 export function AddToCart({
-  productId,
+  product,
   variants,
   optionsLabel,
   disabled,
 }: {
-  productId: string
+  product: TrackedProduct
   variants?: Array<ProductVariant>
   optionsLabel?: string
   disabled?: boolean
@@ -52,7 +54,16 @@ export function AddToCart({
         onClick={async () => {
           setState('busy')
           try {
-            await add({ data: { productId, variantId, quantity: 1 } })
+            await add({ data: { productId: product.id, variantId, quantity: 1 } })
+            trackEvent(
+              'AddToCart',
+              productParams({
+                ...product,
+                price: variant?.price ?? product.price,
+                variant: variants && variants.length > 1 ? variant?.label : undefined,
+                sku: variant?.sku ?? product.sku,
+              }),
+            )
             await router.navigate({ to: '/cart' })
           } catch {
             setState('error')

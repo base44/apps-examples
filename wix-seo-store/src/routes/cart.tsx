@@ -2,6 +2,7 @@ import { Link, createFileRoute } from '@tanstack/react-router'
 import { useServerFn } from '@tanstack/react-start'
 import { useState } from 'react'
 import { checkoutFn, fetchCart } from '#/lib/api'
+import { trackEvent } from '#/lib/analytics'
 import { CACHE_PRIVATE } from '#/lib/http'
 import { NOINDEX, seo } from '#/lib/seo'
 import { Picture } from '#/components/Picture'
@@ -73,6 +74,9 @@ function CartPage() {
                 disabled={busy}
                 onClick={async () => {
                   setBusy(true)
+                  trackEvent('InitiateCheckout', {
+                    contents: cart.lines.map((l) => ({ id: l.productId, name: l.name, quantity: l.quantity })),
+                  })
                   const url = await checkout()
                   if (url) window.location.href = url
                   else setBusy(false)

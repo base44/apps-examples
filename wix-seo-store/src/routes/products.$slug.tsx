@@ -1,4 +1,6 @@
+import { useEffect } from 'react'
 import { createFileRoute } from '@tanstack/react-router'
+import { productParams, trackEvent } from '#/lib/analytics'
 import { fetchProduct } from '#/lib/api'
 import { publicPageCache } from '#/lib/http'
 import { IMAGE_PRESETS, absoluteImageUrl } from '#/lib/media'
@@ -127,6 +129,17 @@ export const Route = createFileRoute('/products/$slug')({
 
 function ProductPage() {
   const { product, primaryCollection, related } = Route.useLoaderData()
+  const tracked = {
+    id: product.id,
+    name: product.name,
+    price: product.salePrice ?? product.price,
+    currency: product.currency,
+    category: primaryCollection?.name,
+    sku: product.sku,
+  }
+  useEffect(() => {
+    trackEvent('ViewContent', productParams(tracked))
+  }, [product.id]) // once per product
   const main = product.images.at(0)
   const rest = product.images.slice(1)
   return (
@@ -194,7 +207,7 @@ function ProductPage() {
           </p>
           <div className="mt-8">
             <AddToCart
-              productId={product.id}
+              product={tracked}
               variants={product.variants}
               optionsLabel={product.variantOptions}
               disabled={!product.inStock}

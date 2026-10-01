@@ -20,6 +20,7 @@
     "@tanstack/react-start": "latest",
     "@wix/categories": "^1.0.223",
     "@wix/ecom": "^1.0.2524",
+    "@wix/headless-site-assets": "^1.0.14",
     "@wix/redirects": "^1.0.129",
     "@wix/sdk": "^1.21.16",
     "@wix/stores": "^1.0.925",

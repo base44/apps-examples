@@ -1,5 +1,6 @@
 import { Link } from '@tanstack/react-router'
 import type { NavItem, SiteConfig } from '#/lib/types'
+import { AccountLink } from './AccountLink'
 
 export function SiteHeader({ site, nav }: { site: SiteConfig; nav: Array<NavItem> }) {
   return (
@@ -46,6 +47,7 @@ export function SiteHeader({ site, nav }: { site: SiteConfig; nav: Array<NavItem
               Go
             </button>
           </form>
+          <AccountLink />
           <Link to="/cart" className="font-medium text-stone-800 hover:text-stone-950">
             Cart
           </Link>

@@ -4,47 +4,16 @@
  * Falls back to a cookie-only cart when running on mock data.
  * Server-only.
  */
-import { createClient, OAuthStrategy } from '@wix/sdk'
-import type { Tokens } from '@wix/sdk'
 import { currentCart } from '@wix/ecom'
-import { redirects } from '@wix/redirects'
 import { getCookie, setCookie } from '@tanstack/react-start/server'
 import type { Cart } from '#/lib/types'
 import { getSiteConfig, getWixClientId } from './env'
 import { MOCK_PRODUCTS } from './catalog/mock-data'
+import { cookieOpts, sessionClient as visitorClient } from './session'
 
-const SESSION_COOKIE = 'wix_session'
 const MOCK_COOKIE = 'mock_cart'
 /** Wix Stores app id, used as catalogReference.appId for Stores products. */
 const WIX_STORES_APP_ID = '215238eb-22a5-4c36-9e7b-e7c08025e04e'
-
-const cookieOpts = () => ({
-  httpOnly: true,
-  sameSite: 'lax' as const,
-  secure: getSiteConfig().siteUrl.startsWith('https://'),
-  path: '/',
-  maxAge: 60 * 60 * 24 * 30,
-})
-
-async function visitorClient(clientId: string) {
-  let tokens: Tokens | undefined
-  try {
-    const raw = getCookie(SESSION_COOKIE)
-    tokens = raw ? (JSON.parse(raw) as Tokens) : undefined
-  } catch {
-    tokens = undefined
-  }
-  const client = createClient({
-    modules: { currentCart, redirects },
-    auth: OAuthStrategy({ clientId, tokens }),
-  })
-  // Returns the existing tokens if still valid, renews via refresh token if
-  // expired, or mints fresh anonymous visitor tokens.
-  const fresh = await client.auth.generateVisitorTokens(tokens)
-  client.auth.setTokens(fresh)
-  setCookie(SESSION_COOKIE, JSON.stringify(fresh), cookieOpts())
-  return client
-}
 
 function isNotFound(err: unknown): boolean {
   const e = err as { details?: { httpStatus?: number }; status?: number }
