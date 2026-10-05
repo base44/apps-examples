@@ -12,6 +12,7 @@ import { fetchSiteConfig } from '#/lib/api'
 import { absoluteUrl, jsonLdScript } from '#/lib/seo'
 import type { SiteConfig } from '#/lib/types'
 import { SiteFooter, SiteHeader } from '#/components/SiteChrome'
+import { Base44Scripts } from 'base44:document'
 
 // Imported (not ?url) so the build can inline it (inlineCss in vite.config.ts).
 import '../styles.css'
@@ -100,8 +101,10 @@ function RootDocument({ children }: { children: ReactNode }) {
       <head>
         <HeadContent />
       </head>
-      <body className="bg-white text-stone-900 antialiased">
+      {/* data-react-root: the Base44 builder's preview bridge looks for it. */}
+      <body data-react-root="true" className="bg-white text-stone-900 antialiased">
         {children}
+        <Base44Scripts />
         <Scripts />
       </body>
     </html>

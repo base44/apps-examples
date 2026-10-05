@@ -1,8 +1,8 @@
 /**
  * Wix member login/logout (OAuth + PKCE via Wix-hosted login), mirroring
- * @wix/astro's /api/auth/* routes. Member tokens replace the visitor tokens in
+ * @wix/astro's /api/auth/* routes (here under /account/*: Base44 owns /api/auth/*). Member tokens replace the visitor tokens in
  * the httpOnly session cookie; nothing auth-related reaches browser JS.
- * The callback URL `${SITE_URL}/api/auth/callback` must be an allowed redirect
+ * The callback URL `${SITE_URL}/account/callback` must be an allowed redirect
  * URI of the Wix OAuth app (Headless Settings).
  * Server-only.
  */
@@ -33,7 +33,7 @@ export async function login(request: Request): Promise<Response> {
   if (!clientId) return redirect(returnTo)
   const { siteUrl } = getSiteConfig()
   const client = authClient(clientId)
-  const oauthData = client.auth.generateOAuthData(`${siteUrl}/api/auth/callback`, returnTo)
+  const oauthData = client.auth.generateOAuthData(`${siteUrl}/account/callback`, returnTo)
   const { authUrl } = await client.auth.getAuthUrl(oauthData, {
     prompt: url.searchParams.get('prompt') === 'none' ? 'none' : 'login',
     responseMode: 'query',
@@ -69,7 +69,7 @@ export async function logout(request: Request): Promise<Response> {
   const { siteUrl } = getSiteConfig()
   const client = await sessionClient(clientId)
   const { logoutUrl } = await client.auth.logout(
-    `${siteUrl}/api/auth/logout-callback?returnTo=${encodeURIComponent(returnTo)}`,
+    `${siteUrl}/account/logout-callback?returnTo=${encodeURIComponent(returnTo)}`,
   )
   clearSession()
   return redirect(logoutUrl)

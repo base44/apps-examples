@@ -1,26 +1,27 @@
+import base44 from '@base44/vite-plugin'
+import { cloudflare } from '@cloudflare/vite-plugin'
 import { defineConfig } from 'vite'
 import { tanstackStart } from '@tanstack/react-start/plugin/vite'
 import viteReact from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
-import { nitro } from 'nitro/vite'
 
-const config = defineConfig({
+export default defineConfig({
   resolve: { tsconfigPaths: true },
   plugins: [
-    // Cloudflare Workers module output: what Base44 publish deploys.
-    nitro({
-      preset: 'cloudflare_module',
-      compatibilityDate: '2026-09-01',
-      cloudflare: { nodeCompat: true },
+    base44({
+      hmrNotifier: true,
+      navigationNotifier: true,
+      analyticsTracker: true,
+      visualEditAgent: true,
     }),
+    // No inspector: a restarted dev server would race the old one for port 9229.
+    cloudflare({ viteEnvironment: { name: 'ssr' }, inspectorPort: false }),
     tailwindcss(),
     tanstackStart({
-      // Inline the (small) Tailwind CSS into the SSR HTML: removes the only
-      // render-blocking request on first paint (better FCP/LCP).
+      srcDirectory: 'src',
+      // Inline the (small) Tailwind CSS into the SSR HTML: no render-blocking request.
       server: { build: { inlineCss: true } },
     }),
     viteReact(),
   ],
 })
-
-export default config

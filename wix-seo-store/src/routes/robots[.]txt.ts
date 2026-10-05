@@ -14,7 +14,7 @@ export const Route = createFileRoute('/robots.txt')({
           'Disallow: /search',
           // TanStack Start server-function RPC endpoint.
           'Disallow: /_serverFn/',
-          'Disallow: /api/',
+          'Disallow: /account/',
           '',
           `Sitemap: ${siteUrl}/sitemap.xml`,
           '',

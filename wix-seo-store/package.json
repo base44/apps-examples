@@ -10,27 +10,27 @@
     "generate-routes": "tsr generate",
     "build": "vite build",
     "preview": "vite preview",
-    "lint": "eslint",
+    "lint": "eslint src scripts",
     "format": "prettier --write . && eslint --fix",
     "check": "prettier --check ."
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.18",
-    "@tanstack/react-router": "latest",
-    "@tanstack/react-start": "latest",
+    "@tanstack/react-router": "1.170.40",
+    "@tanstack/react-start": "1.168.59",
     "@wix/categories": "^1.0.223",
     "@wix/ecom": "^1.0.2524",
     "@wix/headless-site-assets": "^1.0.14",
     "@wix/redirects": "^1.0.129",
     "@wix/sdk": "^1.21.16",
     "@wix/stores": "^1.0.925",
-    "nitro": "3.0.260610-beta",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "tailwindcss": "^4.1.18"
+    "tailwindcss": "^4.1.18",
+    "@base44/vite-plugin": "1.0.44"
   },
   "devDependencies": {
-    "@tanstack/eslint-config": "latest",
+    "@tanstack/eslint-config": "0.4.0",
     "@tanstack/router-cli": "^1.132.0",
     "@types/node": "^22.10.2",
     "@types/react": "^19.2.0",
@@ -39,12 +39,8 @@
     "eslint": "^9.20.0",
     "prettier": "^3.8.1",
     "typescript": "^6.0.2",
-    "vite": "^8.0.0"
-  },
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "esbuild",
-      "lightningcss"
-    ]
+    "vite": "^8.0.0",
+    "@cloudflare/vite-plugin": "1.61.0",
+    "wrangler": "4.142.0"
   }
 }

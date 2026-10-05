@@ -13,14 +13,14 @@ ESLint).
 cp .env.example .env        # set WIX_CLIENT_ID + SITE_URL
 npm install
 npm run dev                 # http://localhost:3000
-npm run build && PORT=3000 SITE_URL=https://shop.example.com node .output/server/index.mjs
+npm run build          # Cloudflare Workers build: dist/{client,server} + .wrangler/deploy
 node scripts/verify-seo.mjs http://localhost:3000   # no-JS SEO assertions
 ```
 
 | Env var | Purpose |
 | --- | --- |
 | `WIX_CLIENT_ID` | Client ID of a Wix Headless OAuth app. **Unset → built-in mock catalog** (clearly marked: footer notice + `X-Data-Source: mock`). |
-| `SITE_URL` | Absolute origin for canonical, `og:url`, JSON-LD, sitemap, robots. Read at runtime. |
+| `SITE_URL` | Absolute origin for canonical, `og:url`, JSON-LD, sitemap, robots. Defaults to the request origin. |
 | `SITE_NAME`, `SITE_DESCRIPTION` | Branding / default meta. |
 | `SITE_LOGO_URL` | Logo for Organization JSON-LD (absolute URL or site path). Default `/logo.png`. |
 | `WIX_CATALOG_VERSION` | `V1` or `V3` to skip catalog auto-detection. |
@@ -47,7 +47,10 @@ node scripts/verify-seo.mjs http://localhost:3000   # no-JS SEO assertions
 - `src/server/catalog/wix-v3.ts` – Wix Stores Catalog V3 provider (products, categories, variants).
 - `src/server/catalog/wix.ts` – Wix Stores Catalog V1 provider; `mock-data.ts` – fallback.
 - `src/server/cart.ts` – Wix eCom current cart with visitor tokens in an httpOnly cookie.
-- `src/start.ts` – gzip middleware for SSR responses.
+- `src/start.ts` – Wix site-script injection and the /checkout, /_paylink, /_proposal, /_api hand-offs.
+- `src/server/site-scripts.ts` – Wix site scripts (Custom Code, marketing tags, consent, analytics).
+- `src/server/auth.ts`, `src/routes/account.*.ts` – Wix member login/logout (Base44 reserves `/api/auth/*`).
+- `src/lib/analytics.ts` – ViewContent / AddToCart / InitiateCheckout via `window.wixAnalytics`.
 
 ## Get a Wix store to test against
 
@@ -78,3 +81,14 @@ variant products (Size/Color), a sale item and an out-of-stock item.
   over plain http (`is-on-https`); it is 100 over HTTPS.
 - Pagination and multi-collection nav are exercised on mock data; the seeded
   Wix template has 12 products in a single category.
+
+## Deployed on Base44
+
+Live: https://wix-seo-storefront-716be8c4.base44.app (Base44 app `6ac34c6ec1768adf716be8c4`,
+TanStack Start template, Cloudflare Workers). Built with the template's toolchain
+(`@base44/vite-plugin`, `@cloudflare/vite-plugin`, `wrangler.jsonc`) and published from the
+app sandbox. App secrets: `WIX_CLIENT_ID`, `WIX_SITE_URL`, `SITE_NAME`.
+
+Verified on the live HTTPS URL: `verify-seo.mjs` 116/116; browser flow (variant add-to-cart,
+Wix cart, checkout hand-off to Wix) with the Wix analytics and consent runtimes loaded;
+Lighthouse mobile 96, desktop 99–100, SEO and accessibility 100.
