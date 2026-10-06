@@ -10,6 +10,19 @@ const WAIT_MS = Number(process.env.EVAL_WAIT_MS ?? 30_000);
 
 let pendingOutput = "";
 let evalCount = 0;
+let openQuestions = 0;
+
+/** Wraps an ask function so time spent waiting for the user doesn't count toward a call's wait limit. */
+export function trackQuestions(askFn) {
+  return async (...args) => {
+    openQuestions++;
+    try {
+      return await askFn(...args);
+    } finally {
+      openQuestions--;
+    }
+  };
+}
 
 function record(stream, args) {
   const text = `${format(...args)}\n`;
@@ -56,7 +69,7 @@ export function closeInput() {
 }
 
 globalThis.require = createRequire(join(process.cwd(), "repl.cjs"));
-globalThis.ask = ask;
+globalThis.ask = trackQuestions(ask);
 
 function truncate(text) {
   if (text.length <= MAX_OUTPUT_CHARS) return text;
@@ -79,12 +92,15 @@ export async function evaluate(code) {
   let result;
   try {
     const running = new AsyncFunction(`${code}\n//# sourceURL=${name}.js`)();
-    let timer;
     const stillRunning = Symbol("still running");
-    const timeout = new Promise((resolve) => {
-      timer = setTimeout(resolve, WAIT_MS, stillRunning);
-    });
-    const settled = await Promise.race([running, timeout]).finally(() => clearTimeout(timer));
+    let settled;
+    do {
+      let timer;
+      const timeout = new Promise((resolve) => {
+        timer = setTimeout(resolve, WAIT_MS, stillRunning);
+      });
+      settled = await Promise.race([running, timeout]).finally(() => clearTimeout(timer));
+    } while (settled === stillRunning && openQuestions > 0);
     if (settled === stillRunning) {
       running.then(
         (value) => record(process.stdout, [`[${name} finished]`, describe(value)]),

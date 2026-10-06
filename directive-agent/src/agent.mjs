@@ -1,5 +1,5 @@
 import { createClient } from "@base44/sdk";
-import { ask, closeInput, evaluate } from "./repl.mjs";
+import { ask, closeInput, evaluate, trackQuestions } from "./repl.mjs";
 import { createRunLog } from "./run-log.mjs";
 
 const MODEL = process.env.MODEL ?? "automatic";
@@ -119,7 +119,7 @@ export async function run({ appId, token, serverUrl, directive }) {
   const runId = await log.start(first);
   process.stdout.write(dim(`Run ${runId} — watch it at ${serverUrl}/?run=${runId}\n`));
   const askUser = askAnywhere(log);
-  globalThis.ask = askUser;
+  globalThis.ask = trackQuestions(askUser);
 
   const messages = [{ role: "system", content: systemPrompt(appId) }];
   let next = first;
