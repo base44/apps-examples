@@ -10,6 +10,7 @@ You need [Node.js](https://nodejs.org/) v20.19.0 or higher and a [Base44 account
 | --- | --- | --- | --- |
 | [Trellix](./trellix/) | Trello-style task and project management. | React, Vite | [Trellix live demo](https://trellix-example-64ad1623.base44.app/). |
 | [Buzz](./buzz/) | AI browser sidekick extension for Chrome and Firefox. | WXT, React | N/A |
+| [Directive Agent](./directive-agent/) | A model in a loop that runs JavaScript in its own Node process to carry out a directive. | Node.js, AI gateway | N/A |
 
 ## See also
 

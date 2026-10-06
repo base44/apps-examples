@@ -1,0 +1,16 @@
+{
+  "name": "directive-agent",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "description": "A model in a loop with one tool: evaluate JavaScript in its own Node process",
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "scripts": {
+    "start": "node start.mjs"
+  },
+  "dependencies": {
+    "@base44/sdk": "0.8.52"
+  }
+}

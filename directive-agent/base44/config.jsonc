@@ -1,0 +1,11 @@
+// Base44 Project Configuration
+// Docs: https://docs.base44.com/developers/backend/overview/project-structure
+
+{
+  "name": "Directive Agent",
+  "description": "A model in a loop that evaluates JavaScript in its own Node process to carry out a directive",
+
+  // New apps block direct AI gateway calls from app-user tokens unless the app
+  // requires login, so the agent only works while the app stays private.
+  "visibility": "private"
+}
