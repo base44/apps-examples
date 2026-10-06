@@ -1,28 +1,11 @@
-import { createRequire } from "node:module";
-import { join } from "node:path";
-import readline from "node:readline";
+import repl from "node:repl";
+import { PassThrough } from "node:stream";
 import { format, inspect } from "node:util";
 
-// Unlike vm.Script, a function built in the main context gets native `import()`.
-const AsyncFunction = (async () => {}).constructor;
 const MAX_OUTPUT_CHARS = 10_000;
 const WAIT_MS = Number(process.env.EVAL_WAIT_MS ?? 30_000);
 
 let pendingOutput = "";
-let evalCount = 0;
-let openQuestions = 0;
-
-/** Wraps an ask function so time spent waiting for the user doesn't count toward a call's wait limit. */
-export function trackQuestions(askFn) {
-  return async (...args) => {
-    openQuestions++;
-    try {
-      return await askFn(...args);
-    } finally {
-      openQuestions--;
-    }
-  };
-}
 
 function record(stream, args) {
   const text = `${format(...args)}\n`;
@@ -30,46 +13,20 @@ function record(stream, args) {
   pendingOutput += text;
 }
 
-// Everything the agent's code prints, now or later from a server or timer, reaches
-// both the terminal and the model's next tool result.
+// Everything the evaluated code prints, now or later from a server or timer, reaches
+// both the terminal and the next tool result.
 console.log = console.info = console.debug = (...args) => record(process.stdout, args);
 console.warn = console.error = (...args) => record(process.stderr, args);
-process.on("uncaughtException", (error) => record(process.stderr, ["[uncaught]", error]));
-process.on("unhandledRejection", (error) => record(process.stderr, ["[unhandled rejection]", error]));
+process.on("uncaughtException", (error) => record(process.stderr, ["Uncaught", error]));
+process.on("unhandledRejection", (error) => record(process.stderr, ["Unhandled rejection", error]));
 
-const input = readline.createInterface({ input: process.stdin, output: process.stdout });
-let inputClosed = false;
-let pending;
-input.on("close", () => {
-  inputClosed = true;
-  pending?.resolve(null);
-});
-
-/** Prompts the user in the terminal; resolves with their answer, or null once stdin has closed. */
-export function ask(question) {
-  if (inputClosed) return Promise.resolve(null);
-  // A question answered elsewhere leaves readline waiting; reuse it rather than stack a second one.
-  if (pending) {
-    input.setPrompt(`${question} `);
-    input.prompt(true);
-    return pending.promise;
-  }
-  let resolve;
-  const promise = new Promise((r) => (resolve = r));
-  pending = { promise, resolve };
-  input.question(`${question} `, (answer) => {
-    pending = undefined;
-    resolve(answer);
-  });
-  return promise;
-}
-
-export function closeInput() {
-  input.close();
-}
-
-globalThis.require = createRequire(join(process.cwd(), "repl.cjs"));
-globalThis.ask = trackQuestions(ask);
+// Node's own REPL evaluator, on the global context: the last expression's value, top-level
+// await, and declarations that persist between calls. Its streams go nowhere; stdin stays free.
+const server = repl.start({ input: new PassThrough(), output: new PassThrough(), prompt: "", useGlobal: true, terminal: false });
+let settle;
+// The REPL reports thrown errors to its domain rather than the eval callback.
+server._domain.removeAllListeners("error");
+server._domain.on("error", (error) => (settle ? settle(error) : record(process.stderr, ["Uncaught", error])));
 
 function truncate(text) {
   if (text.length <= MAX_OUTPUT_CHARS) return text;
@@ -77,43 +34,31 @@ function truncate(text) {
   return `${text.slice(0, half)}\n… ${text.length - MAX_OUTPUT_CHARS} chars omitted …\n${text.slice(-half)}`;
 }
 
-function describe(value) {
-  return typeof value === "string" ? value : inspect(value, { depth: 4 });
+function run(code) {
+  return new Promise((resolve) => {
+    settle = (error, value) => {
+      settle = undefined;
+      if (!error) return resolve(inspect(value, { depth: 4 }));
+      const cause = error.err ?? error; // a Recoverable wraps an incomplete-input SyntaxError
+      // Like the real REPL, hide the frames of the evaluator itself.
+      const lines = String(cause?.stack ?? cause).split("\n");
+      const end = lines.findIndex((line) => line.includes(import.meta.url));
+      resolve(`Uncaught ${lines.slice(0, end === -1 ? undefined : end).filter((l) => !l.includes("node:")).join("\n")}`);
+    };
+    server.eval(code, server.context, "js", settle);
+  });
 }
 
-function describeError(error) {
-  // Drop the frames below the agent's own code.
-  return String(error?.stack ?? error).split("\n    at evaluate (")[0];
-}
-
-/** Runs `code` as the body of an async function in this process and reports its result plus any output since the last call. */
+/** Evaluates `code` like input typed into a Node REPL running in this process. */
 export async function evaluate(code) {
-  const name = `js-${++evalCount}`;
-  let result;
-  try {
-    const running = new AsyncFunction(`${code}\n//# sourceURL=${name}.js`)();
-    const stillRunning = Symbol("still running");
-    let settled;
-    do {
-      let timer;
-      const timeout = new Promise((resolve) => {
-        timer = setTimeout(resolve, WAIT_MS, stillRunning);
-      });
-      settled = await Promise.race([running, timeout]).finally(() => clearTimeout(timer));
-    } while (settled === stillRunning && openQuestions > 0);
-    if (settled === stillRunning) {
-      running.then(
-        (value) => record(process.stdout, [`[${name} finished]`, describe(value)]),
-        (error) => record(process.stderr, [`[${name} failed]`, describeError(error)]),
-      );
-      result = `Still running after ${WAIT_MS / 1000}s. It keeps going in the background; its result will show up in a later output.`;
-    } else {
-      result = describe(settled);
-    }
-  } catch (error) {
-    result = `Threw ${describeError(error)}`;
-  }
+  let timer;
+  const result = await Promise.race([
+    run(code),
+    new Promise((resolve) => {
+      timer = setTimeout(resolve, WAIT_MS, `(still running after ${WAIT_MS / 1000}s)`);
+    }),
+  ]).finally(() => clearTimeout(timer));
   const output = pendingOutput;
   pendingOutput = "";
-  return truncate(output ? `${result}\n\n--- output ---\n${output}` : result);
+  return truncate(output + result);
 }

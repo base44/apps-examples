@@ -9,9 +9,10 @@
   // requires login, so the agent only works while the app stays private.
   "visibility": "private",
 
-  // A static page that shows runs live; the build only inlines the app ID.
+  // The transcript viewer, a Vite app in web/.
   "site": {
-    "buildCommand": "node scripts/build-site.mjs",
+    "installCommand": "npm ci",
+    "buildCommand": "npm run build",
     "outputDirectory": "./dist"
   }
 }

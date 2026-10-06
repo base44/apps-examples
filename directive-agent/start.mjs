@@ -39,7 +39,9 @@ function credentialsFromCli() {
 
 try {
   const credentials = credentialsFromEnv() ?? credentialsFromCli();
-  await run({ ...credentials, directive: process.argv.slice(2).join(" ").trim() });
+  // `base44 exec` needs the linked project folder; the agent itself can start somewhere else.
+  if (process.env.AGENT_CWD) process.chdir(process.env.AGENT_CWD);
+  await run(credentials);
 } catch (error) {
   console.error(error.message);
   process.exit(1);

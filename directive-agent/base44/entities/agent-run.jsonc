@@ -2,11 +2,11 @@
   "name": "AgentRun",
   "type": "object",
   "properties": {
-    "directive": { "type": "string", "description": "The directive the agent was started with" },
+    "directive": { "type": "string", "description": "System prompt the run was started with" },
     "status": {
       "type": "string",
-      "enum": ["running", "waiting", "done", "error"],
-      "description": "running: working; waiting: needs a reply; done: exited"
+      "enum": ["running", "done", "error"],
+      "description": "running: working; done: used its step budget"
     },
     "model": { "type": "string", "description": "AI gateway model" },
     "host": { "type": "string", "description": "Machine and Node.js version the agent runs on" }
