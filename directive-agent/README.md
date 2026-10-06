@@ -9,7 +9,6 @@ Model calls go through the [Base44 AI gateway](https://docs.base44.com/developer
 - `start.mjs` runs `base44 exec` once to get an app-user token and the app's URL, which is what the gateway needs. It then runs the agent in the normal Node process, so the agent shares your terminal's stdin.
 - `src/agent.mjs` is the loop. It sends the conversation to the gateway's OpenAI-compatible `/chat/completions` endpoint, runs each `js` tool call, and feeds the result back. When the model replies without a tool call, you're prompted with `you>` to reply or give a new directive.
 - `src/repl.mjs` is the tool. Code runs as the body of an async function in the main context, so `await`, `require()`, and `import()` all work, and state the model puts on `globalThis` survives between calls. Anything printed, including later output from servers or timers, goes to your terminal and is returned to the model with its next tool result. `ask("question")` prompts you and resolves with your answer.
-
 - `src/run-log.mjs` writes every step (the directive, the model's thinking, code, results, printed output, questions) to the `AgentRun` and `AgentEvent` entities. The page in `site/` is hosted on the app's domain and shows runs as they happen. You can answer the agent's questions from the page, so it also works without a terminal.
 
 > **Warning:** The model runs arbitrary code on your machine with your permissions. The system prompt tells it to ask before doing anything destructive, but nothing enforces that. Run it somewhere you're comfortable with that.
