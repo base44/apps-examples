@@ -1,0 +1,15 @@
+{
+  "name": "AgentEvent",
+  "type": "object",
+  "properties": {
+    "run_id": { "type": "string", "description": "AgentRun this event belongs to" },
+    "seq": { "type": "number", "description": "Order within the run" },
+    "kind": {
+      "type": "string",
+      "enum": ["directive", "thinking", "message", "code", "result", "output", "question", "reply", "user", "error"],
+      "description": "reply: written by the viewer page for the agent to read; user: an answer typed in the terminal"
+    },
+    "content": { "type": "string" }
+  },
+  "required": ["run_id", "kind"]
+}

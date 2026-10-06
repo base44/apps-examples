@@ -7,5 +7,11 @@
 
   // New apps block direct AI gateway calls from app-user tokens unless the app
   // requires login, so the agent only works while the app stays private.
-  "visibility": "private"
+  "visibility": "private",
+
+  // A static page that shows runs live; the build step only writes site/config.js.
+  "site": {
+    "buildCommand": "node scripts/write-site-config.mjs",
+    "outputDirectory": "./site"
+  }
 }

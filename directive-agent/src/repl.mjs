@@ -26,22 +26,29 @@ process.on("unhandledRejection", (error) => record(process.stderr, ["[unhandled 
 
 const input = readline.createInterface({ input: process.stdin, output: process.stdout });
 let inputClosed = false;
-let pendingQuestion;
+let pending;
 input.on("close", () => {
   inputClosed = true;
-  pendingQuestion?.(null);
+  pending?.resolve(null);
 });
 
 /** Prompts the user in the terminal; resolves with their answer, or null once stdin has closed. */
 export function ask(question) {
   if (inputClosed) return Promise.resolve(null);
-  return new Promise((resolve) => {
-    pendingQuestion = resolve;
-    input.question(`${question} `, (answer) => {
-      pendingQuestion = undefined;
-      resolve(answer);
-    });
+  // A question answered elsewhere leaves readline waiting; reuse it rather than stack a second one.
+  if (pending) {
+    input.setPrompt(`${question} `);
+    input.prompt(true);
+    return pending.promise;
+  }
+  let resolve;
+  const promise = new Promise((r) => (resolve = r));
+  pending = { promise, resolve };
+  input.question(`${question} `, (answer) => {
+    pending = undefined;
+    resolve(answer);
   });
+  return promise;
 }
 
 export function closeInput() {
