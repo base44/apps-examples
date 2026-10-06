@@ -1,3 +1,4 @@
 node_modules/
 site/config.js
 deno.lock
+scratchpad/
