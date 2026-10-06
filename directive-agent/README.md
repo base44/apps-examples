@@ -25,7 +25,7 @@ You need Node.js v20.19.0 or higher, [Deno](https://deno.com/) (used by `base44 
    base44 login
    ```
 
-2. Create the app from this folder and deploy it. Deploying creates the entities, publishes the viewer page, and applies `"visibility": "private"` from `base44/config.jsonc`. New apps block direct gateway calls from app-user tokens unless the app requires login, so the agent gets a 403 while the app is public.
+2. Create the app from this folder and deploy it. Deploying creates the entities, builds and publishes the viewer page, and applies `"visibility": "private"` from `base44/config.jsonc`. New apps block direct gateway calls from app-user tokens unless the app requires login, so the agent gets a 403 while the app is public.
 
    ```bash
    base44 link --create

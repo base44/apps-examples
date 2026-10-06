@@ -46,6 +46,7 @@
   .directive { background: var(--panel); border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 10px; padding: 14px 16px; font-size: 16px; }
   .thinking { color: var(--think); font-style: italic; padding-left: 14px; border-left: 2px solid color-mix(in srgb, var(--think) 40%, transparent); white-space: pre-wrap; }
   .message { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 16px; white-space: pre-wrap; }
+  .message pre { background: var(--bg); border-radius: 8px; padding: 10px 12px; margin: 6px 0; overflow-x: auto; white-space: pre; }
   pre { margin: 0; font: 13px/1.5 "JetBrains Mono", ui-monospace, monospace; white-space: pre-wrap; word-break: break-word; }
   .code pre { background: var(--code-bg); color: var(--code-ink); border-radius: 10px; padding: 12px 14px; }
   .output pre { background: var(--panel); border: 1px dashed var(--line); border-radius: 10px; padding: 10px 14px; color: var(--muted); }
@@ -57,7 +58,7 @@
   .question { background: var(--warn-soft); border: 1px solid color-mix(in srgb, var(--warn) 35%, transparent); color: var(--ink); border-radius: 12px; padding: 12px 16px; }
   .question .label { color: var(--warn); }
   .reply { align-self: flex-end; max-width: 80%; background: var(--accent); color: white; border-radius: 12px 12px 4px 12px; padding: 10px 14px; white-space: pre-wrap; }
-  .error { background: var(--bad-soft); color: var(--bad); border-radius: 10px; padding: 10px 14px; white-space: pre-wrap; }
+  .err { background: var(--bad-soft); color: var(--bad); border-radius: 10px; padding: 10px 14px; white-space: pre-wrap; }
   .empty { color: var(--muted); text-align: center; margin-top: 18vh; }
   form { position: fixed; bottom: 0; left: 280px; right: 0; padding: 16px 28px 22px; background: linear-gradient(transparent, var(--bg) 35%); }
   form .box { max-width: 920px; margin: 0 auto; display: flex; gap: 10px; background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 8px; box-shadow: 0 6px 24px rgb(0 0 0 / 0.06); }
@@ -99,7 +100,7 @@
 </form>
 <script type="module">
   import { createClient } from "https://esm.sh/@base44/sdk@0.8.52";
-  import { APP_ID } from "./config.js";
+  const APP_ID = __APP_ID__;
 
   const base44 = createClient({ appId: APP_ID, appBaseUrl: location.origin, requiresAuth: true });
   const { AgentRun, AgentEvent } = base44.entities;
@@ -124,12 +125,19 @@
     return wrap;
   }
 
+  // Fenced code blocks in the agent's text render as monospace so ASCII output lines up.
+  function richText(cls, text) {
+    const node = el("div", cls);
+    text.split(/```[^\n]*\n?/).forEach((part, i) => node.append(i % 2 ? el("pre", "", part.replace(/\n$/, "")) : part));
+    return node;
+  }
+
   function renderEvent(e) {
     const c = e.content ?? "";
     switch (e.kind) {
       case "directive": return labelled("", "Directive", el("div", "directive", c));
       case "thinking": return labelled("", "Thinking", el("div", "thinking", c));
-      case "message": return labelled("", "Agent", el("div", "message", c));
+      case "message": return labelled("", "Agent", richText("message", c));
       case "code": { const w = el("div", "code"); w.append(el("pre", "", c)); return labelled("", "Runs JavaScript", w); }
       case "output": { const w = el("div", "output"); w.append(el("pre", "", c)); return labelled("", "Printed", w); }
       case "result": {
@@ -140,7 +148,7 @@
       }
       case "question": return labelled("question", "Agent asks", el("div", "", c));
       case "reply": case "user": return Object.assign(el("div", "ev reply", c), { title: e.kind === "user" ? "Typed in the terminal" : "Sent from this page" });
-      case "error": return labelled("", "Error", el("div", "error", c));
+      case "error": return labelled("", "Error", el("div", "err", c));
       default: return el("div", "ev message", c);
     }
   }

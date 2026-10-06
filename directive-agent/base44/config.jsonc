@@ -9,9 +9,9 @@
   // requires login, so the agent only works while the app stays private.
   "visibility": "private",
 
-  // A static page that shows runs live; the build step only writes site/config.js.
+  // A static page that shows runs live; the build only inlines the app ID.
   "site": {
-    "buildCommand": "node scripts/write-site-config.mjs",
-    "outputDirectory": "./site"
+    "buildCommand": "node scripts/build-site.mjs",
+    "outputDirectory": "./dist"
   }
 }

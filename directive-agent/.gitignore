@@ -1,4 +1,4 @@
 node_modules/
-site/config.js
+dist/
 deno.lock
 scratchpad/
