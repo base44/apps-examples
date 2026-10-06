@@ -15,13 +15,16 @@ const JS_TOOL = {
     description:
       "Run JavaScript in the live Node.js process you are running in, as the body of an async function. " +
       "`return` a value to see it. Returns the value plus anything printed since your last call.",
+    strict: true,
     parameters: {
       type: "object",
       properties: { code: { type: "string", description: "JavaScript to run" } },
       required: ["code"],
+      additionalProperties: false,
     },
   },
 };
+const TOOL_ONLY_NUDGE = "Respond only with a `js` tool call. Use say() to talk to the user and done() when finished.";
 
 function systemPrompt(appId) {
   return `You are an autonomous agent living inside a running Node.js ${process.version} process on a machine (${process.platform}, cwd ${process.cwd()}). You were given a directive; carry it out.
@@ -31,10 +34,14 @@ You have one tool, \`js\`, which runs JavaScript in this same process:
 - Local declarations vanish after each call. Keep anything you need later on \`globalThis\` (e.g. \`globalThis.server = http.createServer(...)\`).
 - \`require()\` and \`import()\` work for Node built-ins and installed packages; \`fetch\` is global.
 - Servers, timers and child processes you start keep running after the call returns. Their console output reaches you with your next \`js\` result.
-- To ask the user something mid-task: \`return await ask("question")\`. It resolves with their answer.
 - \`base44\` is a Base44 SDK client signed in as the user for app ${appId}.
 
-The user watches a live feed of your work. Before each tool call, write a sentence or two saying what you're about to do and why. Work in small steps and check your work (for example, fetch the server you started). Ask before anything destructive, such as deleting files you didn't create or killing processes you didn't start. When you're done, or need a longer answer from the user, reply with text and no tool call; the user can reply or give a new directive.`;
+Every response you give must be a single \`js\` call; plain-text replies are not shown to anyone. Everything you communicate goes through code:
+- \`say("text")\` posts a message to the user. Use it to explain what you're doing and why, and to show results.
+- \`return await ask("question")\` asks the user something and resolves with their answer.
+- \`done("summary")\` ends your turn when the directive is complete. The user can then give you a new one.
+
+The user watches a live feed of your code and output. Work in small steps and check your work (for example, fetch the server you started). Ask before anything destructive, such as deleting files you didn't create or killing processes you didn't start.`;
 }
 
 function gatewayClient(base44) {
@@ -43,7 +50,7 @@ function gatewayClient(base44) {
     const response = await fetch(`${baseURL}/chat/completions`, {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}`, ...headers },
-      body: JSON.stringify({ model: MODEL, messages, tools: [JS_TOOL] }),
+      body: JSON.stringify({ model: MODEL, messages, tools: [JS_TOOL], tool_choice: "required" }),
     });
     if (!response.ok) {
       const hint = response.status === 403 ? " Is the app private? Run `base44 deploy` to apply `visibility` from base44/config.jsonc." : "";
@@ -87,20 +94,21 @@ async function runToolCall(call, log) {
   return content;
 }
 
-async function runTurn(complete, messages, log) {
+async function runTurn(complete, messages, log, turn) {
   for (let step = 0; step < MAX_STEPS; step++) {
     const message = await complete(messages);
     messages.push(message);
-    const thinking = message.reasoning_content ?? message.reasoning;
+    const thinking = [message.reasoning_content ?? message.reasoning, message.content].filter(Boolean).join("\n\n");
     if (thinking) log.emit("thinking", thinking);
-    if (message.content) {
-      process.stdout.write(`\nagent> ${message.content}\n`);
-      log.emit(message.tool_calls?.length ? "thinking" : "message", message.content);
+    if (!message.tool_calls?.length) {
+      // A model that ignores tool_choice gets told again rather than ending the turn.
+      messages.push({ role: "user", content: TOOL_ONLY_NUDGE });
+      continue;
     }
-    if (!message.tool_calls?.length) return;
     for (const call of message.tool_calls) {
       messages.push({ role: "tool", tool_call_id: call.id, content: await runToolCall(call, log) });
     }
+    if (turn.done) return;
   }
   const note = `Stopped after ${MAX_STEPS} steps; reply to let it continue.`;
   process.stdout.write(`\n[${note}]\n`);
@@ -120,6 +128,16 @@ export async function run({ appId, token, serverUrl, directive }) {
   process.stdout.write(dim(`Run ${runId} — watch it at ${serverUrl}/?run=${runId}\n`));
   const askUser = askAnywhere(log);
   globalThis.ask = trackQuestions(askUser);
+  globalThis.say = (text) => {
+    process.stdout.write(`\nagent> ${text}\n`);
+    log.emit("message", text);
+  };
+  let turn;
+  globalThis.done = (summary) => {
+    turn.done = true;
+    if (summary) globalThis.say(summary);
+    return "Turn ended. The user will be asked what to do next.";
+  };
 
   const messages = [{ role: "system", content: systemPrompt(appId) }];
   let next = first;
@@ -127,8 +145,9 @@ export async function run({ appId, token, serverUrl, directive }) {
   while (next !== null && next.trim() !== "exit") {
     if (next.trim()) {
       messages.push({ role: "user", content: next });
+      turn = { done: false };
       try {
-        await runTurn(complete, messages, log);
+        await runTurn(complete, messages, log, turn);
       } catch (error) {
         process.stderr.write(`\n${error.message}\n`);
         log.emit("error", error.message);
