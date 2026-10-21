@@ -47,7 +47,7 @@ jobs:
 
       - run: npm ci
 
-      - run: npm install -g base44@0.2.0
+      - run: npm install -g @base44-preview/cli@0.2.0-pr.671.556605b
 
       # --build injects the app id into the build; --git-hash addresses the
       # deployment by this commit, which a full-stack build requires.
