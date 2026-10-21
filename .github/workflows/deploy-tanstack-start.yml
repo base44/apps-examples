@@ -27,16 +27,7 @@ jobs:
     defaults:
       run:
         working-directory: tanstack-start
-    env:
-      BASE44_API_KEY: ${{ secrets.BASE44_API_KEY }}
-      BASE44_APP_ID: ${{ vars.TANSTACK_START_APP_ID }}
     steps:
-      - name: Check repository settings
-        run: |
-          [ -n "$BASE44_API_KEY" ] || { echo "::error::Add the BASE44_API_KEY repository secret (a workspace API key)."; exit 1; }
-          [ -n "$BASE44_APP_ID" ] || { echo "::error::Add the TANSTACK_START_APP_ID repository variable (Settings > Secrets and variables > Actions > Variables)."; exit 1; }
-        working-directory: .
-
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
 
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
@@ -49,6 +40,20 @@ jobs:
 
       - run: npm install -g base44@0.2.0
 
+      # Each value reaches only the step that needs it; link checks the app
+      # exists, so it needs the key too.
+      - name: Link the Base44 app
+        env:
+          APP_ID: ${{ vars.TANSTACK_START_APP_ID }}
+          BASE44_API_KEY: ${{ secrets.BASE44_API_KEY }}
+        run: |
+          [ -n "$APP_ID" ] || { echo "::error::Add the TANSTACK_START_APP_ID repository variable (Settings > Secrets and variables > Actions > Variables)."; exit 1; }
+          [ -n "$BASE44_API_KEY" ] || { echo "::error::Add the BASE44_API_KEY repository secret (a workspace API key)."; exit 1; }
+          base44 link --app-id "$APP_ID"
+
       # --build injects the app id into the build; --git-hash addresses the
       # deployment by this commit, which a full-stack build requires.
-      - run: base44 deploy -y --build --git-hash "$GITHUB_SHA"
+      - name: Deploy
+        env:
+          BASE44_API_KEY: ${{ secrets.BASE44_API_KEY }}
+        run: base44 deploy -y --build --git-hash "$GITHUB_SHA"
