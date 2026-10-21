@@ -1,0 +1,24 @@
+{
+  "name": "GuestbookEntry",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "maxLength": 60,
+      "description": "Who signed the guestbook"
+    },
+    "message": {
+      "type": "string",
+      "maxLength": 280,
+      "description": "What they wrote"
+    }
+  },
+  "required": ["name", "message"],
+  // Anyone can read and sign; only admins can edit or remove entries.
+  "rls": {
+    "create": true,
+    "read": true,
+    "update": { "user_condition": { "role": "admin" } },
+    "delete": { "user_condition": { "role": "admin" } }
+  }
+}

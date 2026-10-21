@@ -1,0 +1,15 @@
+// JSONC enables inline documentation and discoverability directly in config files.
+
+{
+  "name": "TanStack Guestbook",
+  "description": "A server-rendered guestbook built with TanStack Start and the Base44 backend",
+
+  // Site/hosting configuration
+  // Docs: https://docs.base44.com/configuration/hosting
+  "site": {
+    "installCommand": "npm ci",
+    "buildCommand": "npm run build",
+    "serveCommand": "npm run dev",
+    "outputDirectory": "./dist"
+  }
+}
