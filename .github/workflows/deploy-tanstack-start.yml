@@ -1,0 +1,48 @@
+# Deploys tanstack-start/ to Base44 on every push to main that touches it.
+#
+# Repository settings it needs:
+#   - secret   BASE44_API_KEY          a Base44 workspace API key (starts with b44k_)
+#   - variable TANSTACK_START_APP_ID   the Base44 app to deploy to
+name: Deploy tanstack-start
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "tanstack-start/**"
+      - ".github/workflows/deploy-tanstack-start.yml"
+  workflow_dispatch:
+
+# One deploy at a time, and never cancel one halfway through.
+concurrency:
+  group: deploy-tanstack-start
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: tanstack-start
+    env:
+      BASE44_API_KEY: ${{ secrets.BASE44_API_KEY }}
+      BASE44_APP_ID: ${{ vars.TANSTACK_START_APP_ID }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: tanstack-start/package-lock.json
+
+      - run: npm ci
+
+      - run: npm install -g base44@0.2.0
+
+      # --build injects the app id into the build; --git-hash addresses the
+      # deployment by this commit, which a full-stack build requires.
+      - run: base44 deploy -y --build --git-hash "$GITHUB_SHA"
