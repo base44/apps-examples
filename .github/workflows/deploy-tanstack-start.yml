@@ -38,7 +38,7 @@ jobs:
 
       - run: npm ci
 
-      - run: npm install -g base44@0.2.0
+      - run: npm install -g base44@0.2.1
 
       # Each value reaches only the step that needs it; link checks the app
       # exists, so it needs the key too.
